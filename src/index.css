@@ -1,50 +1,70 @@
+/* Import Tailwind CSS v4 — this single import brings in all of Tailwind's utility classes */
 @import "tailwindcss";
 
+/* ===== Custom Theme Tokens =====
+   Extends Tailwind's default theme with custom fonts, colors, and animations.
+   These become usable as Tailwind classes (e.g. "animate-float", "bg-glass"). */
 @theme {
+  /* Use the Inter font loaded from Google Fonts, with system font fallbacks */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
+  /* Glassmorphism color tokens — semi-transparent whites for frosted-glass surfaces */
   --color-glass: rgba(255, 255, 255, 0.03);
   --color-glass-border: rgba(255, 255, 255, 0.06);
   --color-glass-hover: rgba(255, 255, 255, 0.06);
 
-  --animate-float: float 8s ease-in-out infinite;
-  --animate-float-delayed: float 8s ease-in-out 4s infinite;
-  --animate-shimmer: shimmer 2.5s ease-in-out infinite;
-  --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
-  --animate-fade-in: fade-in 0.4s ease-out both;
-  --animate-slide-up: slide-up 0.5s ease-out both;
+  /* Custom animation definitions — each maps to a @keyframes rule below */
+  --animate-float: float 8s ease-in-out infinite;           /* Slow ambient floating for background orbs */
+  --animate-float-delayed: float 8s ease-in-out 4s infinite; /* Same float, offset by 4s so orbs move out of sync */
+  --animate-shimmer: shimmer 2.5s ease-in-out infinite;      /* Light sweep effect on buttons */
+  --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;  /* Subtle opacity pulse for empty states */
+  --animate-fade-in: fade-in 0.4s ease-out both;             /* Simple opacity entrance */
+  --animate-slide-up: slide-up 0.5s ease-out both;           /* Slide up + fade entrance for staggered content */
 }
 
+/* ===== Keyframe Animations ===== */
+
+/* Float — used by the background gradient orbs to slowly drift around the screen */
 @keyframes float {
   0%, 100% { transform: translate(0, 0) scale(1); }
   33% { transform: translate(30px, -20px) scale(1.05); }
   66% { transform: translate(-20px, 15px) scale(0.95); }
 }
 
+/* Shimmer — a light gradient sweep that moves left-to-right across buttons */
 @keyframes shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
 
+/* Glow Pulse — gentle opacity breathing effect for decorative elements */
 @keyframes glow-pulse {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 0.8; }
 }
 
+/* Fade In — simple opacity transition for elements entering the view */
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
+/* Slide Up — combines upward movement with a fade for a polished entrance effect.
+   Used with staggered animationDelay values to create a cascading appearance. */
 @keyframes slide-up {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Prevent horizontal scrollbar from ambient orbs that extend off-screen */
 body {
   overflow-x: hidden;
 }
 
+/* ===== Gradient Border Effect =====
+   Applied to news cards via the "gradient-border" class.
+   Uses a CSS mask trick: a gradient is drawn as a pseudo-element's background,
+   then masked so only a 1px border ring is visible. Fades in on hover. */
 .gradient-border {
   position: relative;
 }
@@ -53,14 +73,15 @@ body {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
+  padding: 1px; /* This becomes the "border width" after masking */
   background: linear-gradient(
     135deg,
-    rgba(139, 92, 246, 0.3),
-    rgba(59, 130, 246, 0.1),
-    rgba(16, 185, 129, 0.15),
-    rgba(139, 92, 246, 0.3)
+    rgba(139, 92, 246, 0.3),  /* violet */
+    rgba(59, 130, 246, 0.1),   /* blue */
+    rgba(16, 185, 129, 0.15),  /* emerald */
+    rgba(139, 92, 246, 0.3)    /* violet again for seamless loop */
   );
+  /* Mask trick: show the gradient only in the 1px gap between content-box and border-box */
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
   pointer-events: none;
@@ -68,9 +89,12 @@ body {
   transition: opacity 0.3s ease;
 }
 .gradient-border:hover::before {
-  opacity: 1;
+  opacity: 1; /* Gradient border appears on hover */
 }
 
+/* ===== Search Bar Glow Effect =====
+   Applied to the search bar wrapper via the "search-glow" class.
+   Creates a blurred colored halo behind the input that appears when focused. */
 .search-glow {
   position: relative;
 }
@@ -81,19 +105,23 @@ body {
   border-radius: 16px;
   background: linear-gradient(
     135deg,
-    rgba(139, 92, 246, 0.5),
-    rgba(59, 130, 246, 0.5),
-    rgba(16, 185, 129, 0.5)
+    rgba(139, 92, 246, 0.5),  /* violet */
+    rgba(59, 130, 246, 0.5),   /* blue */
+    rgba(16, 185, 129, 0.5)    /* emerald */
   );
-  z-index: -1;
+  z-index: -1;       /* Behind the input */
   opacity: 0;
-  filter: blur(12px);
+  filter: blur(12px); /* Soft glow, not a hard edge */
   transition: opacity 0.4s ease;
 }
 .search-glow:focus-within::after {
-  opacity: 0.35;
+  opacity: 0.35; /* Glow appears when the input inside is focused */
 }
 
+/* ===== Noise Texture Overlay =====
+   Applied to a full-screen div via the "noise-overlay" class.
+   Uses an inline SVG data URI to generate a fractal noise pattern,
+   adding subtle film grain texture to the dark background for visual depth. */
 .noise-overlay {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
   background-repeat: repeat;

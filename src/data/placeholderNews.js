@@ -1,3 +1,7 @@
+// placeholderNews.js — Static placeholder data for the news feed.
+// Used as fallback data when the NewsAPI is unavailable or for development/testing.
+// Each item mirrors the shape of a transformed API article: id, title, source, date, category, summary.
+
 export const placeholderNews = [
   {
     id: 1,
