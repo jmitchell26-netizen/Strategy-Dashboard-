@@ -2,6 +2,7 @@
   "name": "strategy-dashboard",
   "private": true,
   "version": "0.0.0",
+  "description": "Strategy Research Dashboard (React + Vite + Tailwind). Scripts: npm run dev=start dev server; npm run build=production bundle to dist/; npm run preview=serve dist locally; npm run lint=ESLint. Create .env with VITE_NEWSAPI_KEY for NewsAPI. Standard JSON has no // comments; see vite.config.js for build notes.",
   "type": "module",
   "scripts": {
     "dev": "vite",

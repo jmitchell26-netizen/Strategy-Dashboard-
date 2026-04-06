@@ -77,6 +77,9 @@ export default function useNews(query) {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
+    // Only `query` should re-run this effect; fetch helpers are defined below and intentionally omitted
+    // from deps to avoid stale closures and infinite loops (eslint react-hooks/exhaustive-deps).
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchTopHeadlines / fetchEverything only use stable module constants
   }, [query]);
 
   // Fetches top US business headlines (used when the search bar is empty)

@@ -1,16 +1,22 @@
 <!doctype html>
+<!-- index.html — Single-page app shell. Vite injects the bundled JS from /src/main.jsx into #root. -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Mobile viewport; required for responsive layout -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Preconnect speeds up loading the Inter font from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>Strategy Research Dashboard</title>
   </head>
+  <!-- Base page styles; the React app fills #root -->
   <body class="bg-[#06060e] text-slate-100 antialiased">
+    <!-- React mounts here — see src/main.jsx -->
     <div id="root"></div>
+    <!-- Vite resolves this to src/main.jsx and bundles it -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

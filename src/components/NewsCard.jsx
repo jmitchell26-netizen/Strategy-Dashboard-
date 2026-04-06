@@ -1,6 +1,7 @@
 // NewsCard.jsx — Displays a single news article in the Live News Feed.
 // Each card shows the category badge, date, title, summary, source, and a "Save to Matrix" button.
-// The button disables and changes to "✓ Saved" once the item has been saved.
+// When NewsAPI provides item.url, the title and "Read full article" open the publisher in a new tab.
+// The save button disables and changes to "✓ Saved" once the item has been saved.
 
 // Color configuration for each category — controls the badge background, text, and dot colors.
 // Each category gets a unique color so users can visually scan the feed at a glance.
