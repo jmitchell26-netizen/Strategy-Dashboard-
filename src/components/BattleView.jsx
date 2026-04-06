@@ -192,7 +192,20 @@ export default function BattleView({ itemA, itemB, onClose }) {
                 <span className={`h-2 w-2 rounded-full ${categoryDot[itemA.category] || "bg-slate-400"}`} />
                 <span className="text-[11px] font-semibold tracking-wide text-slate-500 uppercase">{itemA.category}</span>
               </div>
-              <h3 className="mb-2 text-[15px] leading-snug font-bold text-white">{itemA.title}</h3>
+              <h3 className="mb-2 text-[15px] leading-snug font-bold">
+                {itemA.url ? (
+                  <a
+                    href={itemA.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white underline decoration-white/20 underline-offset-2 transition-colors hover:text-sky-300 hover:decoration-sky-400/50"
+                  >
+                    {itemA.title}
+                  </a>
+                ) : (
+                  <span className="text-white">{itemA.title}</span>
+                )}
+              </h3>
               <div className="flex items-center gap-2 text-[11px] text-slate-600">
                 <span className="font-medium">{itemA.source}</span>
                 <span>·</span>
@@ -222,7 +235,20 @@ export default function BattleView({ itemA, itemB, onClose }) {
                 <span className={`h-2 w-2 rounded-full ${categoryDot[itemB.category] || "bg-slate-400"}`} />
                 <span className="text-[11px] font-semibold tracking-wide text-slate-500 uppercase">{itemB.category}</span>
               </div>
-              <h3 className="mb-2 text-[15px] leading-snug font-bold text-white">{itemB.title}</h3>
+              <h3 className="mb-2 text-[15px] leading-snug font-bold">
+                {itemB.url ? (
+                  <a
+                    href={itemB.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white underline decoration-white/20 underline-offset-2 transition-colors hover:text-sky-300 hover:decoration-sky-400/50"
+                  >
+                    {itemB.title}
+                  </a>
+                ) : (
+                  <span className="text-white">{itemB.title}</span>
+                )}
+              </h3>
               <div className="flex items-center gap-2 text-[11px] text-slate-600">
                 <span className="font-medium">{itemB.source}</span>
                 <span>·</span>

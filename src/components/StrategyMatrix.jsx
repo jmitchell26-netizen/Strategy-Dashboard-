@@ -137,9 +137,21 @@ export default function StrategyMatrix({
                 </svg>
               </button>
 
-              {/* Article title */}
+              {/* Article title — link to original story when URL was saved from NewsAPI */}
               <h3 className="flex-1 text-[13px] leading-snug font-semibold text-slate-200">
-                {item.title}
+                {item.url ? (
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-200 underline decoration-white/15 underline-offset-2 transition-colors hover:text-sky-300 hover:decoration-sky-400/40"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {item.title}
+                  </a>
+                ) : (
+                  item.title
+                )}
               </h3>
 
               {/* Remove button — deletes this item from the saved matrix */}

@@ -60,12 +60,14 @@ const fallback = {
 };
 
 // Props:
-//   item     — the news article object { id, title, source, date, category, summary }
+//   item     — the news article object { id, title, source, date, category, summary, url? }
 //   onSave   — callback to save this item to the strategy matrix
 //   isSaved  — boolean, true if this item is already in the matrix
 export default function NewsCard({ item, onSave, isSaved }) {
   // Look up the color scheme for this article's category
   const cat = categoryConfig[item.category] || fallback;
+  // NewsAPI provides the publisher URL; open in a new tab when present
+  const articleUrl = item.url;
 
   return (
     // "gradient-border" class (from index.css) adds an animated gradient border on hover
@@ -89,15 +91,50 @@ export default function NewsCard({ item, onSave, isSaved }) {
           </time>
         </div>
 
-        {/* Article title — brightens on hover via group-hover */}
-        <h3 className="mb-2 text-[15px] leading-snug font-semibold text-white/90 transition-colors group-hover:text-white">
-          {item.title}
-        </h3>
+        {/* Article title — links to the full story on the publisher site when URL is available */}
+        {articleUrl ? (
+          <h3 className="mb-2 text-[15px] leading-snug font-semibold">
+            <a
+              href={articleUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/90 underline decoration-white/20 underline-offset-2 transition-colors hover:text-sky-300 hover:decoration-sky-400/50"
+            >
+              {item.title}
+              <span className="ml-1 inline-block align-middle text-sky-400/80" aria-hidden>
+                <svg className="inline h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5M19 5v6m0 0h-6m6 0L9 15" />
+                </svg>
+              </span>
+            </a>
+          </h3>
+        ) : (
+          <h3 className="mb-2 text-[15px] leading-snug font-semibold text-white/90 transition-colors group-hover:text-white">
+            {item.title}
+          </h3>
+        )}
 
         {/* Article summary / description */}
-        <p className="mb-5 text-[13px] leading-relaxed text-slate-400/80">
+        <p className="mb-4 text-[13px] leading-relaxed text-slate-400/80">
           {item.summary}
         </p>
+
+        {/* Explicit “open article” link — easier to discover than title alone */}
+        {articleUrl && (
+          <p className="mb-5">
+            <a
+              href={articleUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-sky-400/90 transition-colors hover:text-sky-300"
+            >
+              Read full article
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5M19 5v6m0 0h-6m6 0L9 15" />
+              </svg>
+            </a>
+          </p>
+        )}
 
         {/* Footer: source name (left) and save button (right) */}
         <div className="flex items-center justify-between">
