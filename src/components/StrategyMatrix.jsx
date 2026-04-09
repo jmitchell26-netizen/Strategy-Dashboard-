@@ -22,11 +22,13 @@ const categoryDot = {
 //   onUpdateNotes  — callback(id, notesText) to update an item's research notes
 //   selectedIds    — Set of item IDs currently checked for comparison
 //   onToggleSelect — callback(id) to check/uncheck an item for comparison
-//   onCompare      — callback to open the Battle View modal with the 2 selected items
+//   onCompare        — callback to open the Battle View modal with the 2 selected items
+//   onUpdateCompany  — callback(id, companyName) to tag an article with a company for AI profiles
 export default function StrategyMatrix({
   items,
   onRemove,
   onUpdateNotes,
+  onUpdateCompany,
   selectedIds,
   onToggleSelect,
   onCompare,
@@ -174,6 +176,23 @@ export default function StrategyMatrix({
               <span className="font-medium text-slate-500">{item.source}</span>
               <span className="text-slate-600">·</span>
               <span className="tabular-nums text-slate-600">{item.date}</span>
+            </div>
+
+            {/* --- Company tag (groups articles for AI company profile) --- */}
+            <div className="mb-3 pl-8">
+              <label className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold tracking-widest text-slate-500 uppercase">
+                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
+                </svg>
+                Company
+              </label>
+              <input
+                type="text"
+                value={item.companyName || ""}
+                onChange={(e) => onUpdateCompany(item.id, e.target.value)}
+                placeholder="e.g. Apple, Tesla — same name for all articles about one firm"
+                className="w-full rounded-xl border border-white/[0.04] bg-white/[0.02] px-3.5 py-2 text-[13px] text-slate-300 placeholder-slate-600 transition-colors focus:border-violet-500/30 focus:bg-white/[0.04] focus:outline-none focus:ring-1 focus:ring-violet-500/20"
+              />
             </div>
 
             {/* --- Research Notes textarea ---

@@ -6,6 +6,7 @@ import { useState, useMemo, useEffect } from "react";
 import SearchBar from "./components/SearchBar";
 import NewsCard from "./components/NewsCard";
 import StrategyMatrix from "./components/StrategyMatrix";
+import CompanyProfilesPanel from "./components/CompanyProfilesPanel";
 import BattleView from "./components/BattleView";
 import useNews from "./hooks/useNews";
 
@@ -20,7 +21,14 @@ function App() {
   const [savedItems, setSavedItems] = useState(() => {
     try {
       const stored = localStorage.getItem("savedStrategies");
-      return stored ? JSON.parse(stored) : [];
+      if (!stored) return [];
+      const parsed = JSON.parse(stored);
+      return Array.isArray(parsed)
+        ? parsed.map((item) => ({
+            ...item,
+            companyName: item.companyName ?? "",
+          }))
+        : [];
     } catch {
       return [];
     }
@@ -30,6 +38,20 @@ function App() {
   useEffect(() => {
     localStorage.setItem("savedStrategies", JSON.stringify(savedItems));
   }, [savedItems]);
+
+  // --- AI company profiles (keyed by normalized company name; see CompanyProfilesPanel) ---
+  const [companyProfiles, setCompanyProfiles] = useState(() => {
+    try {
+      const stored = localStorage.getItem("companyProfiles");
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("companyProfiles", JSON.stringify(companyProfiles));
+  }, [companyProfiles]);
 
   // --- NewsAPI hook ---
   // Fetches live articles from NewsAPI based on the search query.
@@ -49,7 +71,10 @@ function App() {
   // Save a news article to the strategy matrix (adds an empty "notes" field)
   function handleSave(item) {
     if (savedIds.has(item.id)) return; // Prevent duplicates
-    setSavedItems((prev) => [{ ...item, notes: "" }, ...prev]); // Prepend to top of list
+    setSavedItems((prev) => [
+      { ...item, notes: "", companyName: "" },
+      ...prev,
+    ]); // Prepend to top of list
   }
 
   // Remove a saved item from the matrix by its ID
@@ -61,6 +86,12 @@ function App() {
   function handleUpdateNotes(id, notes) {
     setSavedItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, notes } : item))
+    );
+  }
+
+  function handleUpdateCompany(id, companyName) {
+    setSavedItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, companyName } : item))
     );
   }
 
@@ -246,11 +277,18 @@ function App() {
                 items={savedItems}
                 onRemove={handleRemove}
                 onUpdateNotes={handleUpdateNotes}
+                onUpdateCompany={handleUpdateCompany}
                 selectedIds={selectedIds}
                 onToggleSelect={handleToggleSelect}
                 onCompare={handleCompare}
               />
             </div>
+
+            <CompanyProfilesPanel
+              savedItems={savedItems}
+              companyProfiles={companyProfiles}
+              onProfilesChange={setCompanyProfiles}
+            />
           </section>
         </div>
       </div>
