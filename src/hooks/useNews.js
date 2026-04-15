@@ -1,104 +1,204 @@
 // useNews.js — Custom React hook that fetches live news articles from NewsAPI.
-// On mount (empty query): fetches top US business headlines.
-// When the user types a query: debounces 500ms, then searches the /everything endpoint.
+// Empty search: runs several top-headlines requests in parallel (US business, US tech, UK business),
+// merges, dedupes by URL, and sorts by date — many more sources than a single category call.
+// With a query: debounces 500ms, then searches /everything with a larger page size.
 // Returns { articles, loading, error } for the UI to consume.
 
 import { useState, useEffect, useRef } from "react";
+import {
+  hashString,
+  guessCategory,
+  cleanContentSnippet,
+  deriveShortSummary,
+} from "../utils/articleUtils";
 
 // Read the API key from the .env file (VITE_ prefix exposes it to the client via Vite)
 const API_KEY = import.meta.env.VITE_NEWSAPI_KEY;
 const BASE_URL = "https://newsapi.org/v2";
 
-// Keyword-to-category mapping used to auto-classify articles
-// If an article's title or description contains any of these keywords,
-// it gets assigned that category for display in the UI
-const CATEGORY_KEYWORDS = {
-  "M&A": ["acquire", "acquisition", "merger", "merge", "buyout", "takeover"],
-  "R&D": ["research", "patent", "breakthrough", "innovation", "lab", "experiment", "discovery"],
-  Financial: ["revenue", "earnings", "profit", "stock", "shares", "quarter", "fiscal", "investor"],
-  Expansion: ["expand", "expansion", "new market", "growth", "open", "launch market", "global"],
-  "Product Launch": ["launch", "unveil", "introduce", "release", "announce product", "new device"],
-  "Product Strategy": ["strategy", "pivot", "roadmap", "vision", "plan", "rebrand"],
-  "Market Entry": ["enter", "entry", "disrupt", "compete", "rival", "challenge"],
-  "Content Strategy": ["content", "streaming", "media", "entertainment", "programming"],
-};
-
-// Scans the article title + description for keywords and returns the best-fit category.
-// Falls back to "General" if no keywords match.
-function guessCategory(title, description) {
-  const text = `${title} ${description}`.toLowerCase();
-  for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
-    if (keywords.some((kw) => text.includes(kw))) return category;
-  }
-  return "General";
-}
+// NewsAPI allows up to 100 articles per request on most plans (free tier included).
+// Using the max gives the broadest feed without extra round-trips per category.
+const PAGE_SIZE = 100;
 
 // Converts a raw NewsAPI article object into the shape our app expects:
-// { id, title, source, date, category, summary, url }
+// { id, title, source, date, category, summary, shortSummary, url }
+// ID is stable per URL so merged feeds don’t create duplicate keys.
 function transformArticle(article, index) {
+  const key = article.url || `${article.title || ""}-${article.publishedAt || ""}`;
+  const description =
+    article.description || cleanContentSnippet(article.content || "").slice(0, 500) || "No description available.";
+  let shortSummary = deriveShortSummary(description, article.content);
+  if (shortSummary) {
+    const dNorm = description.replace(/\s+/g, " ").trim();
+    const sNorm = shortSummary.replace(/\s+/g, " ").trim();
+    // Drop if it repeats almost the entire description (single-sentence articles)
+    if (sNorm.length >= dNorm.length * 0.92) shortSummary = "";
+  }
+
   return {
-    id: `news-${index}-${Date.now()}`,                                          // Unique ID combining index + timestamp
+    id: article.url ? `art-${hashString(article.url)}` : `art-${hashString(key)}-${index}`,
     title: article.title || "Untitled",
     source: article.source?.name || "Unknown",
-    date: article.publishedAt?.split("T")[0] || new Date().toISOString().split("T")[0], // Extract YYYY-MM-DD
+    date: article.publishedAt?.split("T")[0] || new Date().toISOString().split("T")[0],
     category: guessCategory(article.title || "", article.description || ""),
-    summary: article.description || article.content?.slice(0, 200) || "No summary available.",
+    summary: description,
+    shortSummary: shortSummary || "",
     url: article.url,
+    publishedAt: article.publishedAt || "", // used only for sorting merged lists
   };
 }
 
-export default function useNews(query) {
-  const [articles, setArticles] = useState([]);  // Array of transformed articles
-  const [loading, setLoading] = useState(false);  // True while an API request is in-flight
-  const [error, setError] = useState(null);        // Error message string, or null
-  const debounceRef = useRef(null);                // Stores the setTimeout ID for debouncing
-  const abortRef = useRef(null);                   // Stores the AbortController to cancel stale requests
+// Strip internal field before exposing to UI (optional — App only uses known fields)
+function toPublicArticle(t) {
+  const { publishedAt: _p, ...rest } = t;
+  return rest;
+}
 
-  // Re-run whenever the search query changes
+// Dedupe by URL (fallback: title+date), then sort newest first
+function mergeAndSortRawArticles(lists) {
+  const seen = new Set();
+  const merged = [];
+  for (const list of lists) {
+    for (const a of list) {
+      if (!a.title || a.title === "[Removed]") continue;
+      const key = (a.url && a.url.trim()) || `${a.title}|${a.publishedAt || ""}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      merged.push(a);
+    }
+  }
+  merged.sort((a, b) => {
+    const ta = new Date(a.publishedAt || 0).getTime();
+    const tb = new Date(b.publishedAt || 0).getTime();
+    return tb - ta;
+  });
+  return merged;
+}
+
+function isAbortError(err) {
+  if (!err) return false;
+  if (err.name === "AbortError") return true;
+  const msg = String(err.message || "");
+  return /aborted|AbortError/i.test(msg);
+}
+
+export default function useNews(query) {
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const debounceRef = useRef(null);
+  const abortRef = useRef(null);
+  // Bumps on each new fetch so we never apply results from a superseded or aborted run (e.g. React Strict Mode).
+  const fetchGenerationRef = useRef(0);
+
   useEffect(() => {
-    // Clear any pending debounce timer from the previous keystroke
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     const searchTerm = query.trim();
 
-    // If the search bar is empty, immediately load top headlines (no debounce)
     if (!searchTerm) {
-      fetchTopHeadlines();
+      fetchTopHeadlinesMerged();
       return;
     }
 
-    // Otherwise, wait 500ms after the user stops typing before calling the API
-    // This prevents firing a request on every single keystroke
     debounceRef.current = setTimeout(() => {
       fetchEverything(searchTerm);
     }, 500);
 
-    // Cleanup: clear the debounce timer if the component re-renders or unmounts
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
+      // Abort in-flight fetches when the effect cleans up (route change, Strict Mode remount, query change)
+      if (abortRef.current) abortRef.current.abort();
     };
-    // Only `query` should re-run this effect; fetch helpers are defined below and intentionally omitted
-    // from deps to avoid stale closures and infinite loops (eslint react-hooks/exhaustive-deps).
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchTopHeadlines / fetchEverything only use stable module constants
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch helpers use stable constants; only `query` should retrigger
   }, [query]);
 
-  // Fetches top US business headlines (used when the search bar is empty)
-  async function fetchTopHeadlines() {
-    await doFetch(`${BASE_URL}/top-headlines?country=us&category=business&pageSize=15&apiKey=${API_KEY}`);
-  }
-
-  // Searches all articles matching the user's query, sorted by most recent
-  async function fetchEverything(q) {
-    const encoded = encodeURIComponent(q);
-    await doFetch(`${BASE_URL}/everything?q=${encoded}&sortBy=publishedAt&pageSize=15&language=en&apiKey=${API_KEY}`);
-  }
-
-  // Core fetch function shared by both endpoints.
-  // Cancels any in-flight request before starting a new one (via AbortController).
-  async function doFetch(url) {
-    if (abortRef.current) abortRef.current.abort();  // Cancel previous request
+  // Parallel top-headlines: multiple countries/categories = many distinct outlets (still one merged list).
+  // NewsAPI counts each HTTP request toward your daily quota — here we use 3 requests for the default feed.
+  async function fetchTopHeadlinesMerged() {
+    if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
     abortRef.current = controller;
+    const generation = ++fetchGenerationRef.current;
+
+    const key = encodeURIComponent(API_KEY);
+    const urls = [
+      `${BASE_URL}/top-headlines?country=us&category=business&pageSize=${PAGE_SIZE}&apiKey=${key}`,
+      `${BASE_URL}/top-headlines?country=us&category=technology&pageSize=${PAGE_SIZE}&apiKey=${key}`,
+      `${BASE_URL}/top-headlines?country=gb&category=business&pageSize=${PAGE_SIZE}&apiKey=${key}`,
+    ];
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const results = await Promise.allSettled(
+        urls.map((url) => fetch(url, { signal: controller.signal }).then((r) => r.json()))
+      );
+
+      // A newer fetch started or React aborted this run — do not touch state or treat as API failure
+      if (generation !== fetchGenerationRef.current || controller.signal.aborted) return;
+
+      const rawLists = [];
+      const errors = [];
+
+      for (const result of results) {
+        if (result.status === "fulfilled") {
+          const data = result.value;
+          if (data.status === "ok" && Array.isArray(data.articles)) {
+            rawLists.push(data.articles);
+          } else if (data.message) {
+            errors.push(data.message);
+          }
+        } else if (!isAbortError(result.reason)) {
+          errors.push(result.reason?.message || "Request failed");
+        }
+      }
+
+      if (generation !== fetchGenerationRef.current || controller.signal.aborted) return;
+
+      if (rawLists.length === 0) {
+        if (controller.signal.aborted) return;
+        throw new Error(errors[0] || "NewsAPI returned no articles");
+      }
+
+      const mergedRaw = mergeAndSortRawArticles(rawLists);
+      const transformed = mergedRaw.map((a, i) => transformArticle(a, i)).map(toPublicArticle);
+
+      if (generation !== fetchGenerationRef.current) return;
+
+      setArticles(transformed);
+
+      // If some feeds failed, surface a soft warning in console (optional partial failure)
+      if (errors.length > 0 && rawLists.length > 0) {
+        console.warn("Some headline feeds failed:", errors);
+      }
+    } catch (err) {
+      if (generation !== fetchGenerationRef.current) return;
+      if (isAbortError(err)) return;
+      console.error("NewsAPI error:", err);
+      setError(err.message);
+    } finally {
+      if (generation === fetchGenerationRef.current) {
+        setLoading(false);
+      }
+    }
+  }
+
+  // Single-request search across all English articles, newest first
+  async function fetchEverything(q) {
+    const encoded = encodeURIComponent(q);
+    const key = encodeURIComponent(API_KEY);
+    const url = `${BASE_URL}/everything?q=${encoded}&sortBy=publishedAt&pageSize=${PAGE_SIZE}&language=en&apiKey=${key}`;
+    await doFetch(url);
+  }
+
+  // Shared single-response path (used for search)
+  async function doFetch(url) {
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    const generation = ++fetchGenerationRef.current;
 
     setLoading(true);
     setError(null);
@@ -107,24 +207,29 @@ export default function useNews(query) {
       const res = await fetch(url, { signal: controller.signal });
       const data = await res.json();
 
-      // NewsAPI returns { status: "ok", articles: [...] } on success
+      if (generation !== fetchGenerationRef.current || controller.signal.aborted) return;
+
       if (data.status !== "ok") {
         throw new Error(data.message || "NewsAPI request failed");
       }
 
-      // Filter out removed/empty articles, then transform into our app's format
       const transformed = (data.articles || [])
         .filter((a) => a.title && a.title !== "[Removed]")
-        .map(transformArticle);
+        .map((a, i) => transformArticle(a, i))
+        .map(toPublicArticle);
+
+      if (generation !== fetchGenerationRef.current) return;
 
       setArticles(transformed);
     } catch (err) {
-      // Don't treat a cancelled request as an error
-      if (err.name === "AbortError") return;
+      if (generation !== fetchGenerationRef.current) return;
+      if (isAbortError(err)) return;
       console.error("NewsAPI error:", err);
       setError(err.message);
     } finally {
-      setLoading(false);
+      if (generation === fetchGenerationRef.current) {
+        setLoading(false);
+      }
     }
   }
 

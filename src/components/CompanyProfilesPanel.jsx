@@ -4,7 +4,7 @@
 import { useMemo, useState } from "react";
 import {
   generateCompanyProfile,
-  getOpenAiKey,
+  isLlmConfigured,
   compareProfilesBrief,
 } from "../api/openaiCompanyProfile";
 import ProfileCompareModal from "./ProfileCompareModal";
@@ -95,10 +95,12 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
       <p className="text-[12px] leading-relaxed text-slate-500">
         Tag saved articles with a <span className="font-semibold text-slate-400">Company</span> name. Group
         articles about the same firm, then generate one merged profile. Compare two profiles side by side.
-        {!getOpenAiKey() && (
+        {!isLlmConfigured() && (
           <span className="mt-1 block text-amber-400/90">
-            Add <code className="rounded bg-white/10 px-1 py-0.5 text-[11px]">VITE_OPENAI_API_KEY</code> to
-            .env and restart the dev server.
+            Add <code className="rounded bg-white/10 px-1 py-0.5 text-[11px]">VITE_OPENAI_API_KEY</code> or
+            Ollama (<code className="rounded bg-white/10 px-1 py-0.5 text-[11px]">VITE_LLM_PROVIDER=ollama</code>{" "}
+            + optional <code className="rounded bg-white/10 px-1 py-0.5 text-[11px]">VITE_OLLAMA_*</code>) to{" "}
+            <code className="rounded bg-white/10 px-1 py-0.5 text-[11px]">.env</code> and restart the dev server.
           </span>
         )}
       </p>
@@ -130,7 +132,7 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
                   </div>
                   <button
                     type="button"
-                    disabled={loading || !getOpenAiKey()}
+                    disabled={loading || !isLlmConfigured()}
                     onClick={() => handleGenerate(key, displayName, items)}
                     className="rounded-xl border border-violet-500/40 bg-violet-500/15 px-3 py-1.5 text-[11px] font-bold text-violet-200 transition-all hover:bg-violet-500/25 disabled:cursor-not-allowed disabled:opacity-40"
                   >
@@ -143,10 +145,9 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
                   </p>
                 )}
                 {prof?.summary && (
-                  <p className="mt-2 line-clamp-3 text-[12px] leading-relaxed text-slate-500">
-                    {prof.summary.replace(/\n+/g, " ").slice(0, 220)}
-                    {prof.summary.length > 220 ? "…" : ""}
-                  </p>
+                  <div className="mt-2 max-h-[min(28rem,70vh)] overflow-y-auto rounded-lg border border-white/[0.06] bg-black/25 px-3 py-2.5 text-[12px] leading-relaxed whitespace-pre-wrap text-slate-300">
+                    {prof.summary}
+                  </div>
                 )}
               </div>
             );

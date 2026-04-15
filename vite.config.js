@@ -10,4 +10,14 @@ import tailwindcss from '@tailwindcss/vite'     // Tailwind CSS v4 integration (
 export default defineConfig({
   // Plugins run in order: React transforms .jsx; Tailwind scans class names and generates CSS
   plugins: [react(), tailwindcss()],
+  // Dev-only: browser → same-origin /ollama-proxy → local Ollama (avoids CORS on localhost:11434)
+  server: {
+    proxy: {
+      '/ollama-proxy': {
+        target: 'http://127.0.0.1:11434',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ollama-proxy/, ''),
+      },
+    },
+  },
 })

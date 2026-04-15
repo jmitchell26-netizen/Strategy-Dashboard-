@@ -61,10 +61,11 @@ const fallback = {
 };
 
 // Props:
-//   item     — the news article object { id, title, source, date, category, summary, url? }
+//   item     — the news article object { id, title, source, date, category, summary, shortSummary?, url? }
 //   onSave   — callback to save this item to the strategy matrix
 //   isSaved  — boolean, true if this item is already in the matrix
-export default function NewsCard({ item, onSave, isSaved }) {
+//   onRemoveFromFeed — optional; for pasted links, removes the card from the custom feed only
+export default function NewsCard({ item, onSave, isSaved, onRemoveFromFeed }) {
   // Look up the color scheme for this article's category
   const cat = categoryConfig[item.category] || fallback;
   // NewsAPI provides the publisher URL; open in a new tab when present
@@ -81,11 +82,18 @@ export default function NewsCard({ item, onSave, isSaved }) {
       <div className="relative">
         {/* Top row: category badge (left) and date (right) */}
         <div className="mb-3 flex items-center justify-between gap-3">
-          {/* Category pill with colored dot */}
-          <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase ${cat.bg} ${cat.text}`}>
-            <span className={`h-1.5 w-1.5 rounded-full ${cat.dot}`} />
-            {item.category}
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            {item.sourceType === "pasted-link" && (
+              <span className="rounded-full border border-sky-500/25 bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold tracking-wide text-sky-300 uppercase">
+                Your link
+              </span>
+            )}
+            {/* Category pill with colored dot */}
+            <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase ${cat.bg} ${cat.text}`}>
+              <span className={`h-1.5 w-1.5 rounded-full ${cat.dot}`} />
+              {item.category}
+            </span>
+          </div>
           {/* Publication date */}
           <time className="text-[11px] font-medium tabular-nums text-slate-600">
             {item.date}
@@ -115,10 +123,27 @@ export default function NewsCard({ item, onSave, isSaved }) {
           </h3>
         )}
 
-        {/* Article summary / description */}
-        <p className="mb-4 text-[13px] leading-relaxed text-slate-400/80">
-          {item.summary}
-        </p>
+        {/* Main article description (from NewsAPI excerpt or body) */}
+        <div className="mb-4">
+          <p className="mb-1.5 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+            Description
+          </p>
+          <p className="text-[13px] leading-relaxed text-slate-400/80">
+            {item.summary}
+          </p>
+        </div>
+
+        {/* Short one-line summary — derived from article body or first sentence; hidden if same as description */}
+        {item.shortSummary ? (
+          <div className="mb-4 rounded-lg border border-white/[0.04] bg-white/[0.02] px-3 py-2.5">
+            <p className="mb-1 text-[10px] font-bold tracking-widest text-violet-400/90 uppercase">
+              Summary
+            </p>
+            <p className="text-[12px] leading-relaxed text-slate-300/90">
+              {item.shortSummary}
+            </p>
+          </div>
+        ) : null}
 
         {/* Explicit “open article” link — easier to discover than title alone */}
         {articleUrl && (
@@ -138,11 +163,22 @@ export default function NewsCard({ item, onSave, isSaved }) {
         )}
 
         {/* Footer: source name (left) and save button (right) */}
-        <div className="flex items-center justify-between">
-          {/* News source in uppercase */}
-          <span className="text-[11px] font-bold tracking-widest text-slate-600 uppercase">
-            {item.source}
-          </span>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            {/* News source in uppercase */}
+            <span className="text-[11px] font-bold tracking-widest text-slate-600 uppercase">
+              {item.source}
+            </span>
+            {onRemoveFromFeed && (
+              <button
+                type="button"
+                onClick={onRemoveFromFeed}
+                className="text-[10px] font-semibold text-slate-500 underline decoration-white/10 underline-offset-2 hover:text-rose-400"
+              >
+                Remove from feed
+              </button>
+            )}
+          </div>
 
           {/* Save to Matrix / Saved button */}
           <button

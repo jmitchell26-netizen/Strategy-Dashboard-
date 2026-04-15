@@ -4,6 +4,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import SearchBar from "./components/SearchBar";
+import PasteArticleLink from "./components/PasteArticleLink";
 import NewsCard from "./components/NewsCard";
 import StrategyMatrix from "./components/StrategyMatrix";
 import CompanyProfilesPanel from "./components/CompanyProfilesPanel";
@@ -57,6 +58,43 @@ function App() {
   // Fetches live articles from NewsAPI based on the search query.
   // Returns the articles array, a loading flag, and any error message.
   const { articles, loading, error } = useNews(query);
+
+  // Pasted URLs (same article shape as the feed); persisted so they survive refresh.
+  const [pastedArticles, setPastedArticles] = useState(() => {
+    try {
+      const stored = localStorage.getItem("pastedFeedArticles");
+      if (!stored) return [];
+      const parsed = JSON.parse(stored);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("pastedFeedArticles", JSON.stringify(pastedArticles));
+  }, [pastedArticles]);
+
+  // Merged feed: pasted first (newest paste on top), then NewsAPI items excluding duplicate URLs.
+  const feedArticles = useMemo(() => {
+    const pastedUrls = new Set(pastedArticles.map((a) => (a.url || "").toLowerCase()));
+    const rest = articles.filter((a) => !pastedUrls.has((a.url || "").toLowerCase()));
+    return [...pastedArticles, ...rest];
+  }, [pastedArticles, articles]);
+
+  function handlePastedArticleAdded(article) {
+    setPastedArticles((prev) => {
+      const u = (article.url || "").toLowerCase();
+      const without = prev.filter(
+        (a) => a.id !== article.id && (a.url || "").toLowerCase() !== u
+      );
+      return [article, ...without];
+    });
+  }
+
+  function handleRemovePastedFromFeed(id) {
+    setPastedArticles((prev) => prev.filter((a) => a.id !== id));
+  }
 
   // --- Derived state ---
   // A Set of IDs for items already saved to the matrix.
@@ -171,6 +209,10 @@ function App() {
           <SearchBar query={query} onChange={setQuery} />
         </div>
 
+        <div className="animate-slide-up mb-8" style={{ animationDelay: "0.12s" }}>
+          <PasteArticleLink onArticleAdded={handlePastedArticleAdded} />
+        </div>
+
         {/* ===== Two-column layout ===== */}
         <div className="grid gap-8 lg:grid-cols-2">
 
@@ -191,7 +233,7 @@ function App() {
               <h2 className="text-lg font-bold text-white">News Feed</h2>
               {/* Article count badge */}
               <span className="ml-auto rounded-full border border-slate-700/60 bg-slate-800/50 px-3 py-0.5 text-xs font-semibold tabular-nums text-slate-400">
-                {articles.length}
+                {feedArticles.length}
               </span>
             </div>
 
@@ -204,7 +246,7 @@ function App() {
 
             {/* News articles list — shows skeleton loaders, articles, or empty state */}
             <div className="space-y-4">
-              {loading ? (
+              {loading && feedArticles.length === 0 ? (
                 // Skeleton loading placeholders (4 pulsing cards while the API responds)
                 Array.from({ length: 4 }).map((_, i) => (
                   <div
@@ -224,9 +266,15 @@ function App() {
                     </div>
                   </div>
                 ))
-              ) : articles.length > 0 ? (
-                // Render each news article as a card with staggered entrance animation
-                articles.map((item, i) => (
+              ) : feedArticles.length > 0 ? (
+                <>
+                  {loading && (
+                    <div className="rounded-xl border border-emerald-500/15 bg-emerald-500/5 px-3 py-2 text-center text-[11px] text-emerald-400/90">
+                      Updating news…
+                    </div>
+                  )}
+                  {/* Render each news article as a card with staggered entrance animation */}
+                  {feedArticles.map((item, i) => (
                   <div
                     key={item.id}
                     className="animate-slide-up"
@@ -236,9 +284,15 @@ function App() {
                       item={item}
                       onSave={handleSave}
                       isSaved={savedIds.has(item.id)}
+                      onRemoveFromFeed={
+                        item.sourceType === "pasted-link"
+                          ? () => handleRemovePastedFromFeed(item.id)
+                          : undefined
+                      }
                     />
                   </div>
-                ))
+                  ))}
+                </>
               ) : (
                 // Empty state when no articles match the search
                 <div className="rounded-2xl border border-dashed border-slate-700/50 bg-slate-900/30 py-16 text-center backdrop-blur-sm">
