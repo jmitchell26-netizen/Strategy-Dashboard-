@@ -1,5 +1,6 @@
 // ProfileCompareModal.jsx — Full-screen view of two AI-generated company profiles side by side,
 // plus an optional AI synthesis comparing them.
+import MarkdownContent from "./MarkdownContent";
 
 export default function ProfileCompareModal({
   companyA,
@@ -51,8 +52,8 @@ export default function ProfileCompareModal({
             )}
           </div>
           {synthesis && (
-            <div className="mt-3 rounded-xl border border-cyan-500/20 bg-cyan-500/5 px-4 py-3 text-[13px] leading-relaxed text-slate-300 whitespace-pre-wrap">
-              {synthesis}
+            <div className="mt-3 rounded-xl border border-cyan-500/20 bg-cyan-500/5 px-4 py-3">
+              <MarkdownContent>{synthesis}</MarkdownContent>
             </div>
           )}
         </div>
@@ -60,15 +61,11 @@ export default function ProfileCompareModal({
         <div className="grid max-h-[min(70vh,720px)] gap-0 overflow-y-auto sm:grid-cols-2">
           <div className="border-b border-white/[0.06] p-6 sm:border-b-0 sm:border-r sm:border-white/[0.06] sm:p-8">
             <h3 className="mb-3 text-sm font-bold text-violet-300">{companyA}</h3>
-            <pre className="font-sans text-[13px] leading-relaxed whitespace-pre-wrap text-slate-300">
-              {profileA}
-            </pre>
+            <MarkdownContent>{profileA}</MarkdownContent>
           </div>
           <div className="p-6 sm:p-8">
             <h3 className="mb-3 text-sm font-bold text-violet-300">{companyB}</h3>
-            <pre className="font-sans text-[13px] leading-relaxed whitespace-pre-wrap text-slate-300">
-              {profileB}
-            </pre>
+            <MarkdownContent>{profileB}</MarkdownContent>
           </div>
         </div>
       </div>

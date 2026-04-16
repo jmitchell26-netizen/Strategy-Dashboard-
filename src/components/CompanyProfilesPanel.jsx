@@ -8,6 +8,7 @@ import {
   compareProfilesBrief,
 } from "../api/openaiCompanyProfile";
 import ProfileCompareModal from "./ProfileCompareModal";
+import MarkdownContent from "./MarkdownContent";
 
 function normalizeCompanyKey(name) {
   return (name || "").trim().toLowerCase();
@@ -145,8 +146,8 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
                   </p>
                 )}
                 {prof?.summary && (
-                  <div className="mt-2 max-h-[min(28rem,70vh)] overflow-y-auto rounded-lg border border-white/[0.06] bg-black/25 px-3 py-2.5 text-[12px] leading-relaxed whitespace-pre-wrap text-slate-300">
-                    {prof.summary}
+                  <div className="mt-2 max-h-[min(28rem,70vh)] overflow-y-auto rounded-lg border border-white/[0.06] bg-black/25 px-3 py-2.5">
+                    <MarkdownContent>{prof.summary}</MarkdownContent>
                   </div>
                 )}
               </div>
