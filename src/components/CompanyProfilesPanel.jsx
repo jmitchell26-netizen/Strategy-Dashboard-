@@ -9,6 +9,11 @@ import {
 } from "../api/openaiCompanyProfile";
 import ProfileCompareModal from "./ProfileCompareModal";
 import MarkdownContent from "./MarkdownContent";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Spinner } from "@/components/ui/spinner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 function normalizeCompanyKey(name) {
   return (name || "").trim().toLowerCase();
@@ -131,14 +136,21 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
                     <p className="text-sm font-semibold text-slate-200">{displayName}</p>
                     <p className="text-[11px] text-slate-500">Articles tagged: {items.length}</p>
                   </div>
-                  <button
-                    type="button"
-                    disabled={loading || !isLlmConfigured()}
-                    onClick={() => handleGenerate(key, displayName, items)}
-                    className="rounded-xl border border-violet-500/40 bg-violet-500/15 px-3 py-1.5 text-[11px] font-bold text-violet-200 transition-all hover:bg-violet-500/25 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    {loading ? "Generating…" : prof?.summary ? "Regenerate profile" : "Generate AI profile"}
-                  </button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        disabled={loading || !isLlmConfigured()}
+                        onClick={() => handleGenerate(key, displayName, items)}
+                        variant="outline"
+                        size="sm"
+                        className="border-violet-500/40 bg-violet-500/15 text-violet-200 hover:bg-violet-500/25 hover:text-violet-100"
+                      >
+                        {loading ? <><Spinner className="mr-1.5 h-3 w-3" />Generating…</> : prof?.summary ? "Regenerate profile" : "Generate AI profile"}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{isLlmConfigured() ? "Generate an AI intelligence profile from tagged articles" : "Configure an LLM in .env to enable this"}</TooltipContent>
+                  </Tooltip>
                 </div>
                 {prof?.summary && (
                   <p className="text-[11px] text-slate-600">
@@ -146,9 +158,9 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
                   </p>
                 )}
                 {prof?.summary && (
-                  <div className="mt-2 max-h-[min(28rem,70vh)] overflow-y-auto rounded-lg border border-white/[0.06] bg-black/25 px-3 py-2.5">
+                  <ScrollArea className="mt-2 max-h-[min(28rem,70vh)] rounded-lg border border-white/[0.06] bg-black/25 px-3 py-2.5">
                     <MarkdownContent>{prof.summary}</MarkdownContent>
-                  </div>
+                  </ScrollArea>
                 )}
               </div>
             );
@@ -162,47 +174,46 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
             Compare two profiles
           </p>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-            <label className="flex-1 text-[13px] leading-snug text-slate-400">
-              Company A
-              <select
-                value={compareSelection.a}
-                onChange={(e) => setCompareSelection((s) => ({ ...s, a: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-white/[0.08] bg-[#0c0c14] px-3 py-2 text-sm text-slate-200"
-              >
-                <option value="">Select…</option>
-                {readyKeys.map((k) => (
-                  <option key={k} value={k}>
-                    {companyProfiles[k].displayName}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="flex-1 text-[13px] leading-snug text-slate-400">
-              Company B
-              <select
-                value={compareSelection.b}
-                onChange={(e) => setCompareSelection((s) => ({ ...s, b: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-white/[0.08] bg-[#0c0c14] px-3 py-2 text-sm text-slate-200"
-              >
-                <option value="">Select…</option>
-                {readyKeys.map((k) => (
-                  <option key={k} value={k}>
-                    {companyProfiles[k].displayName}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button
+            <div className="flex-1 space-y-1">
+              <p className="text-[13px] text-slate-400">Company A</p>
+              <Select value={compareSelection.a} onValueChange={(v) => setCompareSelection((s) => ({ ...s, a: v }))}>
+                <SelectTrigger className="w-full border-white/[0.08] bg-[#0c0c14] text-slate-200">
+                  <SelectValue placeholder="Select…" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#0c0c18] border-white/[0.08]">
+                  {readyKeys.map((k) => (
+                    <SelectItem key={k} value={k} className="text-slate-200 focus:bg-white/[0.06] focus:text-white">
+                      {companyProfiles[k].displayName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex-1 space-y-1">
+              <p className="text-[13px] text-slate-400">Company B</p>
+              <Select value={compareSelection.b} onValueChange={(v) => setCompareSelection((s) => ({ ...s, b: v }))}>
+                <SelectTrigger className="w-full border-white/[0.08] bg-[#0c0c14] text-slate-200">
+                  <SelectValue placeholder="Select…" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#0c0c18] border-white/[0.08]">
+                  {readyKeys.map((k) => (
+                    <SelectItem key={k} value={k} className="text-slate-200 focus:bg-white/[0.06] focus:text-white">
+                      {companyProfiles[k].displayName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button
               type="button"
               disabled={!compareSelection.a || !compareSelection.b || compareSelection.a === compareSelection.b}
-              onClick={() => {
-                setSynthesis("");
-                setCompareOpen(true);
-              }}
-              className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs font-bold text-amber-200 transition-all hover:bg-amber-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+              onClick={() => { setSynthesis(""); setCompareOpen(true); }}
+              variant="outline"
+              size="sm"
+              className="border-amber-500/30 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20 hover:text-amber-100"
             >
               Open comparison
-            </button>
+            </Button>
           </div>
         </div>
       )}

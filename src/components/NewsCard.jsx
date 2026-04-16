@@ -60,6 +60,10 @@ const fallback = {
   dot: "bg-slate-400",
 };
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+
 // Props:
 //   item     — the news article object { id, title, source, date, category, summary, shortSummary?, url? }
 //   onSave   — callback to save this item to the strategy matrix
@@ -84,15 +88,14 @@ export default function NewsCard({ item, onSave, isSaved, onRemoveFromFeed }) {
         <div className="mb-3 flex items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
             {item.sourceType === "pasted-link" && (
-              <span className="rounded-full border border-sky-500/25 bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold tracking-wide text-sky-300 uppercase">
+              <Badge className="border border-sky-500/25 bg-sky-500/10 text-sky-300 rounded-full px-2 py-0.5">
                 Your link
-              </span>
+              </Badge>
             )}
-            {/* Category pill with colored dot */}
-            <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase ${cat.bg} ${cat.text}`}>
+            <Badge className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ${cat.bg} ${cat.text}`}>
               <span className={`h-1.5 w-1.5 rounded-full ${cat.dot}`} />
               {item.category}
-            </span>
+            </Badge>
           </div>
           {/* Publication date */}
           <time className="text-[11px] font-medium tabular-nums text-slate-600">
@@ -181,23 +184,27 @@ export default function NewsCard({ item, onSave, isSaved, onRemoveFromFeed }) {
           </div>
 
           {/* Save to Matrix / Saved button */}
-          <button
-            onClick={() => onSave(item)}
-            disabled={isSaved}
-            className={`relative overflow-hidden rounded-xl px-4 py-2 text-xs font-bold tracking-wide transition-all duration-300 ${
-              isSaved
-                ? "cursor-default border border-emerald-500/20 bg-emerald-500/10 text-emerald-400"   // Saved state: green, disabled
-                : "cursor-pointer border border-violet-500/30 bg-violet-500/10 text-violet-300 hover:border-violet-400/50 hover:bg-violet-500/20 hover:shadow-lg hover:shadow-violet-500/10 active:scale-95" // Active state: violet with click animation
-            }`}
-          >
-            {/* Shimmer animation overlay — only shown on unsaved buttons */}
-            {!isSaved && (
-              <span className="animate-shimmer pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.07] to-transparent bg-[length:200%_100%]" />
-            )}
-            <span className="relative">
-              {isSaved ? "✓ Saved" : "Save to Matrix"}
-            </span>
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => onSave(item)}
+                disabled={isSaved}
+                variant="outline"
+                size="sm"
+                className={`relative overflow-hidden transition-all duration-300 ${
+                  isSaved
+                    ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/10"
+                    : "border-violet-500/30 bg-violet-500/10 text-violet-300 hover:border-violet-400/50 hover:bg-violet-500/20 hover:shadow-lg hover:shadow-violet-500/10"
+                }`}
+              >
+                {!isSaved && (
+                  <span className="animate-shimmer pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.07] to-transparent bg-[length:200%_100%]" />
+                )}
+                <span className="relative">{isSaved ? "✓ Saved" : "Save to Matrix"}</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{isSaved ? "Already in your matrix" : "Save this article to your strategy matrix"}</TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </article>

@@ -1,3 +1,8 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+
 // StrategyMatrix.jsx — Displays the user's saved news items as selectable cards.
 // Each card shows the article title, metadata, a Research Notes textarea, and a checkbox
 // for selecting items to compare in Battle View.
@@ -88,23 +93,29 @@ export default function StrategyMatrix({
           </p>
           {/* Battle View button — enabled only when exactly 2 items are checked.
               Gets a shimmer animation and amber glow when active. */}
-          <button
-            onClick={onCompare}
-            disabled={selCount !== 2}
-            className={`rounded-xl px-4 py-2 text-xs font-bold tracking-wide transition-all duration-300 ${
-              selCount === 2
-                ? "animate-shimmer cursor-pointer border border-amber-500/30 bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-500/15 bg-[length:200%_100%] text-amber-300 shadow-lg shadow-amber-500/10 hover:border-amber-400/50 hover:shadow-amber-500/20 active:scale-95"
-                : "cursor-not-allowed border border-white/[0.04] bg-white/[0.02] text-slate-600"
-            }`}
-          >
-            <span className="flex items-center gap-1.5">
-              {/* Swap arrows icon */}
-              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
-              </svg>
-              Battle View
-            </span>
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={onCompare}
+                disabled={selCount !== 2}
+                variant="outline"
+                size="sm"
+                className={`transition-all duration-300 ${
+                  selCount === 2
+                    ? "animate-shimmer border-amber-500/30 bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-500/15 bg-[length:200%_100%] text-amber-300 shadow-lg shadow-amber-500/10 hover:border-amber-400/50 hover:bg-amber-500/20"
+                    : "border-white/[0.04] bg-white/[0.02] text-slate-600"
+                }`}
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                </svg>
+                Battle View
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {selCount === 2 ? "Open Battle View comparison" : "Select exactly 2 items to compare"}
+            </TooltipContent>
+          </Tooltip>
         </div>
       )}
 
@@ -156,13 +167,19 @@ export default function StrategyMatrix({
                 )}
               </h3>
 
-              {/* Remove button — deletes this item from the saved matrix */}
-              <button
-                onClick={() => onRemove(item.id)}
-                className="shrink-0 cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-bold tracking-wide text-red-400/60 uppercase transition-all hover:bg-red-500/10 hover:text-red-400"
-              >
-                Remove
-              </button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => onRemove(item.id)}
+                    variant="ghost"
+                    size="xs"
+                    className="shrink-0 text-red-400/50 hover:bg-red-500/10 hover:text-red-400"
+                  >
+                    Remove
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Remove from saved matrix</TooltipContent>
+              </Tooltip>
             </div>
 
             {/* --- Metadata row: category dot + name, source, date --- */}
@@ -186,12 +203,12 @@ export default function StrategyMatrix({
                 </svg>
                 Company
               </label>
-              <input
+              <Input
                 type="text"
                 value={item.companyName || ""}
                 onChange={(e) => onUpdateCompany(item.id, e.target.value)}
                 placeholder="e.g. Apple, Tesla — same name for all articles about one firm"
-                className="w-full rounded-xl border border-white/[0.04] bg-white/[0.02] px-3.5 py-2 text-[13px] text-slate-300 placeholder-slate-600 transition-colors focus:border-violet-500/30 focus:bg-white/[0.04] focus:outline-none focus:ring-1 focus:ring-violet-500/20"
+                className="rounded-xl border border-white/[0.04] bg-white/[0.02] px-3.5 py-2 h-auto text-[13px] text-slate-300 placeholder:text-slate-600 focus-visible:border-violet-500/30 focus-visible:bg-white/[0.04] focus-visible:ring-1 focus-visible:ring-violet-500/20"
               />
             </div>
 
@@ -206,12 +223,12 @@ export default function StrategyMatrix({
                 </svg>
                 Research Notes
               </label>
-              <textarea
+              <Textarea
                 value={item.notes || ""}
                 onChange={(e) => onUpdateNotes(item.id, e.target.value)}
                 placeholder="Add your analysis…"
                 rows={2}
-                className="w-full resize-none rounded-xl border border-white/[0.04] bg-white/[0.02] px-3.5 py-2.5 text-[13px] leading-relaxed text-slate-300 placeholder-slate-600 transition-colors focus:border-violet-500/30 focus:bg-white/[0.04] focus:outline-none focus:ring-1 focus:ring-violet-500/20"
+                className="resize-none rounded-xl border border-white/[0.04] bg-white/[0.02] px-3.5 py-2.5 text-[13px] leading-relaxed text-slate-300 placeholder:text-slate-600 focus-visible:border-violet-500/30 focus-visible:bg-white/[0.04] focus-visible:ring-1 focus-visible:ring-violet-500/20"
               />
             </div>
           </div>

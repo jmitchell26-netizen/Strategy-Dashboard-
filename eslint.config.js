@@ -36,7 +36,16 @@ export default defineConfig([
 
     rules: {
       // Allow unused variables that look like React components (PascalCase) or ALL_CAPS constants
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^_' }],
+    },
+  },
+
+  // shadcn/ui components export both components and helpers — relax react-refresh rule for them
+  // Must come AFTER the main config block so it overrides it for these files
+  {
+    files: ['src/components/ui/**/*.{js,jsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
 ])

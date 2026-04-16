@@ -1,6 +1,9 @@
 // ProfileCompareModal.jsx — Full-screen view of two AI-generated company profiles side by side,
 // plus an optional AI synthesis comparing them.
 import MarkdownContent from "./MarkdownContent";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function ProfileCompareModal({
   companyA,
@@ -26,27 +29,31 @@ export default function ProfileCompareModal({
                 AI-generated summaries from your tagged articles
               </p>
             </div>
-            <button
+            <Button
               type="button"
               onClick={onClose}
-              className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.03] text-slate-400 transition-all hover:bg-white/[0.06] hover:text-white"
+              variant="outline"
+              size="icon-sm"
+              className="shrink-0 border-white/[0.06] bg-white/[0.03] text-slate-400 hover:bg-white/[0.06] hover:text-white"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
-            </button>
+            </Button>
           </div>
 
           {/* Optional comparison synthesis */}
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <button
+            <Button
               type="button"
               onClick={onRequestSynthesis}
               disabled={loadingSynthesis}
-              className="rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-xs font-bold text-cyan-300 transition-all hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+              variant="outline"
+              size="sm"
+              className="border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 hover:text-cyan-100"
             >
-              {loadingSynthesis ? "Generating…" : "AI comparison summary"}
-            </button>
+              {loadingSynthesis ? <><Spinner className="mr-1.5 h-3 w-3" />Generating…</> : "AI comparison summary"}
+            </Button>
             {synthesis && (
               <span className="text-[11px] text-slate-500">Uses one extra OpenAI call</span>
             )}
@@ -58,15 +65,15 @@ export default function ProfileCompareModal({
           )}
         </div>
 
-        <div className="grid max-h-[min(70vh,720px)] gap-0 overflow-y-auto sm:grid-cols-2">
-          <div className="border-b border-white/[0.06] p-6 sm:border-b-0 sm:border-r sm:border-white/[0.06] sm:p-8">
+        <div className="grid gap-0 sm:grid-cols-2">
+          <ScrollArea className="max-h-[min(70vh,720px)] border-b border-white/[0.06] p-6 sm:border-b-0 sm:border-r sm:border-white/[0.06] sm:p-8">
             <h3 className="mb-3 text-sm font-bold text-violet-300">{companyA}</h3>
             <MarkdownContent>{profileA}</MarkdownContent>
-          </div>
-          <div className="p-6 sm:p-8">
+          </ScrollArea>
+          <ScrollArea className="max-h-[min(70vh,720px)] p-6 sm:p-8">
             <h3 className="mb-3 text-sm font-bold text-violet-300">{companyB}</h3>
             <MarkdownContent>{profileB}</MarkdownContent>
-          </div>
+          </ScrollArea>
         </div>
       </div>
     </div>

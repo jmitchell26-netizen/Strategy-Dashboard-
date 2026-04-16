@@ -2,6 +2,8 @@
 // Uses a Recharts RadarChart for visual metric comparison and horizontal bars for detail.
 
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import {
   RadarChart,
   Radar,
@@ -62,17 +64,7 @@ function generateMetrics(item) {
   ];
 }
 
-const barColors = {
-  violet: { bar: "bg-violet-500", glow: "shadow-violet-500/30", text: "text-violet-400" },
-  blue: { bar: "bg-blue-500", glow: "shadow-blue-500/30", text: "text-blue-400" },
-  cyan: { bar: "bg-cyan-500", glow: "shadow-cyan-500/30", text: "text-cyan-400" },
-  emerald: { bar: "bg-emerald-500", glow: "shadow-emerald-500/30", text: "text-emerald-400" },
-  rose: { bar: "bg-rose-500", glow: "shadow-rose-500/30", text: "text-rose-400" },
-  amber: { bar: "bg-amber-500", glow: "shadow-amber-500/30", text: "text-amber-400" },
-};
-
-function MetricBar({ label, value, color, opponentValue }) {
-  const c = barColors[color];
+function MetricBar({ label, value, opponentValue }) {
   const isWinning = value > opponentValue;
   const isTied = value === opponentValue;
 
@@ -91,12 +83,11 @@ function MetricBar({ label, value, color, opponentValue }) {
           </span>
         </div>
       </div>
-      <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.04]">
-        <div
-          className={`h-full rounded-full transition-all duration-1000 ease-out ${c.bar} ${isWinning ? `shadow-md ${c.glow}` : "opacity-30"}`}
-          style={{ width: `${value}%`, transitionDelay: "0.3s" }}
-        />
-      </div>
+      <Progress
+        value={value}
+        className={`h-1.5 bg-white/[0.04] transition-all duration-1000 ${isWinning ? "" : "opacity-30"}`}
+        style={{ "--progress-color": isWinning ? undefined : "rgba(255,255,255,0.2)" }}
+      />
     </div>
   );
 }
@@ -165,14 +156,16 @@ export default function BattleView({ itemA, itemB, onClose }) {
                 <p className="text-[12px] font-medium text-slate-500">Strategy comparison analysis</p>
               </div>
             </div>
-            <button
+            <Button
               onClick={onClose}
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.03] text-slate-400 transition-all hover:bg-white/[0.06] hover:text-white"
+              variant="outline"
+              size="icon-sm"
+              className="border-white/[0.06] bg-white/[0.03] text-slate-400 hover:bg-white/[0.06] hover:text-white"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
-            </button>
+            </Button>
           </div>
 
           {/* Scoreboard */}

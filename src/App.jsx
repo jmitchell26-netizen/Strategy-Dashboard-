@@ -3,9 +3,11 @@
 // Renders the two-column layout: Live News Feed (left) and Saved Strategy Matrix (right).
 
 import { useState, useMemo, useEffect } from "react";
+import { toast } from "sonner";
 import SearchBar from "./components/SearchBar";
 import PasteArticleLink from "./components/PasteArticleLink";
 import NewsCard from "./components/NewsCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import StrategyMatrix from "./components/StrategyMatrix";
 import CompanyProfilesPanel from "./components/CompanyProfilesPanel";
 import BattleView from "./components/BattleView";
@@ -108,11 +110,11 @@ function App() {
 
   // Save a news article to the strategy matrix (adds an empty "notes" field)
   function handleSave(item) {
-    if (savedIds.has(item.id)) return; // Prevent duplicates
-    setSavedItems((prev) => [
-      { ...item, notes: "", companyName: "" },
-      ...prev,
-    ]); // Prepend to top of list
+    if (savedIds.has(item.id)) return;
+    setSavedItems((prev) => [{ ...item, notes: "", companyName: "" }, ...prev]);
+    toast.success("Saved to matrix", {
+      description: item.title.slice(0, 72) + (item.title.length > 72 ? "…" : ""),
+    });
   }
 
   // Remove a saved item from the matrix by its ID
@@ -247,22 +249,18 @@ function App() {
             {/* News articles list — shows skeleton loaders, articles, or empty state */}
             <div className="space-y-4">
               {loading && feedArticles.length === 0 ? (
-                // Skeleton loading placeholders (4 pulsing cards while the API responds)
                 Array.from({ length: 4 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="animate-pulse rounded-2xl border border-white/[0.04] bg-white/[0.02] p-5"
-                  >
-                    <div className="mb-3 flex justify-between">
-                      <div className="h-5 w-24 rounded-full bg-white/[0.05]" />
-                      <div className="h-4 w-20 rounded bg-white/[0.04]" />
-                    </div>
-                    <div className="mb-2 h-4 w-3/4 rounded bg-white/[0.06]" />
-                    <div className="mb-1 h-3 w-full rounded bg-white/[0.03]" />
-                    <div className="mb-4 h-3 w-5/6 rounded bg-white/[0.03]" />
+                  <div key={i} className="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-5 space-y-3">
                     <div className="flex justify-between">
-                      <div className="h-3 w-16 rounded bg-white/[0.04]" />
-                      <div className="h-7 w-28 rounded-xl bg-white/[0.04]" />
+                      <Skeleton className="h-5 w-24 bg-white/[0.05]" />
+                      <Skeleton className="h-4 w-20 bg-white/[0.04]" />
+                    </div>
+                    <Skeleton className="h-4 w-3/4 bg-white/[0.06]" />
+                    <Skeleton className="h-3 w-full bg-white/[0.03]" />
+                    <Skeleton className="h-3 w-5/6 bg-white/[0.03]" />
+                    <div className="flex justify-between pt-1">
+                      <Skeleton className="h-3 w-16 bg-white/[0.04]" />
+                      <Skeleton className="h-7 w-28 bg-white/[0.04]" />
                     </div>
                   </div>
                 ))

@@ -1,6 +1,10 @@
 // Paste a URL to fetch metadata and show the article in the feed like NewsAPI items.
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Spinner } from "@/components/ui/spinner";
 import {
   fetchArticleFromUrl,
   buildPastedArticle,
@@ -82,22 +86,24 @@ export default function PasteArticleLink({ onArticleAdded }) {
       </div>
 
       <form onSubmit={handleFetch} className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
-        <input
+        <Input
           type="text"
           name="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://…"
-          className="min-w-0 flex-1 rounded-xl border border-white/[0.08] bg-[#0c0c14] px-3 py-2.5 text-sm text-slate-200 placeholder:text-slate-600 focus:border-sky-500/40 focus:outline-none focus:ring-1 focus:ring-sky-500/30"
           autoComplete="off"
+          className="min-w-0 flex-1 h-auto rounded-xl border border-white/[0.08] bg-[#0c0c14] px-3 py-2.5 text-sm text-slate-200 placeholder:text-slate-600 focus-visible:border-sky-500/40 focus-visible:ring-1 focus-visible:ring-sky-500/30"
         />
-        <button
+        <Button
           type="submit"
           disabled={loading || !url.trim()}
-          className="shrink-0 rounded-xl border border-sky-500/35 bg-sky-500/15 px-4 py-2.5 text-xs font-bold tracking-wide text-sky-200 transition-all hover:bg-sky-500/25 disabled:cursor-not-allowed disabled:opacity-40"
+          variant="outline"
+          size="sm"
+          className="shrink-0 h-auto border-sky-500/35 bg-sky-500/15 px-4 py-2.5 text-sky-200 hover:bg-sky-500/25 hover:text-sky-100"
         >
-          {loading ? "Fetching…" : "Add to feed"}
-        </button>
+          {loading ? <><Spinner className="mr-1.5 h-3 w-3" />Fetching…</> : "Add to feed"}
+        </Button>
       </form>
 
       {error && (
@@ -114,26 +120,28 @@ export default function PasteArticleLink({ onArticleAdded }) {
       {showManual && url.trim() && (
         <form onSubmit={handleManualAdd} className="mt-3 space-y-2 rounded-xl border border-white/[0.06] bg-black/20 p-3">
           <p className="text-[11px] font-medium text-slate-500">Manual entry</p>
-          <input
+          <Input
             type="text"
             value={manualTitle}
             onChange={(e) => setManualTitle(e.target.value)}
             placeholder="Title"
-            className="w-full rounded-lg border border-white/[0.08] bg-[#0c0c14] px-3 py-2 text-sm text-slate-200 placeholder:text-slate-600 focus:border-sky-500/40 focus:outline-none"
+            className="h-auto rounded-lg border border-white/[0.08] bg-[#0c0c14] px-3 py-2 text-sm text-slate-200 placeholder:text-slate-600 focus-visible:border-sky-500/40"
           />
-          <textarea
+          <Textarea
             value={manualDescription}
             onChange={(e) => setManualDescription(e.target.value)}
             placeholder="Short description or excerpt (optional)"
             rows={3}
-            className="w-full resize-y rounded-lg border border-white/[0.08] bg-[#0c0c14] px-3 py-2 text-sm text-slate-200 placeholder:text-slate-600 focus:border-sky-500/40 focus:outline-none"
+            className="resize-y rounded-lg border border-white/[0.08] bg-[#0c0c14] px-3 py-2 text-sm text-slate-200 placeholder:text-slate-600 focus-visible:border-sky-500/40"
           />
-          <button
+          <Button
             type="submit"
-            className="rounded-lg border border-violet-500/35 bg-violet-500/15 px-3 py-2 text-[11px] font-bold text-violet-200 hover:bg-violet-500/25"
+            variant="outline"
+            size="sm"
+            className="border-violet-500/35 bg-violet-500/15 text-violet-200 hover:bg-violet-500/25 hover:text-violet-100"
           >
             Add to feed without preview
-          </button>
+          </Button>
         </form>
       )}
     </div>
