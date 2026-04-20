@@ -16,7 +16,7 @@ export default function ProfileCompareModal({
   onRequestSynthesis,
 }) {
   return (
-    <div className="animate-fade-in fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm sm:items-center sm:p-6">
+    <div className="animate-fade-in fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm sm:items-center sm:p-6" onClick={onClose}>
       <div
         className="animate-slide-up relative w-full max-w-6xl overflow-hidden rounded-3xl border border-white/[0.08] bg-[#0c0c18]/95 shadow-2xl backdrop-blur-xl"
         onClick={(e) => e.stopPropagation()}
@@ -33,7 +33,7 @@ export default function ProfileCompareModal({
               type="button"
               onClick={onClose}
               variant="outline"
-              size="icon-sm"
+              size="icon"
               className="shrink-0 border-white/[0.06] bg-white/[0.03] text-slate-400 hover:bg-white/[0.06] hover:text-white"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/ui/spinner";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   fetchArticleFromUrl,
   buildPastedArticle,
@@ -66,84 +67,54 @@ export default function PasteArticleLink({ onArticleAdded }) {
   }
 
   return (
-    <div className="rounded-2xl border border-sky-500/15 bg-gradient-to-br from-sky-500/[0.06] to-transparent p-4 backdrop-blur-sm">
-      <div className="mb-3 flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-500/15">
-          <svg className="h-4 w-4 text-sky-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M13.19 8.688a4.5 4.5 0 0 1 6.364 6.364l-3.465 3.465a4.5 4.5 0 0 1-6.364 0 4.5 4.5 0 0 1 0-6.364l1.06-1.06m-.53 2.47 2.47-2.47a4.5 4.5 0 0 1 6.364 6.364l-3.465 3.465a4.5 4.5 0 0 1-6.364 0 4.5 4.5 0 0 1 0-6.364l1.06-1.06"
-            />
+    <Card className="border-zinc-800 bg-zinc-900">
+      <CardContent className="p-4">
+        <div className="mb-3 flex items-center gap-2">
+          <svg className="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 6.364 6.364l-3.465 3.465a4.5 4.5 0 0 1-6.364 0 4.5 4.5 0 0 1 0-6.364l1.06-1.06m-.53 2.47 2.47-2.47a4.5 4.5 0 0 1 6.364 6.364l-3.465 3.465a4.5 4.5 0 0 1-6.364 0 4.5 4.5 0 0 1 0-6.364l1.06-1.06" />
           </svg>
+          <span className="text-sm font-medium text-zinc-300">Add your own article</span>
+          <span className="text-[11px] text-zinc-600">— paste a link to bring it into the feed</span>
         </div>
-        <div>
-          <h3 className="text-sm font-bold text-white">Add your own article</h3>
-          <p className="text-[11px] text-slate-500">
-            Paste a link — it appears in the feed so you can save, tag, battle, and run AI profiles like any story.
-          </p>
-        </div>
-      </div>
 
-      <form onSubmit={handleFetch} className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
-        <Input
-          type="text"
-          name="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://…"
-          autoComplete="off"
-          className="min-w-0 flex-1 h-auto rounded-xl border border-white/[0.08] bg-[#0c0c14] px-3 py-2.5 text-sm text-slate-200 placeholder:text-slate-600 focus-visible:border-sky-500/40 focus-visible:ring-1 focus-visible:ring-sky-500/30"
-        />
-        <Button
-          type="submit"
-          disabled={loading || !url.trim()}
-          variant="outline"
-          size="sm"
-          className="shrink-0 h-auto border-sky-500/35 bg-sky-500/15 px-4 py-2.5 text-sky-200 hover:bg-sky-500/25 hover:text-sky-100"
-        >
-          {loading ? <><Spinner className="mr-1.5 h-3 w-3" />Fetching…</> : "Add to feed"}
-        </Button>
-      </form>
-
-      {error && (
-        <p className="mt-2 text-[12px] text-amber-400/90">
-          {error}{" "}
-          {showManual ? (
-            <>
-              You can fill in title and description below and add it anyway.
-            </>
-          ) : null}
-        </p>
-      )}
-
-      {showManual && url.trim() && (
-        <form onSubmit={handleManualAdd} className="mt-3 space-y-2 rounded-xl border border-white/[0.06] bg-black/20 p-3">
-          <p className="text-[11px] font-medium text-slate-500">Manual entry</p>
+        <form onSubmit={handleFetch} className="flex gap-2">
           <Input
             type="text"
-            value={manualTitle}
-            onChange={(e) => setManualTitle(e.target.value)}
-            placeholder="Title"
-            className="h-auto rounded-lg border border-white/[0.08] bg-[#0c0c14] px-3 py-2 text-sm text-slate-200 placeholder:text-slate-600 focus-visible:border-sky-500/40"
+            name="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://…"
+            autoComplete="off"
+            className="flex-1 border-zinc-700 bg-zinc-800 text-sm text-zinc-200 placeholder:text-zinc-600 focus-visible:border-zinc-500 focus-visible:ring-zinc-500/20"
           />
-          <Textarea
-            value={manualDescription}
-            onChange={(e) => setManualDescription(e.target.value)}
-            placeholder="Short description or excerpt (optional)"
-            rows={3}
-            className="resize-y rounded-lg border border-white/[0.08] bg-[#0c0c14] px-3 py-2 text-sm text-slate-200 placeholder:text-slate-600 focus-visible:border-sky-500/40"
-          />
-          <Button
-            type="submit"
-            variant="outline"
-            size="sm"
-            className="border-violet-500/35 bg-violet-500/15 text-violet-200 hover:bg-violet-500/25 hover:text-violet-100"
-          >
-            Add to feed without preview
+          <Button type="submit" disabled={loading || !url.trim()} variant="outline" size="sm"
+            className="shrink-0 border-zinc-700 bg-zinc-800 text-zinc-300 hover:border-zinc-600 hover:bg-zinc-700 hover:text-white">
+            {loading ? <><Spinner className="mr-1.5 h-3 w-3" />Fetching…</> : "Add to feed"}
           </Button>
         </form>
-      )}
-    </div>
+
+        {error && (
+          <p className="mt-2 text-[12px] text-amber-400">
+            {error}{showManual ? " Fill in details below to add manually." : ""}
+          </p>
+        )}
+
+        {showManual && url.trim() && (
+          <form onSubmit={handleManualAdd} className="mt-3 space-y-2 rounded-lg border border-zinc-700/60 bg-zinc-800/50 p-3">
+            <p className="text-[11px] font-medium text-zinc-500">Manual entry</p>
+            <Input type="text" value={manualTitle} onChange={(e) => setManualTitle(e.target.value)}
+              placeholder="Title"
+              className="border-zinc-700 bg-zinc-800 text-sm text-zinc-200 placeholder:text-zinc-600" />
+            <Textarea value={manualDescription} onChange={(e) => setManualDescription(e.target.value)}
+              placeholder="Short description or excerpt (optional)" rows={3}
+              className="resize-y border-zinc-700 bg-zinc-800 text-sm text-zinc-200 placeholder:text-zinc-600" />
+            <Button type="submit" variant="outline" size="sm"
+              className="border-zinc-700 bg-zinc-800 text-zinc-300 hover:border-zinc-600 hover:bg-zinc-700">
+              Add without preview
+            </Button>
+          </form>
+        )}
+      </CardContent>
+    </Card>
   );
 }

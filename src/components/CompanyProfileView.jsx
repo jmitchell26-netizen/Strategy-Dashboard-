@@ -250,7 +250,7 @@ function ChipsSection({ lines, color }) {
         // Split on " — " or ": " to separate label from description
         const sepIdx = item.search(/ [—–-] | : /);
         const label = sepIdx > 0 ? item.slice(0, sepIdx).trim() : item;
-        const desc = sepIdx > 0 ? item.slice(sepIdx).replace(/^[ —–-:]+/, "").trim() : null;
+        const desc = sepIdx > 0 ? item.slice(sepIdx).replace(/^[ —–:\-]+/, "").trim() : null;
         return (
           <div key={i} className="flex items-start gap-2.5">
             <span className={`mt-0.5 inline-flex shrink-0 items-center rounded-md border px-2 py-0.5 text-[11px] font-semibold ${c.chipBg}`}>

@@ -133,7 +133,7 @@ export default function BattleView({ itemA, itemB, onClose }) {
   const nameB = itemB.source || "Article B";
 
   return (
-    <div className="animate-fade-in fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm sm:items-center sm:p-6">
+    <div className="animate-fade-in fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm sm:items-center sm:p-6" onClick={onClose}>
       <div
         className="animate-slide-up relative w-full max-w-5xl overflow-hidden rounded-3xl border border-white/[0.08] bg-[#0c0c18]/95 shadow-2xl shadow-black/50 backdrop-blur-xl"
         onClick={(e) => e.stopPropagation()}
@@ -159,7 +159,7 @@ export default function BattleView({ itemA, itemB, onClose }) {
             <Button
               onClick={onClose}
               variant="outline"
-              size="icon-sm"
+              size="icon"
               className="border-white/[0.06] bg-white/[0.03] text-slate-400 hover:bg-white/[0.06] hover:text-white"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
