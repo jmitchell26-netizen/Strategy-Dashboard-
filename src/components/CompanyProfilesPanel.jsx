@@ -11,7 +11,6 @@ import ProfileCompareModal from "./ProfileCompareModal";
 import MarkdownContent from "./MarkdownContent";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -158,9 +157,9 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
                   </p>
                 )}
                 {prof?.summary && (
-                  <ScrollArea className="mt-2 max-h-[min(28rem,70vh)] rounded-lg border border-white/[0.06] bg-black/25 px-3 py-2.5">
+                  <div className="mt-2 max-h-[28rem] overflow-y-auto rounded-lg border border-white/[0.06] bg-black/25 px-3 py-2.5 scrollbar-thin">
                     <MarkdownContent>{prof.summary}</MarkdownContent>
-                  </ScrollArea>
+                  </div>
                 )}
               </div>
             );

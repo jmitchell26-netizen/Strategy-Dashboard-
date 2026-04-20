@@ -89,7 +89,6 @@ export default function StrategyMatrix({
             {selCount === 0 && "Select 2 items to compare"}
             {selCount === 1 && "Select 1 more item"}
             {selCount === 2 && "Ready to compare"}
-            {selCount > 2 && "Select only 2 items"}
           </p>
           {/* Battle View button — enabled only when exactly 2 items are checked.
               Gets a shimmer animation and amber glow when active. */}

@@ -112,10 +112,6 @@ export function isLlmConfigured() {
   return getChatConfig() !== null;
 }
 
-/** @deprecated Use isLlmConfigured(); kept for any external imports */
-export function getOpenAiKey() {
-  return isLlmConfigured() ? "1" : "";
-}
 
 async function chatCompletions(body) {
   const cfg = getChatConfig();

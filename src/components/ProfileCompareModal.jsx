@@ -2,7 +2,6 @@
 // plus an optional AI synthesis comparing them.
 import MarkdownContent from "./MarkdownContent";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
 
 export default function ProfileCompareModal({
@@ -66,14 +65,14 @@ export default function ProfileCompareModal({
         </div>
 
         <div className="grid gap-0 sm:grid-cols-2">
-          <ScrollArea className="max-h-[min(70vh,720px)] border-b border-white/[0.06] p-6 sm:border-b-0 sm:border-r sm:border-white/[0.06] sm:p-8">
+          <div className="max-h-[70vh] overflow-y-auto border-b border-white/[0.06] p-6 sm:border-b-0 sm:border-r sm:border-white/[0.06] sm:p-8">
             <h3 className="mb-3 text-sm font-bold text-violet-300">{companyA}</h3>
             <MarkdownContent>{profileA}</MarkdownContent>
-          </ScrollArea>
-          <ScrollArea className="max-h-[min(70vh,720px)] p-6 sm:p-8">
+          </div>
+          <div className="max-h-[70vh] overflow-y-auto p-6 sm:p-8">
             <h3 className="mb-3 text-sm font-bold text-violet-300">{companyB}</h3>
             <MarkdownContent>{profileB}</MarkdownContent>
-          </ScrollArea>
+          </div>
         </div>
       </div>
     </div>
