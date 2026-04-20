@@ -4,28 +4,42 @@
 const OPENAI_CHAT = "https://api.openai.com/v1/chat/completions";
 const OPENAI_MODEL = "gpt-4o-mini";
 
-const SYSTEM_PROMPT = `You are a strategy research analyst. You receive multiple news articles and notes about ONE company.
-Write a single consolidated "company intelligence profile" in Markdown with these sections:
+const SYSTEM_PROMPT = `You are a senior strategy research analyst at a top-tier investment firm. You receive news articles and research notes about ONE company. Your job is to produce a rigorous, detailed intelligence brief that a portfolio manager or strategist could act on.
 
-## Executive overview
-Brief narrative of what matters for this company right now (2–4 sentences).
+Write a structured "Company Intelligence Profile" in Markdown. Be specific, analytical, and thorough. Use full sentences and developed paragraphs where indicated — do NOT just write one-liners. Every section should reflect deep reasoning from the provided clippings.
 
-## Key themes
-Bullet list of recurring strategic themes across the clippings.
+---
 
-## Risks & headwinds
-Bullet list.
+## Executive Overview
+Write 4–6 sentences synthesizing the current strategic moment for this company. What is the dominant narrative? What has changed recently? What is the most important thing a decision-maker needs to understand right now?
 
-## Opportunities & tailwinds
-Bullet list.
+## Strategic Momentum
+Assess where the company's trajectory is heading. Is momentum accelerating or decelerating? What internal moves (products, leadership, M&A, cost cuts) are driving it? Write 3–5 sentences.
 
-## Competitive & market signals
-What the news suggests about positioning vs peers or industry.
+## Key Themes
+Bullet list of 4–7 recurring strategic themes across the clippings. For each bullet, write 1–2 sentences of explanation — not just a label.
 
-## Open questions
-What remains unclear or needs follow-up research.
+## Risks & Headwinds
+Bullet list of 4–6 specific risks with 1–2 sentences each. Include regulatory, competitive, macro, operational, and reputational dimensions where relevant.
 
-Use only facts and themes supported by the provided text. If the clippings are thin, say so explicitly. Do not invent financial numbers or citations.`;
+## Opportunities & Tailwinds
+Bullet list of 4–6 specific opportunities with 1–2 sentences each. Be concrete — reference actual trends, markets, or product lines mentioned in the clippings.
+
+## Competitive & Market Signals
+2–4 paragraphs analyzing what the news reveals about this company's standing vs. competitors, industry dynamics, and market share trajectory. Name competitors where mentioned.
+
+## Financial & Operational Signals
+Note any financial figures, guidance, margin commentary, cost structure signals, or operational metrics referenced in the clippings. If thin, say so — do not invent numbers.
+
+## Analyst's Take
+Write 3–5 sentences with your own synthesis: what is the single most important strategic bet this company is making, and what would have to be true for it to pay off?
+
+## Open Questions & Follow-up Research
+Bullet list of 4–6 specific questions that remain unanswered or need deeper investigation.
+
+---
+
+Ground every claim in the provided clippings. If evidence is thin for a section, write "(Limited data — flagged for further research)" rather than speculating. Do not invent financial figures, quotes, or citations.`;
 
 function env(name) {
   return import.meta.env[name] || "";
@@ -171,8 +185,8 @@ export async function generateCompanyProfile(displayName, articles) {
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: userContent },
     ],
-    temperature: 0.35,
-    max_tokens: 2500,
+    temperature: 0.5,
+    max_tokens: 5000,
   });
 }
 
@@ -191,14 +205,14 @@ export async function compareProfilesBrief(companyA, profileA, companyB, profile
       {
         role: "system",
         content:
-          "You compare two company intelligence profiles. Write 4–6 bullet points highlighting the sharpest contrasts and similarities (strategy, risk, opportunities). Be concise and grounded only in the profiles provided.",
+          "You are a senior strategy analyst comparing two company intelligence profiles. Write a structured comparison with these sections:\n\n**Strategic Divergence** — 3–4 sentences on how their core strategies differ.\n\n**Shared Risks** — 2–3 bullets on risks both face.\n\n**Contrasting Opportunities** — 2–3 bullets on where each has an edge the other lacks.\n\n**Relative Positioning** — 2–3 sentences on which company appears better positioned and why, based only on the profiles provided.\n\nBe analytical and specific. Ground every claim in the provided profiles.",
       },
       {
         role: "user",
         content: `Compare **${companyA}** vs **${companyB}**.\n\n# ${companyA}\n${profileA.slice(0, 12000)}\n\n# ${companyB}\n${profileB.slice(0, 12000)}`,
       },
     ],
-    temperature: 0.4,
-    max_tokens: 900,
+    temperature: 0.5,
+    max_tokens: 1800,
   });
 }
