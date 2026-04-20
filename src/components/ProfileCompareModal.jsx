@@ -1,6 +1,7 @@
 // ProfileCompareModal.jsx — Full-screen view of two AI-generated company profiles side by side,
 // plus an optional AI synthesis comparing them.
 import MarkdownContent from "./MarkdownContent";
+import CompanyProfileView from "./CompanyProfileView";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -65,13 +66,13 @@ export default function ProfileCompareModal({
         </div>
 
         <div className="grid gap-0 sm:grid-cols-2">
-          <div className="max-h-[70vh] overflow-y-auto border-b border-white/[0.06] p-6 sm:border-b-0 sm:border-r sm:border-white/[0.06] sm:p-8">
-            <h3 className="mb-3 text-sm font-bold text-violet-300">{companyA}</h3>
-            <MarkdownContent>{profileA}</MarkdownContent>
+          <div className="max-h-[70vh] overflow-y-auto border-b border-white/[0.06] p-4 sm:border-b-0 sm:border-r sm:border-white/[0.06] sm:p-6">
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-slate-500">{companyA}</p>
+            <CompanyProfileView markdown={profileA} />
           </div>
-          <div className="max-h-[70vh] overflow-y-auto p-6 sm:p-8">
-            <h3 className="mb-3 text-sm font-bold text-violet-300">{companyB}</h3>
-            <MarkdownContent>{profileB}</MarkdownContent>
+          <div className="max-h-[70vh] overflow-y-auto p-4 sm:p-6">
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-slate-500">{companyB}</p>
+            <CompanyProfileView markdown={profileB} />
           </div>
         </div>
       </div>
