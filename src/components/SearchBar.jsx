@@ -9,7 +9,7 @@ export default function SearchBar({ query, onChange }) {
       {/* Magnifying glass icon — positioned absolutely inside the left side of the input */}
       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-5">
         <svg
-          className="h-5 w-5 text-slate-500 transition-colors"
+          className="h-5 w-5 text-stone-500 transition-colors"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={2}
@@ -28,7 +28,7 @@ export default function SearchBar({ query, onChange }) {
         value={query}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search company name (e.g. Apple, Tesla, Microsoft)…"
-        className="w-full rounded-2xl border border-white/[0.06] bg-white/[0.03] py-4 pl-14 pr-5 h-auto text-[15px] font-medium text-white placeholder:text-slate-600 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all duration-300 focus-visible:border-violet-500/40 focus-visible:bg-white/[0.05] focus-visible:ring-1 focus-visible:ring-violet-500/20"
+        className="w-full rounded-xl border border-stone-700 bg-stone-900 py-4 pl-14 pr-5 h-auto text-[15px] font-medium text-stone-100 placeholder:text-stone-600 shadow-sm transition-all focus-visible:border-amber-600/60 focus-visible:ring-1 focus-visible:ring-amber-500/20"
       />
 
       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-5">

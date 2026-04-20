@@ -172,28 +172,37 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-stone-950">
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 
         {/* ===== Header ===== */}
         <header className="mb-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800">
-              <svg className="h-4.5 w-4.5 text-zinc-300" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0 1 16.5 7.605" />
-              </svg>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-700/40 bg-amber-500/10">
+                <svg className="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0 1 16.5 7.605" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold tracking-tight text-stone-50">
+                  Strategy Research Dashboard
+                </h1>
+                <p className="text-xs text-stone-500">
+                  Search companies · clip intelligence · run AI profiles
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold tracking-tight text-white">
-                Strategy Research Dashboard
-              </h1>
-              <p className="text-xs text-zinc-500">
-                Search companies · clip intelligence · run AI profiles
-              </p>
+            <div className="hidden items-center gap-1.5 rounded-full border border-emerald-800/60 bg-emerald-950/60 px-3 py-1 sm:flex">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              </span>
+              <span className="text-[11px] font-medium text-emerald-400">Live</span>
             </div>
           </div>
-          <Separator className="mt-6 bg-zinc-800" />
+          <Separator className="mt-5 bg-stone-800" />
         </header>
 
         {/* ===== Search + Paste row ===== */}
@@ -208,12 +217,8 @@ function App() {
           {/* ===== LEFT COLUMN: Live News Feed ===== */}
           <section>
             <div className="mb-4 flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-              </span>
-              <h2 className="text-sm font-semibold text-zinc-300">Live Feed</h2>
-              <span className="ml-auto rounded-md border border-zinc-700 bg-zinc-800 px-2 py-0.5 text-xs font-medium tabular-nums text-zinc-400">
+              <h2 className="text-sm font-semibold text-stone-300">News Feed</h2>
+              <span className="ml-auto rounded-md border border-stone-700 bg-stone-800/80 px-2 py-0.5 text-xs font-medium tabular-nums text-stone-400">
                 {feedArticles.length}
               </span>
             </div>
@@ -227,17 +232,17 @@ function App() {
             <div className="space-y-3">
               {loading && feedArticles.length === 0 ? (
                 Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 space-y-3">
+                  <div key={i} className="rounded-xl border border-stone-800 bg-stone-900 p-5 space-y-3">
                     <div className="flex justify-between">
-                      <Skeleton className="h-5 w-24 bg-zinc-800" />
-                      <Skeleton className="h-4 w-20 bg-zinc-800" />
+                      <Skeleton className="h-5 w-24 bg-stone-800" />
+                      <Skeleton className="h-4 w-20 bg-stone-800" />
                     </div>
-                    <Skeleton className="h-4 w-3/4 bg-zinc-800" />
-                    <Skeleton className="h-3 w-full bg-zinc-800" />
-                    <Skeleton className="h-3 w-5/6 bg-zinc-800" />
+                    <Skeleton className="h-4 w-3/4 bg-stone-800" />
+                    <Skeleton className="h-3 w-full bg-stone-800" />
+                    <Skeleton className="h-3 w-5/6 bg-stone-800" />
                     <div className="flex justify-between pt-1">
-                      <Skeleton className="h-3 w-16 bg-zinc-800" />
-                      <Skeleton className="h-7 w-28 bg-zinc-800" />
+                      <Skeleton className="h-3 w-16 bg-stone-800" />
+                      <Skeleton className="h-7 w-28 bg-stone-800" />
                     </div>
                   </div>
                 ))
@@ -263,9 +268,9 @@ function App() {
                   ))}
                 </>
               ) : (
-                <div className="rounded-xl border border-dashed border-zinc-800 py-16 text-center">
-                  <p className="text-sm text-zinc-600">
-                    {query ? <>No results for "<span className="text-zinc-400">{query}</span>"</> : "No articles available right now"}
+                <div className="rounded-xl border border-dashed border-stone-800 py-16 text-center">
+                  <p className="text-sm text-stone-600">
+                    {query ? <>No results for "<span className="text-stone-400">{query}</span>"</> : "No articles available right now"}
                   </p>
                 </div>
               )}
@@ -275,11 +280,11 @@ function App() {
           {/* ===== RIGHT COLUMN: Saved Strategy Matrix ===== */}
           <section>
             <div className="mb-4 flex items-center gap-2">
-              <svg className="h-3.5 w-3.5 text-zinc-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <svg className="h-3.5 w-3.5 text-stone-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z" />
               </svg>
-              <h2 className="text-sm font-semibold text-zinc-300">Saved Strategies</h2>
-              <span className="ml-auto rounded-md border border-zinc-700 bg-zinc-800 px-2 py-0.5 text-xs font-medium tabular-nums text-zinc-400">
+              <h2 className="text-sm font-semibold text-stone-300">Saved Strategies</h2>
+              <span className="ml-auto rounded-md border border-stone-700 bg-stone-800/80 px-2 py-0.5 text-xs font-medium tabular-nums text-stone-400">
                 {savedItems.length}
               </span>
             </div>
