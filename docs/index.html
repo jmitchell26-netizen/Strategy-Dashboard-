@@ -11,21 +11,22 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #09090b;
-      --surface:   #111113;
-      --card:      #18181b;
-      --border:    #27272a;
-      --muted:     #3f3f46;
-      --text:      #fafafa;
-      --text-2:    #a1a1aa;
-      --text-3:    #71717a;
-      --accent:    #6366f1;
-      --accent-2:  #8b5cf6;
-      --green:     #22c55e;
+      --bg:        #0c0b09;
+      --surface:   #131210;
+      --card:      #1a1814;
+      --border:    #2c2924;
+      --muted:     #44403c;
+      --text:      #f5f0eb;
+      --text-2:    #a8a29e;
+      --text-3:    #78716c;
       --amber:     #f59e0b;
-      --red:       #ef4444;
-      --blue:      #3b82f6;
-      --glow:      rgba(99,102,241,0.15);
+      --amber-2:   #d97706;
+      --amber-dim: rgba(245,158,11,0.12);
+      --amber-glow:rgba(245,158,11,0.18);
+      --green:     #34d399;
+      --red:       #f87171;
+      --blue:      #38bdf8;
+      --violet:    #a78bfa;
     }
 
     html { scroll-behavior: smooth; }
@@ -38,244 +39,152 @@
       overflow-x: hidden;
     }
 
-    /* ─── NOISE TEXTURE ──────────────────────────── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ─── NAV ────────────────────────────────────── */
+    /* ─── NAV ─────────────────────────────────── */
     nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2rem;
-      height: 60px;
-      background: rgba(9,9,11,0.85);
-      backdrop-filter: blur(12px);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 60px;
+      background: rgba(12,11,9,0.88);
+      backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
     }
 
     .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 700;
-      font-size: 0.95rem;
-      letter-spacing: -0.01em;
-      color: var(--text);
-      text-decoration: none;
+      display: flex; align-items: center; gap: 0.6rem;
+      font-weight: 700; font-size: 0.92rem; letter-spacing: -0.01em;
+      color: var(--text); text-decoration: none;
     }
 
-    .nav-logo .dot {
-      width: 8px; height: 8px;
-      background: var(--accent);
-      border-radius: 50%;
-      box-shadow: 0 0 8px var(--accent);
-      animation: pulse 2s ease-in-out infinite;
+    .nav-icon {
+      width: 28px; height: 28px;
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(0.85); }
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 1.75rem;
-      list-style: none;
-    }
+    .nav-links { display: flex; gap: 1.75rem; list-style: none; }
 
     .nav-links a {
-      color: var(--text-2);
-      text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: color 0.2s;
+      color: var(--text-2); text-decoration: none;
+      font-size: 0.875rem; font-weight: 500; transition: color 0.2s;
     }
 
     .nav-links a:hover { color: var(--text); }
 
     .nav-cta {
-      background: var(--accent);
-      color: white !important;
-      padding: 0.4rem 1rem;
-      border-radius: 6px;
-      font-size: 0.8rem !important;
-      font-weight: 600 !important;
+      background: var(--amber) !important;
+      color: #0c0b09 !important;
+      padding: 0.4rem 1rem; border-radius: 6px;
+      font-size: 0.8rem !important; font-weight: 700 !important;
       transition: opacity 0.2s !important;
     }
 
     .nav-cta:hover { opacity: 0.85; }
 
-    /* ─── HERO ───────────────────────────────────── */
+    /* ─── HERO ────────────────────────────────── */
     .hero {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 7rem 2rem 4rem;
+      position: relative; min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 7rem 2rem 4rem;
       overflow: hidden;
     }
 
     .hero-glow {
-      position: absolute;
-      top: 20%;
-      left: 50%;
+      position: absolute; top: 15%; left: 50%;
       transform: translateX(-50%);
-      width: 700px;
-      height: 500px;
-      background: radial-gradient(ellipse at center, rgba(99,102,241,0.18) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .hero-glow-2 {
-      position: absolute;
-      top: 40%;
-      left: 30%;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(ellipse at center, rgba(139,92,246,0.1) 0%, transparent 70%);
+      width: 800px; height: 500px;
+      background: radial-gradient(ellipse at center, rgba(245,158,11,0.10) 0%, transparent 65%);
       pointer-events: none;
     }
 
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: rgba(99,102,241,0.12);
-      border: 1px solid rgba(99,102,241,0.3);
-      color: #a5b4fc;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 0.35rem 0.9rem;
-      border-radius: 100px;
-      margin-bottom: 1.5rem;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.3);
+      color: #fbbf24;
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 0.35rem 0.9rem; border-radius: 100px; margin-bottom: 1.5rem;
     }
 
-    .badge .icon { font-size: 0.7rem; }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.8); }
+    }
 
     h1 {
-      font-size: clamp(2.8rem, 7vw, 5.5rem);
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 1.05;
+      font-size: clamp(2.8rem, 7vw, 5.2rem);
+      font-weight: 900; letter-spacing: -0.04em; line-height: 1.06;
       margin-bottom: 1.5rem;
-      background: linear-gradient(135deg, #fff 30%, #a5b4fc 70%, #8b5cf6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      background: linear-gradient(135deg, #f5f0eb 25%, #fbbf24 60%, #d97706 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
 
     .hero-sub {
-      max-width: 600px;
-      color: var(--text-2);
-      font-size: 1.15rem;
-      font-weight: 400;
-      line-height: 1.7;
-      margin-bottom: 2.5rem;
+      max-width: 580px; color: var(--text-2);
+      font-size: 1.1rem; font-weight: 400; line-height: 1.75; margin-bottom: 2.5rem;
     }
 
     .hero-actions {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
     }
 
     .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--accent);
-      color: white;
-      font-weight: 600;
-      font-size: 0.95rem;
-      padding: 0.75rem 1.75rem;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: all 0.2s;
-      box-shadow: 0 0 24px rgba(99,102,241,0.3);
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--amber); color: #0c0b09;
+      font-weight: 700; font-size: 0.95rem;
+      padding: 0.75rem 1.75rem; border-radius: 8px; text-decoration: none;
+      transition: all 0.2s; box-shadow: 0 0 28px rgba(245,158,11,0.28);
     }
 
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 36px rgba(99,102,241,0.45);
-    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 40px rgba(245,158,11,0.4); }
 
     .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: transparent;
-      color: var(--text-2);
-      font-weight: 500;
-      font-size: 0.95rem;
-      padding: 0.75rem 1.75rem;
-      border-radius: 8px;
-      text-decoration: none;
-      border: 1px solid var(--border);
-      transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: transparent; color: var(--text-2);
+      font-weight: 500; font-size: 0.95rem;
+      padding: 0.75rem 1.75rem; border-radius: 8px; text-decoration: none;
+      border: 1px solid var(--border); transition: all 0.2s;
     }
 
-    .btn-ghost:hover {
-      color: var(--text);
-      border-color: var(--muted);
-      background: var(--card);
-    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--muted); background: var(--card); }
 
     .hero-scroll {
-      margin-top: 4rem;
-      color: var(--text-3);
-      font-size: 0.8rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
+      margin-top: 4rem; color: var(--text-3); font-size: 0.8rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
       animation: float 3s ease-in-out infinite;
     }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(6px); }
-    }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(7px); } }
 
-    /* ─── MOCKUP STRIP ───────────────────────────── */
+    /* ─── APP MOCKUP ──────────────────────────── */
     .mockup-strip {
-      width: 100%;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0 2rem 5rem;
-      position: relative;
-      z-index: 1;
+      width: 100%; max-width: 1060px;
+      margin: 0 auto; padding: 0 2rem 5rem;
+      position: relative; z-index: 1;
     }
 
     .mockup-window {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+      border-radius: 16px; overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.03);
     }
 
-    .mockup-bar {
+    .mockup-chrome {
       background: var(--surface);
-      padding: 0.75rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      padding: 0.7rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
       border-bottom: 1px solid var(--border);
     }
 
@@ -283,676 +192,546 @@
     .dot-y { width:10px; height:10px; border-radius:50%; background:#ffbd2e; }
     .dot-g { width:10px; height:10px; border-radius:50%; background:#28ca41; }
 
-    .mockup-url {
-      flex: 1;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 0.25rem 0.75rem;
-      font-size: 0.75rem;
-      color: var(--text-3);
-      font-family: 'JetBrains Mono', monospace;
+    .mockup-url-bar {
+      flex: 1; background: var(--card);
+      border: 1px solid var(--border); border-radius: 5px;
+      padding: 0.25rem 0.75rem; font-size: 0.72rem;
+      color: var(--text-3); font-family: 'JetBrains Mono', monospace;
       margin-left: 0.5rem;
     }
 
-    .mockup-body {
-      display: grid;
-      grid-template-columns: 240px 1fr;
-      height: 340px;
-    }
-
-    .mockup-sidebar {
+    /* App header */
+    .app-header {
       background: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      display: flex; align-items: center; justify-content: space-between;
     }
 
-    .sidebar-label {
+    .app-logo-row { display: flex; align-items: center; gap: 0.5rem; }
+
+    .app-icon {
+      width: 22px; height: 22px;
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
       font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-3);
-      margin-bottom: 0.25rem;
-      padding: 0 0.25rem;
     }
 
-    .sidebar-item {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.5rem 0.6rem;
-      font-size: 0.72rem;
-      color: var(--text-2);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
+    .app-title-text { font-size: 0.72rem; font-weight: 700; color: var(--text); }
+    .app-sub { font-size: 0.6rem; color: var(--text-3); }
+
+    .live-pill {
+      display: flex; align-items: center; gap: 0.35rem;
+      background: rgba(52,211,153,0.08);
+      border: 1px solid rgba(52,211,153,0.25);
+      border-radius: 100px; padding: 0.2rem 0.55rem;
+      font-size: 0.6rem; font-weight: 600; color: #6ee7b7;
     }
 
-    .sidebar-item.active {
-      background: rgba(99,102,241,0.12);
-      border-color: rgba(99,102,241,0.35);
-      color: #a5b4fc;
+    .live-pip {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--green); animation: pulse-dot 2s ease-in-out infinite;
     }
 
-    .sidebar-tag {
-      display: inline-block;
-      background: rgba(34,197,94,0.12);
-      color: #4ade80;
-      border: 1px solid rgba(34,197,94,0.25);
-      border-radius: 4px;
-      font-size: 0.6rem;
-      font-weight: 600;
-      padding: 0.1rem 0.35rem;
+    /* Tab nav */
+    .app-tabs {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex; overflow: hidden;
     }
 
-    .mockup-main {
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
+    .app-tab {
+      padding: 0.55rem 0.85rem;
+      font-size: 0.62rem; font-weight: 500;
+      color: var(--text-3); white-space: nowrap;
+      position: relative; cursor: default;
+    }
+
+    .app-tab.active {
+      color: #fbbf24;
+    }
+
+    .app-tab.active::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px; background: var(--amber);
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* Two-column layout */
+    .app-body {
+      display: grid; grid-template-columns: 1fr 1fr;
+      height: 320px;
+    }
+
+    .app-col {
+      padding: 0.75rem;
+      display: flex; flex-direction: column; gap: 0.5rem;
       overflow: hidden;
     }
 
-    .mockup-header-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .app-col-right {
+      border-left: 1px solid var(--border);
+      background: rgba(26,24,20,0.5);
     }
 
-    .mockup-title-sm {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--text);
+    .col-header {
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem; margin-bottom: 0.25rem;
     }
 
-    .mockup-pill {
-      background: rgba(99,102,241,0.15);
-      color: #a5b4fc;
-      font-size: 0.62rem;
-      font-weight: 600;
-      border-radius: 100px;
-      padding: 0.2rem 0.6rem;
-      border: 1px solid rgba(99,102,241,0.3);
+    .col-header-left { display: flex; align-items: center; gap: 0.4rem; }
+
+    .col-icon {
+      width: 18px; height: 18px;
+      background: var(--card); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem;
     }
 
-    .news-card-mock {
+    .col-icon.amber { background: var(--amber-dim); }
+
+    .col-title { font-size: 0.68rem; font-weight: 700; color: var(--text); }
+
+    .count-badge {
+      font-size: 0.58rem; font-weight: 600; tabular-nums: true;
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text-3); border-radius: 100px;
+      padding: 0.08rem 0.45rem;
+    }
+
+    /* Category tabs in feed */
+    .cat-tabs {
+      display: flex; gap: 0.3rem;
+      overflow: hidden; margin-bottom: 0.25rem;
+    }
+
+    .cat-tab {
+      display: flex; align-items: center; gap: 0.3rem;
+      padding: 0.2rem 0.5rem; border-radius: 5px;
+      border: 1px solid var(--border);
+      font-size: 0.56rem; font-weight: 500;
+      color: var(--text-3); white-space: nowrap;
+    }
+
+    .cat-tab.active-cat {
+      background: var(--amber-dim);
+      border-color: rgba(245,158,11,0.4);
+      color: #fbbf24;
+    }
+
+    .cat-dot { width: 5px; height: 5px; border-radius: 50%; }
+
+    /* News card mock */
+    .news-card-m {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.65rem 0.75rem;
+      border-radius: 7px; overflow: hidden;
     }
 
-    .news-card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 0.5rem;
-      margin-bottom: 0.3rem;
+    .news-card-bar { height: 2px; width: 100%; }
+    .bar-amber { background: #f59e0b; }
+    .bar-sky   { background: #38bdf8; }
+    .bar-rose  { background: #f87171; }
+    .bar-violet{ background: #a78bfa; }
+
+    .news-card-inner { padding: 0.5rem 0.6rem; }
+
+    .news-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.2rem;
     }
 
-    .news-card-title {
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.4;
+    .cat-label {
+      font-size: 0.55rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
     }
 
-    .news-card-sub {
-      font-size: 0.65rem;
-      color: var(--text-3);
-      margin-top: 0.15rem;
+    .date-label { font-size: 0.55rem; color: var(--text-3); font-variant-numeric: tabular-nums; }
+
+    .news-title-m {
+      font-size: 0.67rem; font-weight: 600; color: var(--text);
+      line-height: 1.35; margin-bottom: 0.35rem;
     }
 
-    .tag {
-      display: inline-block;
-      font-size: 0.58rem;
-      font-weight: 700;
-      padding: 0.15rem 0.45rem;
-      border-radius: 4px;
-      white-space: nowrap;
+    .save-btn {
+      font-size: 0.56rem; font-weight: 600;
+      background: var(--amber-dim);
+      color: #fbbf24;
+      border: 1px solid rgba(245,158,11,0.35);
+      border-radius: 4px; padding: 0.15rem 0.45rem;
+      cursor: default;
     }
 
-    .tag-blue { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
-    .tag-green { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
-    .tag-amber { background: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }
-    .tag-purple { background: rgba(139,92,246,0.12); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); }
-
-    .radar-mock {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
+    .save-btn.saved {
+      background: rgba(52,211,153,0.1);
+      color: #6ee7b7; border-color: rgba(52,211,153,0.3);
     }
 
-    /* ─── SECTIONS ───────────────────────────────── */
-    section {
-      position: relative;
-      z-index: 1;
+    /* Saved item card */
+    .saved-card-m {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px; overflow: hidden;
     }
+
+    .saved-card-inner { padding: 0.5rem 0.6rem; }
+
+    .saved-title-m { font-size: 0.63rem; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 0.25rem; }
+
+    .saved-meta-m { font-size: 0.55rem; color: var(--text-3); }
+
+    .input-mock {
+      height: 18px; background: var(--card);
+      border: 1px solid var(--border); border-radius: 4px;
+      margin-top: 0.3rem;
+    }
+
+    /* ─── SECTIONS ────────────────────────────── */
+    section { position: relative; z-index: 1; }
 
     .section-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 5rem 2rem;
+      max-width: 1100px; margin: 0 auto; padding: 5rem 2rem;
     }
 
     .section-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 1rem;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--amber); margin-bottom: 0.85rem;
     }
 
     .section-label::before {
-      content: '';
-      display: block;
-      width: 20px;
-      height: 2px;
-      background: var(--accent);
-      border-radius: 2px;
+      content: ''; display: block; width: 18px; height: 2px;
+      background: var(--amber); border-radius: 2px;
     }
 
     h2 {
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
-      margin-bottom: 1rem;
+      font-size: clamp(1.8rem, 4vw, 2.7rem);
+      font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 1rem;
     }
 
     .section-sub {
-      color: var(--text-2);
-      font-size: 1.05rem;
-      max-width: 540px;
-      line-height: 1.7;
-      margin-bottom: 3rem;
+      color: var(--text-2); font-size: 1.05rem; max-width: 540px;
+      line-height: 1.75; margin-bottom: 3rem;
     }
 
-    /* ─── FEATURE GRID ───────────────────────────── */
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .feature-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.25s, transform 0.25s;
-    }
-
-    .feature-card:hover {
-      border-color: var(--muted);
-      transform: translateY(-2px);
-    }
-
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(99,102,241,0.4), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .feature-card:hover::before { opacity: 1; }
-
-    .feature-icon {
-      font-size: 1.75rem;
-      margin-bottom: 1rem;
-      display: block;
-    }
-
-    .feature-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.01em;
-    }
-
-    .feature-desc {
-      font-size: 0.875rem;
-      color: var(--text-2);
-      line-height: 1.65;
-    }
-
-    .feature-accent {
-      position: absolute;
-      bottom: 0; right: 0;
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      filter: blur(40px);
-      pointer-events: none;
-    }
-
-    /* ─── HOW IT WORKS ───────────────────────────── */
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      position: relative;
-    }
-
-    .steps::before {
-      content: '';
-      position: absolute;
-      left: 24px;
-      top: 28px;
-      bottom: 28px;
-      width: 2px;
-      background: linear-gradient(to bottom, var(--accent), var(--accent-2), transparent);
-    }
-
-    .step {
-      display: flex;
-      gap: 1.5rem;
-      align-items: flex-start;
-      padding: 1.75rem 0;
-    }
-
-    .step-num {
-      width: 50px;
-      height: 50px;
-      min-width: 50px;
-      background: var(--card);
-      border: 2px solid var(--accent);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: var(--accent);
-      box-shadow: 0 0 20px rgba(99,102,241,0.2);
-      position: relative;
-      z-index: 1;
-    }
-
-    .step-body { padding-top: 0.5rem; }
-
-    .step-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 0.35rem;
-      letter-spacing: -0.01em;
-    }
-
-    .step-desc {
-      color: var(--text-2);
-      font-size: 0.9rem;
-      line-height: 1.65;
-    }
-
-    /* ─── AI SECTION ─────────────────────────────── */
-    .ai-section {
-      background: linear-gradient(135deg, rgba(99,102,241,0.06) 0%, rgba(139,92,246,0.06) 100%);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .ai-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: center;
-    }
-
-    .ai-profile-mock {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    }
-
-    .ai-profile-header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0.85rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .ai-avatar {
-      width: 28px; height: 28px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-    }
-
-    .ai-profile-name {
-      font-size: 0.85rem;
-      font-weight: 700;
-    }
-
-    .ai-profile-sub {
-      font-size: 0.7rem;
-      color: var(--text-3);
-    }
-
-    .ai-model-badge {
-      margin-left: auto;
-      background: rgba(99,102,241,0.12);
-      border: 1px solid rgba(99,102,241,0.25);
-      color: #a5b4fc;
-      font-size: 0.65rem;
-      font-weight: 600;
-      padding: 0.2rem 0.55rem;
-      border-radius: 4px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .ai-profile-body {
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .ai-section-block {
-      border-left: 2px solid var(--accent);
-      padding-left: 0.75rem;
-    }
-
-    .ai-section-heading {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #a5b4fc;
-      margin-bottom: 0.35rem;
-    }
-
-    .ai-line {
-      height: 6px;
-      background: var(--border);
-      border-radius: 3px;
-      margin-bottom: 0.25rem;
-    }
-
-    .ai-line.w-full { width: 100%; }
-    .ai-line.w-90 { width: 90%; }
-    .ai-line.w-75 { width: 75%; }
-    .ai-line.w-60 { width: 60%; }
-    .ai-line.w-45 { width: 45%; }
-
-    /* ─── TECH STACK ─────────────────────────────── */
-    .tech-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
-    .tech-pill {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.5rem 1rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--text-2);
-      transition: all 0.2s;
-    }
-
-    .tech-pill:hover {
-      color: var(--text);
-      border-color: var(--muted);
-    }
-
-    .tech-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-    }
-
-    /* ─── STAT ROW ───────────────────────────────── */
+    /* ─── STATS ───────────────────────────────── */
     .stat-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 1.25rem;
-      margin-top: 3rem;
     }
 
     .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-align: center;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem; text-align: center;
     }
 
     .stat-num {
-      font-size: 2.5rem;
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      background: linear-gradient(135deg, var(--text) 40%, var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 2.5rem; font-weight: 900; letter-spacing: -0.04em;
+      background: linear-gradient(135deg, var(--text) 30%, var(--amber));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
 
-    .stat-label {
-      font-size: 0.8rem;
-      color: var(--text-3);
-      margin-top: 0.25rem;
-      font-weight: 500;
+    .stat-label { font-size: 0.78rem; color: var(--text-3); margin-top: 0.3rem; font-weight: 500; }
+
+    /* ─── FEATURE GRID ────────────────────────── */
+    .feature-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.15rem;
     }
 
-    /* ─── BATTLE VIEW MOCK ───────────────────────── */
-    .battle-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      align-items: center;
+    .feature-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
     }
+
+    .feature-card:hover { border-color: var(--muted); transform: translateY(-2px); }
+
+    .feature-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      opacity: 0; transition: opacity 0.3s;
+    }
+
+    .feature-card:hover::before { opacity: 1; }
+    .fc-amber::before { background: linear-gradient(90deg, transparent, rgba(245,158,11,0.5), transparent); }
+    .fc-sky::before   { background: linear-gradient(90deg, transparent, rgba(56,189,248,0.5), transparent); }
+    .fc-violet::before{ background: linear-gradient(90deg, transparent, rgba(167,139,250,0.5), transparent); }
+    .fc-green::before { background: linear-gradient(90deg, transparent, rgba(52,211,153,0.5), transparent); }
+    .fc-rose::before  { background: linear-gradient(90deg, transparent, rgba(248,113,113,0.5), transparent); }
+
+    .feature-icon-box {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1rem; font-size: 1.1rem;
+    }
+
+    .fi-amber  { background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.25); }
+    .fi-sky    { background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.25); }
+    .fi-violet { background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); }
+    .fi-green  { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.25); }
+    .fi-rose   { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.25); }
+
+    .feature-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.45rem; letter-spacing: -0.01em; }
+    .feature-desc  { font-size: 0.875rem; color: var(--text-2); line-height: 1.65; }
+
+    /* ─── TAB SHOWCASE ────────────────────────── */
+    .tabs-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem;
+    }
+
+    .tab-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.1rem; cursor: default;
+      transition: all 0.2s;
+    }
+
+    .tab-card:hover { border-color: var(--muted); background: #201e1a; }
+
+    .tab-num {
+      font-size: 0.58rem; font-weight: 800; letter-spacing: 0.08em;
+      color: var(--text-3); margin-bottom: 0.4rem;
+    }
+
+    .tab-name { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--text); }
+    .tab-blurb { font-size: 0.78rem; color: var(--text-2); line-height: 1.55; }
+
+    /* ─── HOW IT WORKS ────────────────────────── */
+    .steps { display: flex; flex-direction: column; gap: 0; position: relative; }
+
+    .steps::before {
+      content: ''; position: absolute; left: 24px; top: 28px; bottom: 28px;
+      width: 2px; background: linear-gradient(to bottom, var(--amber), var(--amber-2), transparent);
+    }
+
+    .step { display: flex; gap: 1.5rem; align-items: flex-start; padding: 1.75rem 0; }
+
+    .step-num {
+      width: 50px; height: 50px; min-width: 50px;
+      background: var(--card); border: 2px solid var(--amber);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; font-weight: 800; color: var(--amber);
+      box-shadow: 0 0 18px rgba(245,158,11,0.18); position: relative; z-index: 1;
+    }
+
+    .step-body { padding-top: 0.5rem; }
+    .step-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem; letter-spacing: -0.01em; }
+    .step-desc  { color: var(--text-2); font-size: 0.88rem; line-height: 1.65; }
+
+    /* ─── AI / SIGNAL SCORE SECTION ──────────── */
+    .ai-section {
+      background: linear-gradient(135deg, rgba(245,158,11,0.04) 0%, rgba(217,119,6,0.03) 100%);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+
+    .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+
+    .profile-mock {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+    }
+
+    .profile-mock-header {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1rem; display: flex; align-items: center; gap: 0.6rem;
+    }
+
+    .profile-avatar {
+      width: 26px; height: 26px; background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.3); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
+    }
+
+    .profile-name { font-size: 0.82rem; font-weight: 700; }
+    .profile-sub  { font-size: 0.68rem; color: var(--text-3); }
+
+    .model-badge {
+      margin-left: auto; background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.25); color: #6ee7b7;
+      font-size: 0.62rem; font-weight: 600; padding: 0.18rem 0.5rem;
+      border-radius: 4px; font-family: 'JetBrains Mono', monospace;
+    }
+
+    .profile-mock-body { padding: 1rem; display: flex; flex-direction: column; gap: 0.85rem; }
+
+    /* Signal scores section */
+    .signal-box {
+      background: rgba(26,24,20,0.7); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.75rem;
+    }
+
+    .signal-label {
+      font-size: 0.58rem; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #fbbf24; margin-bottom: 0.6rem;
+    }
+
+    .signal-row {
+      display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;
+    }
+
+    .signal-name { font-size: 0.6rem; color: var(--text-2); width: 110px; flex-shrink: 0; }
+
+    .signal-track {
+      flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+    }
+
+    .signal-fill { height: 100%; border-radius: 2px; }
+    .sf-amber  { background: var(--amber); }
+    .sf-green  { background: var(--green); }
+    .sf-red    { background: var(--red); }
+    .sf-sky    { background: var(--blue); }
+
+    .signal-val { font-size: 0.58rem; color: var(--text-3); width: 22px; text-align: right; font-variant-numeric: tabular-nums; }
+
+    .report-section-mock { border-left: 2px solid var(--border); padding-left: 0.7rem; }
+    .report-section-mock.amber { border-color: var(--amber); }
+    .report-section-mock.green { border-color: var(--green); }
+    .report-section-mock.red   { border-color: var(--red); }
+
+    .rsh { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.3rem; }
+    .rsh.amber { color: #fbbf24; }
+    .rsh.green { color: #6ee7b7; }
+    .rsh.red   { color: #fca5a5; }
+
+    .ai-line { height: 5px; background: var(--border); border-radius: 3px; margin-bottom: 0.22rem; }
+    .w100 { width: 100%; } .w85 { width: 85%; } .w70 { width: 70%; }
+    .w60  { width: 60%; }  .w45 { width: 45%; }
+
+    /* ─── BATTLE VIEW ─────────────────────────── */
+    .battle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; }
 
     .battle-mock {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      box-shadow: 0 20px 55px rgba(0,0,0,0.45);
     }
 
     .battle-header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0.85rem 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0.8rem 1rem; display: flex; align-items: center; justify-content: space-between;
     }
 
-    .battle-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
+    .battle-title { font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; }
 
     .vs-badge {
-      background: rgba(239,68,68,0.15);
-      color: #fca5a5;
-      border: 1px solid rgba(239,68,68,0.3);
-      font-size: 0.6rem;
-      font-weight: 800;
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
+      background: rgba(248,113,113,0.15); color: #fca5a5;
+      border: 1px solid rgba(248,113,113,0.3);
+      font-size: 0.58rem; font-weight: 800; padding: 0.15rem 0.4rem; border-radius: 4px;
     }
 
-    .battle-body {
-      padding: 1rem;
-    }
+    .battle-body { padding: 1rem; }
 
-    .battle-names {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.75rem;
-    }
+    .battle-names { display: flex; justify-content: space-between; margin-bottom: 0.75rem; }
+    .battle-name { font-size: 0.72rem; font-weight: 700; }
 
-    .battle-name {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--text-2);
-    }
-
-    .radar-svg-container {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-    }
-
-    .metric-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-    }
-
-    .metric-label {
-      font-size: 0.65rem;
-      color: var(--text-3);
-      width: 80px;
-      flex-shrink: 0;
-    }
+    .metric-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+    .metric-label { font-size: 0.62rem; color: var(--text-3); width: 80px; flex-shrink: 0; }
 
     .metric-track {
-      flex: 1;
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      overflow: hidden;
-      position: relative;
+      flex: 1; height: 4px; background: var(--border);
+      border-radius: 2px; overflow: hidden; position: relative;
     }
 
-    .metric-fill-a {
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      border-radius: 2px;
+    .metric-fill {
+      position: absolute; left: 0; top: 0; height: 100%; border-radius: 2px;
     }
 
-    .metric-fill-b {
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100%;
-      background: linear-gradient(90deg, #f59e0b, #ef4444);
-      border-radius: 2px;
+    /* ─── TECH STACK ──────────────────────────── */
+    .tech-grid { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+
+    .tech-pill {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.45rem 0.9rem;
+      font-size: 0.83rem; font-weight: 500; color: var(--text-2);
+      transition: all 0.2s;
     }
 
-    /* ─── CTA ────────────────────────────────────── */
-    .cta-section {
-      text-align: center;
-    }
+    .tech-pill:hover { color: var(--text); border-color: var(--muted); }
 
-    .cta-inner {
-      max-width: 700px;
-      margin: 0 auto;
-    }
+    .tech-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* ─── CTA ─────────────────────────────────── */
+    .cta-section { text-align: center; }
+    .cta-inner { max-width: 720px; margin: 0 auto; }
 
     .cta-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4rem 3rem;
-      position: relative;
-      overflow: hidden;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 4rem 3rem; position: relative; overflow: hidden;
     }
 
     .cta-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.15) 0%, transparent 60%);
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(245,158,11,0.10) 0%, transparent 60%);
       pointer-events: none;
     }
 
-    .cta-card h2 {
-      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
-      margin-bottom: 0.75rem;
-    }
+    .cta-card h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); margin-bottom: 0.75rem; }
+    .cta-card p  { color: var(--text-2); font-size: 1rem; margin-bottom: 2rem; line-height: 1.7; }
 
-    .cta-card p {
-      color: var(--text-2);
-      font-size: 1rem;
-      margin-bottom: 2rem;
-      line-height: 1.7;
-    }
-
-    /* ─── FOOTER ─────────────────────────────────── */
+    /* ─── FOOTER ──────────────────────────────── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 2rem;
-      text-align: center;
-      color: var(--text-3);
-      font-size: 0.8rem;
+      padding: 2rem; text-align: center;
+      color: var(--text-3); font-size: 0.8rem;
     }
 
-    footer a {
-      color: var(--text-2);
-      text-decoration: none;
-    }
-
+    footer a { color: var(--text-2); text-decoration: none; }
     footer a:hover { color: var(--text); }
 
-    /* ─── DIVIDER ─────────────────────────────────── */
+    /* ─── DIVIDER ─────────────────────────────── */
     .divider {
-      width: 100%;
-      height: 1px;
+      width: 100%; height: 1px;
       background: linear-gradient(90deg, transparent, var(--border), transparent);
     }
 
-    /* ─── RESPONSIVE ─────────────────────────────── */
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .mockup-body { grid-template-columns: 1fr; }
-      .mockup-sidebar { display: none; }
-      .ai-grid { grid-template-columns: 1fr; }
-      .battle-grid { grid-template-columns: 1fr; }
-      .cta-card { padding: 2.5rem 1.5rem; }
+    /* ─── CHECK ITEMS ─────────────────────────── */
+    .check-list { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 1.5rem; }
+
+    .check-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.875rem; color: var(--text-2);
     }
 
-    /* ─── SCROLL FADE-IN ─────────────────────────── */
+    .check-icon { font-size: 1rem; color: var(--green); flex-shrink: 0; }
+
+    /* ─── RESPONSIVE ──────────────────────────── */
+    @media (max-width: 900px) {
+      .tabs-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .app-body { grid-template-columns: 1fr; }
+      .app-col-right { display: none; }
+      .ai-grid, .battle-grid { grid-template-columns: 1fr; }
+      .cta-card { padding: 2.5rem 1.5rem; }
+      .tabs-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .tabs-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── REVEAL ──────────────────────────────── */
     .reveal {
-      opacity: 0;
-      transform: translateY(24px);
+      opacity: 0; transform: translateY(22px);
       transition: opacity 0.6s ease, transform 0.6s ease;
     }
 
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    .reveal-delay-1 { transition-delay: 0.1s; }
-    .reveal-delay-2 { transition-delay: 0.2s; }
-    .reveal-delay-3 { transition-delay: 0.3s; }
-    .reveal-delay-4 { transition-delay: 0.4s; }
-    .reveal-delay-5 { transition-delay: 0.5s; }
+    .rd-1 { transition-delay: 0.08s; }
+    .rd-2 { transition-delay: 0.16s; }
+    .rd-3 { transition-delay: 0.24s; }
+    .rd-4 { transition-delay: 0.32s; }
+    .rd-5 { transition-delay: 0.40s; }
+    .rd-6 { transition-delay: 0.48s; }
+    .rd-7 { transition-delay: 0.56s; }
+    .rd-8 { transition-delay: 0.64s; }
   </style>
 </head>
 <body>
@@ -960,14 +739,14 @@
   <!-- NAV -->
   <nav>
     <a class="nav-logo" href="#">
-      <span class="dot"></span>
+      <div class="nav-icon">📊</div>
       Strategy Dashboard
     </a>
     <ul class="nav-links">
       <li><a href="#features">Features</a></li>
+      <li><a href="#tabs">8 Tabs</a></li>
       <li><a href="#how-it-works">How it works</a></li>
       <li><a href="#ai">AI Engine</a></li>
-      <li><a href="#battle">Battle View</a></li>
       <li><a href="https://github.com/jmitchell26-netizen/Strategy-Dashboard-" target="_blank" class="nav-cta">View on GitHub →</a></li>
     </ul>
   </nav>
@@ -975,104 +754,156 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-glow"></div>
-    <div class="hero-glow-2"></div>
 
     <div class="badge">
-      <span class="icon">⚡</span>
+      <span class="live-dot"></span>
       Strategy Research Tool
     </div>
 
     <h1>Your personal<br/>intelligence desk</h1>
 
     <p class="hero-sub">
-      Clip news, tag companies, generate deep AI profiles, and battle articles
-      head-to-head — all in one dark-mode research dashboard.
+      A full research workflow in one warm, professional dashboard — live news, AI intelligence profiles with signal scores, 8 specialist research tabs, and exportable reports.
     </p>
 
     <div class="hero-actions">
       <a href="https://github.com/jmitchell26-netizen/Strategy-Dashboard-" target="_blank" class="btn-primary">
-        View Source on GitHub →
+        View on GitHub →
       </a>
-      <a href="#features" class="btn-ghost">
-        Explore Features ↓
-      </a>
+      <a href="#features" class="btn-ghost">Explore Features ↓</a>
     </div>
 
     <div class="hero-scroll">
       <span>Scroll to explore</span>
-      <span style="font-size:1.2rem">↓</span>
+      <span style="font-size:1.1rem">↓</span>
     </div>
   </section>
 
   <!-- APP MOCKUP -->
   <div class="mockup-strip reveal">
     <div class="mockup-window">
-      <div class="mockup-bar">
+      <!-- Browser chrome -->
+      <div class="mockup-chrome">
         <div class="dot-r"></div>
         <div class="dot-y"></div>
         <div class="dot-g"></div>
-        <div class="mockup-url">localhost:5173 — Strategy Research Dashboard</div>
+        <div class="mockup-url-bar">localhost:5173 — Strategy Research Dashboard</div>
       </div>
-      <div class="mockup-body">
-        <div class="mockup-sidebar">
-          <div class="sidebar-label">Saved Articles</div>
-          <div class="sidebar-item active">
-            <span>📰</span>
-            <span>Apple Reports Record Q2 Revenue</span>
-          </div>
-          <div class="sidebar-item">
-            <span>📰</span>
-            <span>Google AI Search Update</span>
-          </div>
-          <div class="sidebar-item">
-            <span>🔗</span>
-            <span>Your link — TechCrunch Analysis</span>
-          </div>
-          <div class="sidebar-label" style="margin-top:0.5rem">Tags</div>
-          <div style="display:flex;flex-wrap:wrap;gap:0.3rem;padding:0 0.25rem">
-            <span class="sidebar-tag">Tech</span>
-            <span class="sidebar-tag" style="background:rgba(99,102,241,0.12);color:#a5b4fc;border-color:rgba(99,102,241,0.25)">AI</span>
-            <span class="sidebar-tag" style="background:rgba(245,158,11,0.12);color:#fcd34d;border-color:rgba(245,158,11,0.25)">Finance</span>
-            <span class="sidebar-tag" style="background:rgba(239,68,68,0.12);color:#fca5a5;border-color:rgba(239,68,68,0.25)">Risk</span>
+
+      <!-- App header -->
+      <div class="app-header">
+        <div class="app-logo-row">
+          <div class="app-icon">📊</div>
+          <div>
+            <div class="app-title-text">Strategy Research Dashboard</div>
+            <div class="app-sub">Search companies · clip intelligence · run AI profiles</div>
           </div>
         </div>
-        <div class="mockup-main">
-          <div class="mockup-header-row">
-            <span class="mockup-title-sm">Live News Feed</span>
-            <div style="display:flex;gap:0.4rem">
-              <span class="mockup-pill">NewsAPI ✓</span>
-              <span class="mockup-pill" style="background:rgba(34,197,94,0.1);color:#4ade80;border-color:rgba(34,197,94,0.25)">Ollama ✓</span>
+        <div class="live-pill"><div class="live-pip"></div>Live</div>
+      </div>
+
+      <!-- Tab navigation -->
+      <div class="app-tabs">
+        <div class="app-tab active">Research <span style="color:#d97706;font-size:0.55rem;margin-left:3px">130</span></div>
+        <div class="app-tab">Briefing</div>
+        <div class="app-tab">Watchlist <span style="color:#57534e;font-size:0.55rem;margin-left:2px">3</span></div>
+        <div class="app-tab">Trends</div>
+        <div class="app-tab">Timeline <span style="color:#57534e;font-size:0.55rem;margin-left:2px">12</span></div>
+        <div class="app-tab">Comparison Lab</div>
+        <div class="app-tab">Reports</div>
+        <div class="app-tab">Thesis Builder <span style="color:#57534e;font-size:0.55rem;margin-left:2px">2</span></div>
+      </div>
+
+      <!-- Two-column layout -->
+      <div class="app-body">
+        <!-- Left: News Feed -->
+        <div class="app-col">
+          <div class="col-header">
+            <div class="col-header-left">
+              <div class="col-icon">📰</div>
+              <span class="col-title">Live News Feed</span>
+            </div>
+            <span class="count-badge">130</span>
+          </div>
+
+          <!-- Category tabs -->
+          <div class="cat-tabs">
+            <div class="cat-tab active-cat">All <span style="color:#d97706;margin-left:2px;font-size:0.52rem">130</span></div>
+            <div class="cat-tab"><span class="cat-dot" style="background:#fbbf24"></span>Market Entry <span style="margin-left:2px;font-size:0.52rem">4</span></div>
+            <div class="cat-tab"><span class="cat-dot" style="background:#38bdf8"></span>Financial <span style="margin-left:2px;font-size:0.52rem">10</span></div>
+            <div class="cat-tab"><span class="cat-dot" style="background:#a78bfa"></span>Product Strategy</div>
+          </div>
+
+          <!-- News cards -->
+          <div class="news-card-m">
+            <div class="news-card-bar bar-amber"></div>
+            <div class="news-card-inner">
+              <div class="news-meta">
+                <span class="cat-label" style="color:#fbbf24">Market Entry</span>
+                <span class="date-label">Apr 19, 2026</span>
+              </div>
+              <div class="news-title-m">Soaring jet fuel prices could threaten your European vacation</div>
+              <span class="save-btn saved">✓ Saved</span>
             </div>
           </div>
-          <div class="news-card-mock">
-            <div class="news-card-top">
-              <div>
-                <div class="news-card-title">Apple posts $124B revenue — AI services lead growth</div>
-                <div class="news-card-sub">Reuters · Apr 16, 2026</div>
+
+          <div class="news-card-m" style="opacity:0.8">
+            <div class="news-card-bar bar-sky"></div>
+            <div class="news-card-inner">
+              <div class="news-meta">
+                <span class="cat-label" style="color:#38bdf8">Financial</span>
+                <span class="date-label">Apr 18, 2026</span>
               </div>
-              <span class="tag tag-blue">Tech</span>
-            </div>
-            <div style="display:flex;gap:0.35rem;margin-top:0.4rem">
-              <button style="font-size:0.62rem;background:rgba(99,102,241,0.12);color:#a5b4fc;border:1px solid rgba(99,102,241,0.3);border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer;font-weight:600">Save to Matrix</button>
-              <button style="font-size:0.62rem;background:transparent;color:var(--text-3);border:1px solid var(--border);border-radius:4px;padding:0.2rem 0.5rem;cursor:pointer">Battle ⚡</button>
-            </div>
-          </div>
-          <div class="news-card-mock" style="opacity:0.75">
-            <div class="news-card-top">
-              <div>
-                <div class="news-card-title">Fed holds rates — markets brace for Q2 guidance</div>
-                <div class="news-card-sub">Bloomberg · Apr 15, 2026</div>
-              </div>
-              <span class="tag tag-amber">Finance</span>
+              <div class="news-title-m">Fed holds rates — markets brace for Q2 guidance season</div>
+              <span class="save-btn">Save to Matrix</span>
             </div>
           </div>
-          <div class="news-card-mock" style="opacity:0.5">
-            <div class="news-card-top">
-              <div>
-                <div class="news-card-title">OpenAI rival Anthropic raises $3B at $50B valuation</div>
-                <div class="news-card-sub">The Verge · Apr 14, 2026</div>
+
+          <div class="news-card-m" style="opacity:0.55">
+            <div class="news-card-bar bar-violet"></div>
+            <div class="news-card-inner">
+              <div class="news-meta">
+                <span class="cat-label" style="color:#a78bfa">Product Strategy</span>
+                <span class="date-label">Apr 17, 2026</span>
               </div>
-              <span class="tag tag-purple">AI</span>
+              <div class="news-title-m">Apple posts $124B revenue — AI services lead growth surge</div>
+              <span class="save-btn">Save to Matrix</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Saved Strategies -->
+        <div class="app-col app-col-right">
+          <div class="col-header">
+            <div class="col-header-left">
+              <div class="col-icon amber">⬡</div>
+              <span class="col-title">Saved Strategies</span>
+            </div>
+            <span class="count-badge">2</span>
+          </div>
+
+          <!-- Saved item cards -->
+          <div class="saved-card-m">
+            <div class="news-card-bar bar-amber"></div>
+            <div class="saved-card-inner">
+              <div class="saved-title-m">Soaring jet fuel prices and shortages could threaten your European vacation</div>
+              <div class="saved-meta-m">Market Entry · Washington Post · Apr 19</div>
+              <div style="margin-top:0.4rem">
+                <div style="font-size:0.52rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#57534e;margin-bottom:0.2rem">Company</div>
+                <div class="input-mock"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="saved-card-m" style="opacity:0.7">
+            <div class="news-card-bar bar-sky"></div>
+            <div class="saved-card-inner">
+              <div class="saved-title-m">Fed holds rates — markets brace for Q2 guidance</div>
+              <div class="saved-meta-m">Financial · Bloomberg · Apr 18</div>
+              <div style="margin-top:0.4rem">
+                <div style="font-size:0.52rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#57534e;margin-bottom:0.2rem">Research Notes</div>
+                <div class="input-mock" style="height:26px"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -1081,94 +912,126 @@
   </div>
 
   <!-- STATS -->
-  <div class="section-inner" style="padding-top:1rem;padding-bottom:1rem">
+  <div class="section-inner" style="padding-top:0.5rem;padding-bottom:1rem">
     <div class="stat-row reveal">
       <div class="stat-card">
-        <div class="stat-num">6+</div>
+        <div class="stat-num">8</div>
+        <div class="stat-label">Specialist research tabs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">9+</div>
         <div class="stat-label">AI profile sections</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num">∞</div>
-        <div class="stat-label">Articles saved locally</div>
-      </div>
-      <div class="stat-card">
         <div class="stat-num">100%</div>
-        <div class="stat-label">Free with local Ollama</div>
+        <div class="stat-label">Free with Groq or local Ollama</div>
       </div>
       <div class="stat-card">
         <div class="stat-num">0</div>
-        <div class="stat-label">Data sent to servers</div>
+        <div class="stat-label">Data sent to servers (local mode)</div>
       </div>
     </div>
   </div>
 
   <div class="divider"></div>
 
-  <!-- FEATURES -->
+  <!-- CORE FEATURES -->
   <section id="features">
     <div class="section-inner">
-      <div class="section-label">Features</div>
+      <div class="section-label">Core Features</div>
       <h2>Everything a strategist<br/>needs, built in</h2>
-      <p class="section-sub">
-        From live news to AI-powered deep dives, the dashboard covers the full research workflow in one place.
-      </p>
+      <p class="section-sub">From live news ingestion to AI-powered deep dives — the full research workflow in one professional interface.</p>
 
       <div class="feature-grid">
-
-        <div class="feature-card reveal reveal-delay-1">
-          <span class="feature-icon">📡</span>
+        <div class="feature-card fc-amber reveal rd-1">
+          <div class="feature-icon-box fi-amber">📡</div>
           <div class="feature-title">Live News Feed</div>
-          <div class="feature-desc">
-            Pulls real-time headlines from NewsAPI across categories — Tech, Finance, AI, Geopolitics, and more. Auto-categorized and searchable.
-          </div>
-          <div class="feature-accent" style="background:rgba(59,130,246,0.3)"></div>
+          <div class="feature-desc">Real-time headlines from NewsAPI, auto-categorized across 9 strategy lenses. Category tab bar with article counts — filter the feed in one click.</div>
         </div>
 
-        <div class="feature-card reveal reveal-delay-2">
-          <span class="feature-icon">🧠</span>
-          <div class="feature-title">AI Company Profiles</div>
-          <div class="feature-desc">
-            Tag saved articles to companies, hit Generate, and get a structured intelligence brief — executive overview, risks, opportunities, competitive signals.
-          </div>
-          <div class="feature-accent" style="background:rgba(99,102,241,0.3)"></div>
+        <div class="feature-card fc-violet reveal rd-2">
+          <div class="feature-icon-box fi-violet">🧠</div>
+          <div class="feature-title">AI Intelligence Profiles</div>
+          <div class="feature-desc">Tag articles to companies and generate a 9-section investment-grade brief — including Signal Scores (1–10) with radar chart and AI-written rationale for each rating.</div>
         </div>
 
-        <div class="feature-card reveal reveal-delay-3">
-          <span class="feature-icon">⚡</span>
+        <div class="feature-card fc-rose reveal rd-3">
+          <div class="feature-icon-box fi-rose">⚡</div>
           <div class="feature-title">Battle View</div>
-          <div class="feature-desc">
-            Select two articles and compare them head-to-head on an interactive RadarChart — credibility, market impact, recency, novelty, and more metrics.
-          </div>
-          <div class="feature-accent" style="background:rgba(239,68,68,0.3)"></div>
+          <div class="feature-desc">Select two saved articles for a head-to-head comparison — interactive RadarChart, per-metric progress bars, and automatic scoring on 6 dimensions.</div>
         </div>
 
-        <div class="feature-card reveal reveal-delay-4">
-          <span class="feature-icon">📋</span>
+        <div class="feature-card fc-green reveal rd-4">
+          <div class="feature-icon-box fi-green">📋</div>
           <div class="feature-title">Strategy Matrix</div>
-          <div class="feature-desc">
-            Clip and annotate articles with your own research notes. All data persists in localStorage — no account required, no cloud lock-in.
-          </div>
-          <div class="feature-accent" style="background:rgba(34,197,94,0.3)"></div>
+          <div class="feature-desc">Clip and annotate articles with research notes. Company-tag any article to group it into AI profiles. All data persists in localStorage — no account needed.</div>
         </div>
 
-        <div class="feature-card reveal reveal-delay-5">
-          <span class="feature-icon">🔗</span>
-          <div class="feature-title">Paste Your Own Links</div>
-          <div class="feature-desc">
-            Drop any article URL into the feed. Microlink fetches the preview automatically. Use all the same features — save, tag, AI profile, Battle View.
-          </div>
-          <div class="feature-accent" style="background:rgba(245,158,11,0.3)"></div>
+        <div class="feature-card fc-sky reveal rd-5">
+          <div class="feature-icon-box fi-sky">🔗</div>
+          <div class="feature-title">Paste Any URL</div>
+          <div class="feature-desc">Drop any article link into the feed. Preview metadata is fetched automatically. Pasted articles support every feature — save, tag, profile, battle.</div>
         </div>
 
-        <div class="feature-card reveal">
-          <span class="feature-icon">⚖️</span>
+        <div class="feature-card fc-amber reveal rd-6">
+          <div class="feature-icon-box fi-amber">⚖️</div>
           <div class="feature-title">Profile Comparison</div>
-          <div class="feature-desc">
-            Side-by-side two AI-generated company profiles with an AI synthesis layer that highlights sharpest contrasts, risks, and strategic divergence.
-          </div>
-          <div class="feature-accent" style="background:rgba(139,92,246,0.3)"></div>
+          <div class="feature-desc">Side-by-side two AI profiles with an AI synthesis highlighting the sharpest strategic contrasts, shared risks, and relative competitive positioning.</div>
         </div>
+      </div>
+    </div>
+  </section>
 
+  <div class="divider"></div>
+
+  <!-- 8 TABS -->
+  <section id="tabs">
+    <div class="section-inner">
+      <div class="section-label">8 Research Tabs</div>
+      <h2>A workspace for every<br/>part of your research</h2>
+      <p class="section-sub">Every tab is a distinct tool. Switch between them with one click — all state persists across sessions.</p>
+
+      <div class="tabs-grid">
+        <div class="tab-card reveal rd-1">
+          <div class="tab-num">01</div>
+          <div class="tab-name">Research</div>
+          <div class="tab-blurb">Live feed + saved matrix side by side. The core workspace.</div>
+        </div>
+        <div class="tab-card reveal rd-2">
+          <div class="tab-num">02</div>
+          <div class="tab-name">Morning Briefing</div>
+          <div class="tab-blurb">One click → AI-generated daily digest from the live feed. Cached so it's instant on revisit.</div>
+        </div>
+        <div class="tab-card reveal rd-3">
+          <div class="tab-num">03</div>
+          <div class="tab-name">Watchlist</div>
+          <div class="tab-blurb">Track companies and keywords. Live match counts update automatically as the feed refreshes.</div>
+        </div>
+        <div class="tab-card reveal rd-4">
+          <div class="tab-num">04</div>
+          <div class="tab-name">Trends</div>
+          <div class="tab-blurb">Category bar charts, company coverage, save-activity timeline, heat grid, and sentiment chart per company.</div>
+        </div>
+        <div class="tab-card reveal rd-5">
+          <div class="tab-num">05</div>
+          <div class="tab-name">Timeline</div>
+          <div class="tab-blurb">All saved articles in chronological order, grouped by week. Filter by category and company.</div>
+        </div>
+        <div class="tab-card reveal rd-6">
+          <div class="tab-num">06</div>
+          <div class="tab-name">Comparison Lab</div>
+          <div class="tab-blurb">Compare up to 4 company profiles — overlay radar, score breakdown table, top/bottom signal dimensions.</div>
+        </div>
+        <div class="tab-card reveal rd-7">
+          <div class="tab-num">07</div>
+          <div class="tab-name">Reports</div>
+          <div class="tab-blurb">Build polished research reports. AI executive summary + copy as Markdown or print to PDF.</div>
+        </div>
+        <div class="tab-card reveal rd-8">
+          <div class="tab-num">08</div>
+          <div class="tab-name">Thesis Builder</div>
+          <div class="tab-blurb">Group articles into investment theses. AI synthesises evidence for, against, and what must be true.</div>
+        </div>
       </div>
     </div>
   </section>
@@ -1183,7 +1046,7 @@
           <div class="section-label">How it works</div>
           <h2>Research workflow,<br/>end to end</h2>
           <p class="section-sub" style="margin-bottom:0">
-            The dashboard guides you from raw news to polished strategic intelligence in four simple steps.
+            The dashboard guides you from raw news to polished deliverables in five clear steps.
           </p>
         </div>
         <div class="steps">
@@ -1191,28 +1054,35 @@
             <div class="step-num">01</div>
             <div class="step-body">
               <div class="step-title">Collect articles</div>
-              <div class="step-desc">Browse the live feed or paste your own URLs. Tag articles to companies with a single click.</div>
+              <div class="step-desc">Browse the live feed filtered by category, or paste any URL. Add articles to your saved matrix with one click.</div>
             </div>
           </div>
-          <div class="step reveal reveal-delay-1">
+          <div class="step reveal rd-1">
             <div class="step-num">02</div>
             <div class="step-body">
-              <div class="step-title">Annotate with notes</div>
-              <div class="step-desc">Add your own research notes to any saved article in the Strategy Matrix. These notes feed directly into the AI.</div>
+              <div class="step-title">Tag and annotate</div>
+              <div class="step-desc">Tag each article to a company. Add your own research notes — they feed directly into the AI profile prompt.</div>
             </div>
           </div>
-          <div class="step reveal reveal-delay-2">
+          <div class="step reveal rd-2">
             <div class="step-num">03</div>
             <div class="step-body">
               <div class="step-title">Generate AI profiles</div>
-              <div class="step-desc">Hit "Generate Profile" — the AI synthesizes all clippings and notes into a structured intelligence brief.</div>
+              <div class="step-desc">Hit "Generate Profile" — the AI writes a 9-section brief with Signal Scores, a radar chart, and per-score rationale.</div>
             </div>
           </div>
-          <div class="step reveal reveal-delay-3">
+          <div class="step reveal rd-3">
             <div class="step-num">04</div>
             <div class="step-body">
-              <div class="step-title">Compare & decide</div>
-              <div class="step-desc">Battle articles or compare full company profiles side-by-side with AI synthesis to sharpen your conclusions.</div>
+              <div class="step-title">Analyse across tools</div>
+              <div class="step-desc">Switch to Trends for charts, Timeline to track how a story evolved, or Comparison Lab to overlay up to 4 companies.</div>
+            </div>
+          </div>
+          <div class="step reveal rd-4">
+            <div class="step-num">05</div>
+            <div class="step-body">
+              <div class="step-title">Build a thesis or report</div>
+              <div class="step-desc">Group articles into structured theses in Thesis Builder, or export a polished research report as Markdown or PDF.</div>
             </div>
           </div>
         </div>
@@ -1222,65 +1092,80 @@
 
   <div class="divider"></div>
 
-  <!-- AI SECTION -->
+  <!-- AI ENGINE -->
   <section id="ai" class="ai-section">
     <div class="section-inner">
       <div class="ai-grid">
         <div>
           <div class="section-label">AI Engine</div>
-          <h2>Deep intelligence<br/>profiles, locally</h2>
+          <h2>Signal scores with<br/>radar charts, locally</h2>
           <p class="section-sub">
-            Run on free local Ollama models or OpenAI — the dashboard works with any OpenAI-compatible API. No data leaves your machine with Ollama.
+            Runs on free Groq (cloud, 70B model) or local Ollama. Any OpenAI-compatible API works. No data leaves your machine with Ollama.
           </p>
-          <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:1.5rem">
-            <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.875rem;color:var(--text-2)">
-              <span style="color:var(--green);font-size:1.1rem">✓</span> Executive overview &amp; key themes
-            </div>
-            <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.875rem;color:var(--text-2)">
-              <span style="color:var(--green);font-size:1.1rem">✓</span> Risks &amp; headwinds, opportunities &amp; tailwinds
-            </div>
-            <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.875rem;color:var(--text-2)">
-              <span style="color:var(--green);font-size:1.1rem">✓</span> Competitive &amp; market signals
-            </div>
-            <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.875rem;color:var(--text-2)">
-              <span style="color:var(--green);font-size:1.1rem">✓</span> Open questions for follow-up research
-            </div>
-            <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.875rem;color:var(--text-2)">
-              <span style="color:var(--green);font-size:1.1rem">✓</span> Grounded only in your clippings — no hallucinations
-            </div>
+          <div class="check-list">
+            <div class="check-item"><span class="check-icon">✓</span> 9-section intelligence brief per company</div>
+            <div class="check-item"><span class="check-icon">✓</span> Signal Scores (1–10) on 6 dimensions with AI rationale</div>
+            <div class="check-item"><span class="check-icon">✓</span> Radar chart overlay for up to 4 companies</div>
+            <div class="check-item"><span class="check-icon">✓</span> Morning briefing from live feed in one click</div>
+            <div class="check-item"><span class="check-icon">✓</span> Thesis synthesis — evidence for, against, conditions</div>
+            <div class="check-item"><span class="check-icon">✓</span> Grounded in your clippings — no hallucinated facts</div>
           </div>
         </div>
-        <div class="ai-profile-mock reveal">
-          <div class="ai-profile-header">
-            <div class="ai-avatar">🤖</div>
+
+        <div class="profile-mock reveal">
+          <div class="profile-mock-header">
+            <div class="profile-avatar">📈</div>
             <div>
-              <div class="ai-profile-name">Apple Inc.</div>
-              <div class="ai-profile-sub">Intelligence Profile · 5 articles</div>
+              <div class="profile-name">Apple Inc.</div>
+              <div class="profile-sub">Intelligence Profile · 5 articles</div>
             </div>
-            <div class="ai-model-badge">llama3.1:8b</div>
+            <div class="model-badge">llama-3.3-70b</div>
           </div>
-          <div class="ai-profile-body">
-            <div class="ai-section-block">
-              <div class="ai-section-heading">Executive Overview</div>
-              <div class="ai-line w-full"></div>
-              <div class="ai-line w-90"></div>
-              <div class="ai-line w-75"></div>
+
+          <div class="profile-mock-body">
+            <!-- Signal scores -->
+            <div class="signal-box">
+              <div class="signal-label">Signal Scores</div>
+              <div class="signal-row">
+                <span class="signal-name">Strategic Momentum</span>
+                <div class="signal-track"><div class="signal-fill sf-amber" style="width:70%"></div></div>
+                <span class="signal-val">7/10</span>
+              </div>
+              <div class="signal-row">
+                <span class="signal-name">Market Opportunity</span>
+                <div class="signal-track"><div class="signal-fill sf-green" style="width:80%"></div></div>
+                <span class="signal-val">8/10</span>
+              </div>
+              <div class="signal-row">
+                <span class="signal-name">Risk Exposure</span>
+                <div class="signal-track"><div class="signal-fill sf-red" style="width:40%"></div></div>
+                <span class="signal-val">4/10</span>
+              </div>
+              <div class="signal-row">
+                <span class="signal-name">Competitive Position</span>
+                <div class="signal-track"><div class="signal-fill sf-sky" style="width:90%"></div></div>
+                <span class="signal-val">9/10</span>
+              </div>
             </div>
-            <div class="ai-section-block" style="border-color:var(--green)">
-              <div class="ai-section-heading" style="color:#4ade80">Opportunities & Tailwinds</div>
-              <div class="ai-line w-90"></div>
-              <div class="ai-line w-60"></div>
-              <div class="ai-line w-75"></div>
+
+            <!-- Sections -->
+            <div class="report-section-mock amber">
+              <div class="rsh amber">Executive Overview</div>
+              <div class="ai-line w100"></div>
+              <div class="ai-line w85"></div>
+              <div class="ai-line w70"></div>
             </div>
-            <div class="ai-section-block" style="border-color:var(--red)">
-              <div class="ai-section-heading" style="color:#fca5a5">Risks & Headwinds</div>
-              <div class="ai-line w-75"></div>
-              <div class="ai-line w-45"></div>
+
+            <div class="report-section-mock green">
+              <div class="rsh green">Opportunities & Tailwinds</div>
+              <div class="ai-line w100"></div>
+              <div class="ai-line w60"></div>
             </div>
-            <div class="ai-section-block" style="border-color:var(--amber)">
-              <div class="ai-section-heading" style="color:#fcd34d">Competitive Signals</div>
-              <div class="ai-line w-full"></div>
-              <div class="ai-line w-60"></div>
+
+            <div class="report-section-mock red">
+              <div class="rsh red">Risks & Headwinds</div>
+              <div class="ai-line w85"></div>
+              <div class="ai-line w45"></div>
             </div>
           </div>
         </div>
@@ -1297,62 +1182,50 @@
         <div class="battle-mock reveal">
           <div class="battle-header">
             <div class="battle-title">
-              <span>⚡ Battle View</span>
+              ⚡ Battle View
               <span class="vs-badge">VS</span>
             </div>
-            <span style="font-size:0.65rem;color:var(--text-3)">Interactive Radar</span>
+            <span style="font-size:0.62rem;color:var(--text-3)">Interactive Radar</span>
           </div>
           <div class="battle-body">
             <div class="battle-names">
-              <span class="battle-name" style="color:#a5b4fc">Article A</span>
-              <span class="battle-name" style="color:#fcd34d">Article B</span>
+              <span class="battle-name" style="color:#a78bfa">Article A</span>
+              <span class="battle-name" style="color:#fbbf24">Article B</span>
             </div>
 
-            <!-- Simple SVG radar chart mock -->
-            <div class="radar-svg-container">
-              <svg width="180" height="160" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Grid rings -->
-                <polygon points="90,20 155,57 155,103 90,140 25,103 25,57" stroke="#27272a" stroke-width="1" fill="none"/>
-                <polygon points="90,40 138,66 138,94 90,120 42,94 42,66" stroke="#27272a" stroke-width="1" fill="none"/>
-                <polygon points="90,60 121,75 121,85 90,100 59,85 59,75" stroke="#27272a" stroke-width="1" fill="none"/>
-                <!-- Axes -->
-                <line x1="90" y1="20" x2="90" y2="140" stroke="#3f3f46" stroke-width="0.75"/>
-                <line x1="25" y1="57" x2="155" y2="103" stroke="#3f3f46" stroke-width="0.75"/>
-                <line x1="155" y1="57" x2="25" y2="103" stroke="#3f3f46" stroke-width="0.75"/>
-                <!-- Area A (indigo) -->
-                <polygon points="90,28 149,62 145,97 90,128 38,100 33,62" fill="rgba(99,102,241,0.2)" stroke="#6366f1" stroke-width="1.5"/>
-                <!-- Area B (amber) -->
-                <polygon points="90,35 135,70 140,90 90,115 48,95 44,68" fill="rgba(245,158,11,0.15)" stroke="#f59e0b" stroke-width="1.5"/>
-                <!-- Labels -->
-                <text x="90" y="14" font-size="7" fill="#71717a" text-anchor="middle" font-family="Inter,sans-serif">Credibility</text>
-                <text x="162" y="56" font-size="7" fill="#71717a" text-anchor="start" font-family="Inter,sans-serif">Impact</text>
-                <text x="162" y="108" font-size="7" fill="#71717a" text-anchor="start" font-family="Inter,sans-serif">Recency</text>
-                <text x="90" y="152" font-size="7" fill="#71717a" text-anchor="middle" font-family="Inter,sans-serif">Novelty</text>
-                <text x="18" y="108" font-size="7" fill="#71717a" text-anchor="end" font-family="Inter,sans-serif">Depth</text>
-                <text x="18" y="56" font-size="7" fill="#71717a" text-anchor="end" font-family="Inter,sans-serif">Relevance</text>
+            <div style="display:flex;justify-content:center">
+              <svg width="180" height="155" viewBox="0 0 180 155" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="90,18 152,53 152,100 90,135 28,100 28,53" stroke="#2c2924" stroke-width="1" fill="none"/>
+                <polygon points="90,37 134,64 134,90 90,117 46,90 46,64" stroke="#2c2924" stroke-width="1" fill="none"/>
+                <polygon points="90,56 116,74 116,82 90,100 64,82 64,74" stroke="#2c2924" stroke-width="1" fill="none"/>
+                <line x1="90" y1="18" x2="90" y2="135" stroke="#44403c" stroke-width="0.75"/>
+                <line x1="28" y1="53" x2="152" y2="100" stroke="#44403c" stroke-width="0.75"/>
+                <line x1="152" y1="53" x2="28" y2="100" stroke="#44403c" stroke-width="0.75"/>
+                <polygon points="90,25 147,58 144,95 90,130 36,97 31,58" fill="rgba(167,139,250,0.18)" stroke="#a78bfa" stroke-width="1.5"/>
+                <polygon points="90,33 132,68 138,88 90,113 48,92 45,66" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="90" y="12" font-size="7" fill="#78716c" text-anchor="middle" font-family="Inter,sans-serif">Credibility</text>
+                <text x="159" y="52" font-size="7" fill="#78716c" text-anchor="start" font-family="Inter,sans-serif">Impact</text>
+                <text x="159" y="105" font-size="7" fill="#78716c" text-anchor="start" font-family="Inter,sans-serif">Recency</text>
+                <text x="90" y="148" font-size="7" fill="#78716c" text-anchor="middle" font-family="Inter,sans-serif">Novelty</text>
+                <text x="22" y="105" font-size="7" fill="#78716c" text-anchor="end" font-family="Inter,sans-serif">Depth</text>
+                <text x="22" y="52" font-size="7" fill="#78716c" text-anchor="end" font-family="Inter,sans-serif">Relevance</text>
               </svg>
             </div>
 
             <div class="metric-row">
               <span class="metric-label">Credibility</span>
-              <div class="metric-track">
-                <div class="metric-fill-a" style="width:82%"></div>
-              </div>
-              <span style="font-size:0.6rem;color:#a5b4fc;width:20px;text-align:right">82</span>
+              <div class="metric-track"><div class="metric-fill" style="width:82%;background:#a78bfa"></div></div>
+              <span style="font-size:0.6rem;color:#a78bfa;width:20px;text-align:right">82</span>
             </div>
             <div class="metric-row">
               <span class="metric-label">Market Impact</span>
-              <div class="metric-track">
-                <div class="metric-fill-b" style="width:67%"></div>
-              </div>
-              <span style="font-size:0.6rem;color:#fcd34d;width:20px;text-align:right">67</span>
+              <div class="metric-track"><div class="metric-fill" style="width:67%;background:#f59e0b"></div></div>
+              <span style="font-size:0.6rem;color:#fbbf24;width:20px;text-align:right">67</span>
             </div>
             <div class="metric-row">
               <span class="metric-label">Recency</span>
-              <div class="metric-track">
-                <div class="metric-fill-a" style="width:91%"></div>
-              </div>
-              <span style="font-size:0.6rem;color:#a5b4fc;width:20px;text-align:right">91</span>
+              <div class="metric-track"><div class="metric-fill" style="width:91%;background:#a78bfa"></div></div>
+              <span style="font-size:0.6rem;color:#a78bfa;width:20px;text-align:right">91</span>
             </div>
           </div>
         </div>
@@ -1361,18 +1234,13 @@
           <div class="section-label">Battle View</div>
           <h2>Pit two articles<br/>against each other</h2>
           <p class="section-sub">
-            Select any two saved articles and instantly generate a multi-dimensional radar comparison — credibility, market impact, recency, novelty, depth, and relevance — all scored automatically.
+            Select any two saved articles and generate a multi-dimensional radar comparison — credibility, market impact, recency, novelty, depth, and relevance — all scored automatically without any AI call.
           </p>
-          <div style="display:flex;flex-direction:column;gap:0.75rem">
-            <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.875rem;color:var(--text-2)">
-              <span style="color:var(--accent);font-size:1.1rem">⚡</span> Six-axis interactive RadarChart (Recharts)
-            </div>
-            <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.875rem;color:var(--text-2)">
-              <span style="color:var(--accent);font-size:1.1rem">⚡</span> Per-metric Progress bars with scores
-            </div>
-            <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.875rem;color:var(--text-2)">
-              <span style="color:var(--accent);font-size:1.1rem">⚡</span> Works with both clipped and pasted articles
-            </div>
+          <div class="check-list">
+            <div class="check-item"><span style="color:var(--amber);font-size:1rem">⚡</span> Six-axis interactive RadarChart (Recharts)</div>
+            <div class="check-item"><span style="color:var(--amber);font-size:1rem">⚡</span> Per-metric progress bars with numeric scores</div>
+            <div class="check-item"><span style="color:var(--amber);font-size:1rem">⚡</span> Fully deterministic — same article = same score</div>
+            <div class="check-item"><span style="color:var(--amber);font-size:1rem">⚡</span> Works with clipped and pasted articles</div>
           </div>
         </div>
       </div>
@@ -1386,7 +1254,7 @@
     <div class="section-inner" style="padding-bottom:3rem">
       <div class="section-label">Built with</div>
       <h2>Modern stack,<br/>zero lock-in</h2>
-      <p class="section-sub">Open source libraries, local AI, browser-native persistence.</p>
+      <p class="section-sub">Open-source libraries, free AI options, and browser-native persistence.</p>
       <div class="tech-grid reveal">
         <div class="tech-pill"><span class="tech-dot" style="background:#61dafb"></span> React 19</div>
         <div class="tech-pill"><span class="tech-dot" style="background:#646cff"></span> Vite</div>
@@ -1395,9 +1263,9 @@
         <div class="tech-pill"><span class="tech-dot" style="background:#6366f1"></span> Radix UI</div>
         <div class="tech-pill"><span class="tech-dot" style="background:#22c55e"></span> Recharts</div>
         <div class="tech-pill"><span class="tech-dot" style="background:#f59e0b"></span> Ollama</div>
+        <div class="tech-pill"><span class="tech-dot" style="background:#34d399"></span> Groq API</div>
         <div class="tech-pill"><span class="tech-dot" style="background:#10b981"></span> NewsAPI</div>
         <div class="tech-pill"><span class="tech-dot" style="background:#3b82f6"></span> Microlink</div>
-        <div class="tech-pill"><span class="tech-dot" style="background:#ef4444"></span> react-markdown</div>
         <div class="tech-pill"><span class="tech-dot" style="background:#eab308"></span> Sonner Toasts</div>
         <div class="tech-pill"><span class="tech-dot" style="background:#8b5cf6"></span> localStorage</div>
       </div>
@@ -1412,7 +1280,7 @@
       <div class="cta-inner">
         <div class="cta-card reveal">
           <h2>Ready to research smarter?</h2>
-          <p>Clone the repo, add your API keys, and start generating intelligence profiles in under 5 minutes.</p>
+          <p>Clone the repo, add your API keys, and start generating intelligence profiles in under 5 minutes. Free with Groq.</p>
           <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
             <a href="https://github.com/jmitchell26-netizen/Strategy-Dashboard-" target="_blank" class="btn-primary">
               GitHub Repository →
@@ -1423,15 +1291,15 @@
           </div>
 
           <div style="margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--border);text-align:left">
-            <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-3);margin-bottom:0.75rem">Quick start</div>
-            <pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--text-2);line-height:1.8;overflow-x:auto"><code><span style="color:#71717a"># clone & install</span>
+            <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-3);margin-bottom:0.75rem">Quick start</div>
+            <pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:0.76rem;color:var(--text-2);line-height:1.8;overflow-x:auto"><code><span style="color:#78716c"># clone &amp; install</span>
 git clone https://github.com/jmitchell26-netizen/Strategy-Dashboard-.git
 cd strategy-dashboard &amp;&amp; npm install
 
-<span style="color:#71717a"># set your keys</span>
-cp .env.example .env  <span style="color:#71717a"># then edit .env</span>
+<span style="color:#78716c"># set your keys (free Groq key works great)</span>
+cp .env.example .env  <span style="color:#78716c"># edit VITE_OLLAMA_* with Groq credentials</span>
 
-<span style="color:#71717a"># run (free local AI)</span>
+<span style="color:#78716c"># or run fully local (free)</span>
 ollama pull llama3.1:8b
 npm run dev</code></pre>
           </div>
@@ -1449,19 +1317,12 @@ npm run dev</code></pre>
   </footer>
 
   <script>
-    // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.12 });
-
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } }),
+      { threshold: 0.1 }
+    );
     reveals.forEach(el => io.observe(el));
   </script>
-
 </body>
 </html>

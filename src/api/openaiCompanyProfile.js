@@ -17,7 +17,7 @@ Write 4–6 sentences synthesizing the current strategic moment for this company
 Assess where the company's trajectory is heading. Is momentum accelerating or decelerating? What internal moves (products, leadership, M&A, cost cuts) are driving it? Write 3–5 sentences.
 
 ## Key Themes
-Bullet list of 4–7 recurring strategic themes across the clippings. For each bullet, write 1–2 sentences of explanation — not just a label.
+Bullet list of 4–7 recurring strategic themes across the clippings. For each bullet, use the format "Theme Label — explanation sentence(s)". Write 1–2 sentences of explanation per theme — not just a label.
 
 ## Risks & Headwinds
 Bullet list of 4–6 specific risks with 1–2 sentences each. Include regulatory, competitive, macro, operational, and reputational dimensions where relevant.
@@ -36,6 +36,15 @@ Write 3–5 sentences with your own synthesis: what is the single most important
 
 ## Open Questions & Follow-up Research
 Bullet list of 4–6 specific questions that remain unanswered or need deeper investigation.
+
+## Signal Scores
+Rate this company on each dimension from 1–10 based solely on evidence in the clippings. After each score, add a brief (1-sentence) rationale explaining why you gave that rating. Use exactly this format (one per line):
+- Strategic Momentum: X/10 — rationale sentence here.
+- Market Opportunity: X/10 — rationale sentence here.
+- Competitive Position: X/10 — rationale sentence here.
+- Risk Exposure: X/10 — rationale sentence here.
+- Financial Health: X/10 — rationale sentence here.
+- Execution Capability: X/10 — rationale sentence here.
 
 ---
 
@@ -186,9 +195,107 @@ export async function generateCompanyProfile(displayName, articles) {
   });
 }
 
-/**
- * Optional: short AI synthesis comparing two existing profile markdown strings.
- */
+/** Morning briefing from the live feed articles. */
+export async function generateMorningBriefing(articles) {
+  const articleText = articles
+    .slice(0, 20)
+    .map((a, i) => `[${i + 1}] ${a.title} (${a.category} · ${a.source} · ${a.date})\n${(a.summary || "").slice(0, 400)}`)
+    .join("\n\n");
+
+  return chatCompletions({
+    model: getChatConfig().model,
+    messages: [
+      {
+        role: "system",
+        content: `You are a strategy research desk editor at a top-tier investment firm. Given today's news articles, write a concise morning briefing a senior analyst could read in 3 minutes.
+
+Use this exact structure:
+
+## Top Stories
+5 bullet points. For each: **Headline** — one sentence on strategic significance.
+
+## Key Themes Today
+3–4 bullet points on the dominant strategic narratives across the clippings.
+
+## Companies to Watch
+3–4 bullet points naming specific firms and why they deserve attention today.
+
+## Market Signals
+2–3 bullet points on macro/sector signals visible in the clippings.
+
+## Editor's Take
+2–3 sentences: what is the single most important strategic development in today's feed and why?
+
+Be specific, analytical, and grounded in the provided articles. Do not invent facts.`,
+      },
+      { role: "user", content: `Today's articles:\n\n${articleText}` },
+    ],
+    temperature: 0.4,
+    max_tokens: 1400,
+  });
+}
+
+/** Thesis synthesis: given a hypothesis and supporting articles, produce a structured brief. */
+export async function generateThesisSummary(thesisTitle, hypothesis, articles) {
+  const chunks = articles
+    .map((a, i) => `[${i + 1}] ${a.title} (${a.source}, ${a.date})\n${(a.summary || a.notes || "").slice(0, 600)}`)
+    .join("\n\n");
+
+  return chatCompletions({
+    model: getChatConfig().model,
+    messages: [
+      {
+        role: "system",
+        content: `You are a senior investment analyst evaluating a strategic thesis. Given a hypothesis and supporting articles, write a structured 3-section brief:
+
+## Evidence Supporting the Thesis
+4–5 bullets with specific evidence from the articles.
+
+## Evidence Against the Thesis
+3–4 bullets on contradicting signals or risks.
+
+## What Would Have to Be True
+3–4 bullets on the key assumptions that must hold for this thesis to pay off.
+
+Be rigorous and honest. Do not spin the evidence.`,
+      },
+      {
+        role: "user",
+        content: `**Thesis: ${thesisTitle}**\nHypothesis: ${hypothesis || "(no hypothesis provided)"}\n\nSupporting Articles:\n${chunks}`,
+      },
+    ],
+    temperature: 0.45,
+    max_tokens: 1200,
+  });
+}
+
+/** Cross-company executive summary for a report. */
+export async function generateReportSummary(companies) {
+  const profileText = companies
+    .map((c) => `## ${c.name}\n${c.summary.slice(0, 3000)}`)
+    .join("\n\n---\n\n");
+
+  return chatCompletions({
+    model: getChatConfig().model,
+    messages: [
+      {
+        role: "system",
+        content: `You are a senior strategy analyst writing an executive summary for a research report covering multiple companies. Write 3 concise paragraphs:
+
+1. The dominant strategic theme across all companies covered.
+2. The most significant divergences between these companies' strategies.
+3. The key risks and opportunities shared across this peer group.
+
+Be specific, name companies, and ground every claim in the provided profiles.`,
+      },
+      { role: "user", content: profileText },
+    ],
+    temperature: 0.4,
+    max_tokens: 600,
+  });
+}
+
+/** Optional: short AI synthesis comparing two existing profile markdown strings. */
 export async function compareProfilesBrief(companyA, profileA, companyB, profileB) {
   const cfg = getChatConfig();
   if (!cfg) {

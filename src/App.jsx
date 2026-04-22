@@ -1,183 +1,131 @@
-// App.jsx — Root component of the Strategy Research Dashboard.
-// Manages all top-level state: search query, saved items, Battle View selection.
-// Renders the two-column layout: Live News Feed (left) and Saved Strategy Matrix (right).
+// App.jsx — Navigation shell. Owns all shared state and renders the active tab.
 
 import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
-import SearchBar from "./components/SearchBar";
-import PasteArticleLink from "./components/PasteArticleLink";
-import NewsCard from "./components/NewsCard";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import StrategyMatrix from "./components/StrategyMatrix";
-import CompanyProfilesPanel from "./components/CompanyProfilesPanel";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import BattleView from "./components/BattleView";
 import useNews from "./hooks/useNews";
+import ResearchTab from "./tabs/ResearchTab";
+import BriefingTab from "./tabs/BriefingTab";
+import WatchlistTab from "./tabs/WatchlistTab";
+import TrendsTab from "./tabs/TrendsTab";
+import TimelineTab from "./tabs/TimelineTab";
+import ComparisonLabTab from "./tabs/ComparisonLabTab";
+import ReportsTab from "./tabs/ReportsTab";
+import ThesisBuilderTab from "./tabs/ThesisBuilderTab";
+
+const NAV_TABS = [
+  { id: "research",    label: "Research" },
+  { id: "briefing",    label: "Briefing" },
+  { id: "watchlist",   label: "Watchlist" },
+  { id: "trends",      label: "Trends" },
+  { id: "timeline",    label: "Timeline" },
+  { id: "comparison",  label: "Comparison Lab" },
+  { id: "reports",     label: "Reports" },
+  { id: "thesis",      label: "Thesis Builder" },
+];
+
+function ls(key, fallback) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch { return fallback; }
+}
 
 function App() {
-  // --- Search state ---
-  // The current text in the search bar; passed to useNews to fetch matching articles
+  const [activeTab, setActiveTab] = useState("research");
+
+  // ── Feed state ────────────────────────────────────────────────
   const [query, setQuery] = useState("");
-
-  // --- Saved strategies state ---
-  // Initialize from localStorage so saved items persist across page refreshes.
-  // Uses a lazy initializer (function passed to useState) so localStorage is only read once on mount.
-  const [savedItems, setSavedItems] = useState(() => {
-    try {
-      const stored = localStorage.getItem("savedStrategies");
-      if (!stored) return [];
-      const parsed = JSON.parse(stored);
-      return Array.isArray(parsed)
-        ? parsed.map((item) => ({
-            ...item,
-            companyName: item.companyName ?? "",
-          }))
-        : [];
-    } catch {
-      return [];
-    }
-  });
-
-  // Sync savedItems to localStorage every time the array changes (add, remove, or edit notes)
-  useEffect(() => {
-    localStorage.setItem("savedStrategies", JSON.stringify(savedItems));
-  }, [savedItems]);
-
-  // --- AI company profiles (keyed by normalized company name; see CompanyProfilesPanel) ---
-  const [companyProfiles, setCompanyProfiles] = useState(() => {
-    try {
-      const stored = localStorage.getItem("companyProfiles");
-      return stored ? JSON.parse(stored) : {};
-    } catch {
-      return {};
-    }
-  });
-
-  useEffect(() => {
-    localStorage.setItem("companyProfiles", JSON.stringify(companyProfiles));
-  }, [companyProfiles]);
-
-  // --- NewsAPI hook ---
-  // Fetches live articles from NewsAPI based on the search query.
-  // Returns the articles array, a loading flag, and any error message.
   const { articles, loading, error } = useNews(query);
 
-  // Pasted URLs (same article shape as the feed); persisted so they survive refresh.
-  const [pastedArticles, setPastedArticles] = useState(() => {
-    try {
-      const stored = localStorage.getItem("pastedFeedArticles");
-      if (!stored) return [];
-      const parsed = JSON.parse(stored);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  });
+  const [pastedArticles, setPastedArticles] = useState(() => ls("pastedFeedArticles", []));
+  useEffect(() => { localStorage.setItem("pastedFeedArticles", JSON.stringify(pastedArticles)); }, [pastedArticles]);
 
-  useEffect(() => {
-    localStorage.setItem("pastedFeedArticles", JSON.stringify(pastedArticles));
-  }, [pastedArticles]);
-
-  // Merged feed: pasted first (newest paste on top), then NewsAPI items excluding duplicate URLs.
   const feedArticles = useMemo(() => {
     const pastedUrls = new Set(pastedArticles.map((a) => (a.url || "").toLowerCase()));
-    const rest = articles.filter((a) => !pastedUrls.has((a.url || "").toLowerCase()));
-    return [...pastedArticles, ...rest];
+    return [...pastedArticles, ...articles.filter((a) => !pastedUrls.has((a.url || "").toLowerCase()))];
   }, [pastedArticles, articles]);
 
-  function handlePastedArticleAdded(article) {
-    setPastedArticles((prev) => {
-      const u = (article.url || "").toLowerCase();
-      const without = prev.filter(
-        (a) => a.id !== article.id && (a.url || "").toLowerCase() !== u
-      );
-      return [article, ...without];
-    });
-  }
+  // ── Saved items ───────────────────────────────────────────────
+  const [savedItems, setSavedItems] = useState(() => {
+    const raw = ls("savedStrategies", []);
+    return Array.isArray(raw)
+      ? raw.map((item) => ({ ...item, companyName: item.companyName ?? "", savedAt: item.savedAt ?? item.date ?? new Date().toISOString() }))
+      : [];
+  });
+  useEffect(() => { localStorage.setItem("savedStrategies", JSON.stringify(savedItems)); }, [savedItems]);
 
-  function handleRemovePastedFromFeed(id) {
-    setPastedArticles((prev) => prev.filter((a) => a.id !== id));
-  }
+  const savedIds = useMemo(() => new Set(savedItems.map((i) => i.id)), [savedItems]);
 
-  // --- Derived state ---
-  // A Set of IDs for items already saved to the matrix.
-  // Used to disable the "Save to Matrix" button on already-saved news cards.
-  const savedIds = useMemo(
-    () => new Set(savedItems.map((item) => item.id)),
-    [savedItems]
-  );
+  // ── AI company profiles ───────────────────────────────────────
+  const [companyProfiles, setCompanyProfiles] = useState(() => ls("companyProfiles", {}));
+  useEffect(() => { localStorage.setItem("companyProfiles", JSON.stringify(companyProfiles)); }, [companyProfiles]);
 
-  // --- Handlers ---
+  // ── Watchlist ─────────────────────────────────────────────────
+  const [watchlist, setWatchlist] = useState(() => ls("watchlist", []));
+  useEffect(() => { localStorage.setItem("watchlist", JSON.stringify(watchlist)); }, [watchlist]);
 
-  // Save a news article to the strategy matrix (adds an empty "notes" field)
-  function handleSave(item) {
-    if (savedIds.has(item.id)) return;
-    setSavedItems((prev) => [{ ...item, notes: "", companyName: "" }, ...prev]);
-    toast.success("Saved to matrix", {
-      description: item.title.slice(0, 72) + (item.title.length > 72 ? "…" : ""),
-    });
-  }
+  // ── Theses ────────────────────────────────────────────────────
+  const [theses, setTheses] = useState(() => ls("theses", []));
+  useEffect(() => { localStorage.setItem("theses", JSON.stringify(theses)); }, [theses]);
 
-  // Remove a saved item from the matrix by its ID
-  function handleRemove(id) {
-    setSavedItems((prev) => prev.filter((item) => item.id !== id));
-  }
+  // ── Morning briefing ──────────────────────────────────────────
+  const [briefing, setBriefing] = useState(() => ls("morningBriefing", null));
+  useEffect(() => { if (briefing) localStorage.setItem("morningBriefing", JSON.stringify(briefing)); }, [briefing]);
 
-  // Update the "Research Notes" text for a specific saved item
-  function handleUpdateNotes(id, notes) {
-    setSavedItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, notes } : item))
-    );
-  }
-
-  function handleUpdateCompany(id, companyName) {
-    setSavedItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, companyName } : item))
-    );
-  }
-
-  // --- Battle View (comparison) state ---
-  // selectedIds: a Set holding up to 2 item IDs that the user has checked for comparison
+  // ── Battle view ───────────────────────────────────────────────
   const [selectedIds, setSelectedIds] = useState(new Set());
-  // battlePair: when set to [itemA, itemB], the BattleView modal opens
   const [battlePair, setBattlePair] = useState(null);
 
-  // Toggle an item's selection checkbox (max 2 selected at a time)
+  // ── Handlers ──────────────────────────────────────────────────
+  function handlePasteArticle(article) {
+    setPastedArticles((prev) => {
+      const u = (article.url || "").toLowerCase();
+      return [article, ...prev.filter((a) => a.id !== article.id && (a.url || "").toLowerCase() !== u)];
+    });
+  }
+  function handleRemovePasted(id) { setPastedArticles((prev) => prev.filter((a) => a.id !== id)); }
+
+  function handleSave(item) {
+    if (savedIds.has(item.id)) return;
+    setSavedItems((prev) => [{ ...item, notes: "", companyName: "", savedAt: new Date().toISOString() }, ...prev]);
+    toast.success("Saved to matrix", { description: item.title.slice(0, 72) + (item.title.length > 72 ? "…" : "") });
+  }
+  function handleRemove(id) { setSavedItems((prev) => prev.filter((i) => i.id !== id)); }
+  function handleUpdateNotes(id, notes) { setSavedItems((prev) => prev.map((i) => i.id === id ? { ...i, notes } : i)); }
+  function handleUpdateCompany(id, companyName) { setSavedItems((prev) => prev.map((i) => i.id === id ? { ...i, companyName } : i)); }
+
   function handleToggleSelect(id) {
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);         // Uncheck: remove from selection
-      } else {
-        if (next.size >= 2) return prev; // Already have 2 selected — ignore
-        next.add(id);            // Check: add to selection
-      }
+      if (next.has(id)) { next.delete(id); } else { if (next.size >= 2) return prev; next.add(id); }
       return next;
     });
   }
-
-  // Open the Battle View modal with the two selected items
   function handleCompare() {
-    if (selectedIds.size !== 2) return; // Safety check
+    if (selectedIds.size !== 2) return;
     const [idA, idB] = [...selectedIds];
-    const a = savedItems.find((item) => item.id === idA);
-    const b = savedItems.find((item) => item.id === idB);
+    const a = savedItems.find((i) => i.id === idA);
+    const b = savedItems.find((i) => i.id === idB);
     if (a && b) setBattlePair([a, b]);
   }
+  function handleCloseBattle() { setBattlePair(null); setSelectedIds(new Set()); }
 
-  // Close the Battle View modal and clear the selection
-  function handleCloseBattle() {
-    setBattlePair(null);
-    setSelectedIds(new Set());
-  }
+  // ── Badge counts for nav ──────────────────────────────────────
+  const navBadges = {
+    research:   feedArticles.length,
+    watchlist:  watchlist.length || null,
+    timeline:   savedItems.length || null,
+    thesis:     theses.length || null,
+    comparison: Object.values(companyProfiles).filter((p) => p?.summary).length || null,
+  };
 
   return (
     <div className="min-h-screen bg-stone-950">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-
-        {/* ===== Header ===== */}
-        <header className="mb-8">
+        {/* ── Header ─────────────────────────────────────────── */}
+        <header className="py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-700/40 bg-amber-500/10">
@@ -186,12 +134,8 @@ function App() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-xl font-bold tracking-tight text-stone-50">
-                  Strategy Research Dashboard
-                </h1>
-                <p className="text-xs text-stone-500">
-                  Search companies · clip intelligence · run AI profiles
-                </p>
+                <h1 className="text-xl font-bold tracking-tight text-stone-50">Strategy Research Dashboard</h1>
+                <p className="text-xs text-stone-500">Search companies · clip intelligence · run AI profiles</p>
               </div>
             </div>
             <div className="hidden items-center gap-1.5 rounded-full border border-emerald-800/60 bg-emerald-950/60 px-3 py-1 sm:flex">
@@ -202,118 +146,79 @@ function App() {
               <span className="text-[11px] font-medium text-emerald-400">Live</span>
             </div>
           </div>
-          <Separator className="mt-5 bg-stone-800" />
         </header>
 
-        {/* ===== Search + Paste row ===== */}
-        <div className="mb-8 space-y-3">
-          <SearchBar query={query} onChange={setQuery} />
-          <PasteArticleLink onArticleAdded={handlePastedArticleAdded} />
+        {/* ── Navigation tabs ─────────────────────────────────── */}
+        <div className="border-b border-stone-800">
+          <ScrollArea className="w-full">
+            <nav className="flex">
+              {NAV_TABS.map((tab) => {
+                const badge = navBadges[tab.id];
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`relative whitespace-nowrap px-4 py-3 text-sm font-medium transition-colors ${
+                      isActive
+                        ? "text-amber-400 after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[2px] after:rounded-t after:bg-amber-500"
+                        : "text-stone-500 hover:text-stone-300"
+                    }`}
+                  >
+                    {tab.label}
+                    {badge != null && (
+                      <span className={`ml-1.5 text-[10px] tabular-nums ${isActive ? "text-amber-600" : "text-stone-700"}`}>
+                        {badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+            <ScrollBar orientation="horizontal" className="h-0" />
+          </ScrollArea>
         </div>
 
-        {/* ===== Two-column layout ===== */}
-        <div className="grid gap-6 lg:grid-cols-2">
-
-          {/* ===== LEFT COLUMN: Live News Feed ===== */}
-          <section>
-            <div className="mb-4 flex items-center gap-2">
-              <h2 className="text-sm font-semibold text-stone-300">News Feed</h2>
-              <span className="ml-auto rounded-md border border-stone-700 bg-stone-800/80 px-2 py-0.5 text-xs font-medium tabular-nums text-stone-400">
-                {feedArticles.length}
-              </span>
-            </div>
-
-            {error && (
-              <div className="mb-4 rounded-lg border border-red-900 bg-red-950/50 px-4 py-3 text-sm text-red-400">
-                <span className="font-semibold">API Error:</span> {error}
-              </div>
-            )}
-
-            <div className="space-y-3">
-              {loading && feedArticles.length === 0 ? (
-                Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="rounded-xl border border-stone-800 bg-stone-900 p-5 space-y-3">
-                    <div className="flex justify-between">
-                      <Skeleton className="h-5 w-24 bg-stone-800" />
-                      <Skeleton className="h-4 w-20 bg-stone-800" />
-                    </div>
-                    <Skeleton className="h-4 w-3/4 bg-stone-800" />
-                    <Skeleton className="h-3 w-full bg-stone-800" />
-                    <Skeleton className="h-3 w-5/6 bg-stone-800" />
-                    <div className="flex justify-between pt-1">
-                      <Skeleton className="h-3 w-16 bg-stone-800" />
-                      <Skeleton className="h-7 w-28 bg-stone-800" />
-                    </div>
-                  </div>
-                ))
-              ) : feedArticles.length > 0 ? (
-                <>
-                  {loading && (
-                    <div className="rounded-lg border border-emerald-900 bg-emerald-950/50 px-3 py-2 text-center text-[11px] text-emerald-400">
-                      Updating feed…
-                    </div>
-                  )}
-                  {feedArticles.map((item) => (
-                    <NewsCard
-                      key={item.id}
-                      item={item}
-                      onSave={handleSave}
-                      isSaved={savedIds.has(item.id)}
-                      onRemoveFromFeed={
-                        item.sourceType === "pasted-link"
-                          ? () => handleRemovePastedFromFeed(item.id)
-                          : undefined
-                      }
-                    />
-                  ))}
-                </>
-              ) : (
-                <div className="rounded-xl border border-dashed border-stone-800 py-16 text-center">
-                  <p className="text-sm text-stone-600">
-                    {query ? <>No results for "<span className="text-stone-400">{query}</span>"</> : "No articles available right now"}
-                  </p>
-                </div>
-              )}
-            </div>
-          </section>
-
-          {/* ===== RIGHT COLUMN: Saved Strategy Matrix ===== */}
-          <section>
-            <div className="mb-4 flex items-center gap-2">
-              <svg className="h-3.5 w-3.5 text-stone-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z" />
-              </svg>
-              <h2 className="text-sm font-semibold text-stone-300">Saved Strategies</h2>
-              <span className="ml-auto rounded-md border border-stone-700 bg-stone-800/80 px-2 py-0.5 text-xs font-medium tabular-nums text-stone-400">
-                {savedItems.length}
-              </span>
-            </div>
-
-            {/* Sticky container so the matrix stays visible while scrolling the news feed */}
-            <div className="sticky top-8">
-              <StrategyMatrix
-                items={savedItems}
-                onRemove={handleRemove}
-                onUpdateNotes={handleUpdateNotes}
-                onUpdateCompany={handleUpdateCompany}
-                selectedIds={selectedIds}
-                onToggleSelect={handleToggleSelect}
-                onCompare={handleCompare}
-              />
-            </div>
-
-            <CompanyProfilesPanel
-              savedItems={savedItems}
-              companyProfiles={companyProfiles}
-              onProfilesChange={setCompanyProfiles}
+        {/* ── Tab content ─────────────────────────────────────── */}
+        <div className="py-8">
+          {activeTab === "research" && (
+            <ResearchTab
+              query={query} setQuery={setQuery}
+              feedArticles={feedArticles} loading={loading} error={error}
+              savedItems={savedItems} savedIds={savedIds}
+              companyProfiles={companyProfiles} onProfilesChange={setCompanyProfiles}
+              onSave={handleSave} onRemove={handleRemove}
+              onUpdateNotes={handleUpdateNotes} onUpdateCompany={handleUpdateCompany}
+              onPasteArticle={handlePasteArticle} onRemovePasted={handleRemovePasted}
+              selectedIds={selectedIds} onToggleSelect={handleToggleSelect}
+              onCompare={handleCompare} battlePair={battlePair} onCloseBattle={handleCloseBattle}
             />
-          </section>
+          )}
+          {activeTab === "briefing" && (
+            <BriefingTab feedArticles={feedArticles} briefing={briefing} setBriefing={setBriefing} />
+          )}
+          {activeTab === "watchlist" && (
+            <WatchlistTab watchlist={watchlist} setWatchlist={setWatchlist} feedArticles={feedArticles} />
+          )}
+          {activeTab === "trends" && (
+            <TrendsTab feedArticles={feedArticles} savedItems={savedItems} />
+          )}
+          {activeTab === "timeline" && (
+            <TimelineTab savedItems={savedItems} onRemove={handleRemove} onUpdateNotes={handleUpdateNotes} onUpdateCompany={handleUpdateCompany} />
+          )}
+          {activeTab === "comparison" && (
+            <ComparisonLabTab companyProfiles={companyProfiles} />
+          )}
+          {activeTab === "reports" && (
+            <ReportsTab savedItems={savedItems} companyProfiles={companyProfiles} />
+          )}
+          {activeTab === "thesis" && (
+            <ThesisBuilderTab savedItems={savedItems} theses={theses} setTheses={setTheses} />
+          )}
         </div>
+
       </div>
 
-      {/* ===== Battle View Modal =====
-          Renders as a full-screen overlay when the user selects 2 items and clicks "Battle View".
-          Shows side-by-side comparison with animated metric bars. */}
       {battlePair && (
         <BattleView itemA={battlePair[0]} itemB={battlePair[1]} onClose={handleCloseBattle} />
       )}

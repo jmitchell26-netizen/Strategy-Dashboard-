@@ -1,166 +1,57 @@
-// CompanyProfileView.jsx — Parses AI-generated markdown profile into distinct visual cards per section.
-// Each section gets a unique color, icon, and layout based on its content type.
+// CompanyProfileView.jsx — Professional research-report layout for AI company profiles.
+// Renders a clean document style (no coloured gradient cards). Exports:
+//   default CompanyProfileView  — full report (used inside the modal)
+//   CompanyProfilePreview       — compact excerpt + mini radar (used in the panel card)
 
-const SECTION_META = {
-  "executive overview": {
-    icon: "🏢",
-    label: "Executive Overview",
-    color: "indigo",
-    layout: "prose",
-    prominent: true,
-  },
-  "strategic momentum": {
-    icon: "📈",
-    label: "Strategic Momentum",
-    color: "blue",
-    layout: "prose",
-  },
-  "key themes": {
-    icon: "🏷️",
-    label: "Key Themes",
-    color: "violet",
-    layout: "chips",
-  },
-  "risks & headwinds": {
-    icon: "⚠️",
-    label: "Risks & Headwinds",
-    color: "red",
-    layout: "bullets",
-    bulletIcon: "▲",
-  },
-  "opportunities & tailwinds": {
-    icon: "🚀",
-    label: "Opportunities & Tailwinds",
-    color: "green",
-    layout: "bullets",
-    bulletIcon: "↑",
-  },
-  "competitive & market signals": {
-    icon: "⚔️",
-    label: "Competitive & Market Signals",
-    color: "amber",
-    layout: "prose",
-  },
-  "financial & operational signals": {
-    icon: "💰",
-    label: "Financial & Operational Signals",
-    color: "cyan",
-    layout: "bullets",
-    bulletIcon: "·",
-  },
-  "analyst's take": {
-    icon: "🔍",
-    label: "Analyst's Take",
-    color: "violet",
-    layout: "spotlight",
-  },
-  "open questions": {
-    icon: "❓",
-    label: "Open Questions & Follow-up",
-    color: "purple",
-    layout: "numbered",
-  },
-};
+import {
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  ResponsiveContainer,
+  Tooltip as RechartsTooltip,
+} from "recharts";
 
-const COLOR_MAP = {
-  indigo: {
-    border: "border-indigo-500/25",
-    bg: "bg-indigo-500/8",
-    headerBg: "bg-indigo-500/12",
-    iconBg: "bg-indigo-500/20",
-    iconText: "text-indigo-300",
-    label: "text-indigo-300",
-    accent: "bg-indigo-500",
-    chipBg: "bg-indigo-500/15 border-indigo-500/30 text-indigo-300",
-  },
-  blue: {
-    border: "border-blue-500/25",
-    bg: "bg-blue-500/5",
-    headerBg: "bg-blue-500/10",
-    iconBg: "bg-blue-500/20",
-    iconText: "text-blue-300",
-    label: "text-blue-300",
-    accent: "bg-blue-500",
-    chipBg: "bg-blue-500/15 border-blue-500/30 text-blue-300",
-  },
-  violet: {
-    border: "border-violet-500/25",
-    bg: "bg-violet-500/5",
-    headerBg: "bg-violet-500/10",
-    iconBg: "bg-violet-500/20",
-    iconText: "text-violet-300",
-    label: "text-violet-300",
-    accent: "bg-violet-500",
-    chipBg: "bg-violet-500/15 border-violet-500/30 text-violet-300",
-  },
-  red: {
-    border: "border-red-500/25",
-    bg: "bg-red-500/5",
-    headerBg: "bg-red-500/10",
-    iconBg: "bg-red-500/20",
-    iconText: "text-red-300",
-    label: "text-red-300",
-    accent: "bg-red-500",
-    chipBg: "bg-red-500/15 border-red-500/30 text-red-300",
-  },
-  green: {
-    border: "border-green-500/25",
-    bg: "bg-green-500/5",
-    headerBg: "bg-green-500/10",
-    iconBg: "bg-green-500/20",
-    iconText: "text-green-300",
-    label: "text-green-300",
-    accent: "bg-green-500",
-    chipBg: "bg-green-500/15 border-green-500/30 text-green-300",
-  },
-  amber: {
-    border: "border-amber-500/25",
-    bg: "bg-amber-500/5",
-    headerBg: "bg-amber-500/10",
-    iconBg: "bg-amber-500/20",
-    iconText: "text-amber-300",
-    label: "text-amber-300",
-    accent: "bg-amber-500",
-    chipBg: "bg-amber-500/15 border-amber-500/30 text-amber-300",
-  },
-  cyan: {
-    border: "border-cyan-500/25",
-    bg: "bg-cyan-500/5",
-    headerBg: "bg-cyan-500/10",
-    iconBg: "bg-cyan-500/20",
-    iconText: "text-cyan-300",
-    label: "text-cyan-300",
-    accent: "bg-cyan-500",
-    chipBg: "bg-cyan-500/15 border-cyan-500/30 text-cyan-300",
-  },
-  purple: {
-    border: "border-purple-500/25",
-    bg: "bg-purple-500/5",
-    headerBg: "bg-purple-500/10",
-    iconBg: "bg-purple-500/20",
-    iconText: "text-purple-300",
-    label: "text-purple-300",
-    accent: "bg-purple-500",
-    chipBg: "bg-purple-500/15 border-purple-500/30 text-purple-300",
-  },
-};
+// ─── Parsers ─────────────────────────────────────────────────────────────────
 
-/** Parse raw markdown string into sections keyed by normalized heading. */
+/**
+ * Parse the ## Signal Scores block.
+ * Returns { label: { value: number, rationale: string|null } }
+ */
+export function parseSignalScores(markdown) {
+  const lines = markdown.split("\n");
+  const scores = {};
+  let inScores = false;
+
+  for (const line of lines) {
+    if (/^##\s+signal scores/i.test(line)) { inScores = true; continue; }
+    if (inScores && /^##/.test(line)) { inScores = false; }
+    if (inScores) {
+      // Match:  "- Label: 7/10 — rationale…"  or  "- Label: 7/10"
+      const m = line.match(/^[-*]\s+(.+?):\s*(\d+)(?:\/10)?(?:\s*[—–-]\s*(.+))?/i);
+      if (m) {
+        scores[m[1].trim()] = {
+          value: Math.min(10, Math.max(0, parseInt(m[2], 10))),
+          rationale: m[3] ? m[3].trim() : null,
+        };
+      }
+    }
+  }
+  return scores;
+}
+
+/** Split raw markdown into sections by ## heading. */
 function parseMarkdownSections(markdown) {
   const lines = markdown.split("\n");
   const sections = [];
   let current = null;
 
   for (const line of lines) {
-    // Match ## headings (skip ### sub-headings — they stay as prose)
     if (/^##\s+/.test(line)) {
       if (current) sections.push(current);
-      current = {
-        rawHeading: line.replace(/^##\s+/, "").replace(/\*\*/g, "").trim(),
-        lines: [],
-      };
+      current = { rawHeading: line.replace(/^##\s+/, "").replace(/\*\*/g, "").trim(), lines: [] };
     } else if (/^---+$/.test(line.trim())) {
-      // separator — skip
+      // skip dividers
     } else if (current) {
       current.lines.push(line);
     }
@@ -169,94 +60,134 @@ function parseMarkdownSections(markdown) {
   return sections;
 }
 
-/** Extract bullet items from lines (strips leading -, *, •, **bold**: ) */
+/** Extract bullet points from lines, stripping markdown syntax. */
 function extractBullets(lines) {
   const bullets = [];
-  let current = "";
+  let cur = "";
   for (const line of lines) {
-    const trimmed = line.trim();
-    if (/^[-*•]\s+/.test(trimmed)) {
-      if (current) bullets.push(current.trim());
-      current = trimmed.replace(/^[-*•]\s+/, "").replace(/\*\*/g, "");
-    } else if (trimmed && current) {
-      current += " " + trimmed.replace(/\*\*/g, "");
-    } else if (!trimmed && current) {
-      bullets.push(current.trim());
-      current = "";
+    const t = line.trim();
+    if (/^[-*•]\s+/.test(t)) {
+      if (cur) bullets.push(cur.trim());
+      cur = t.replace(/^[-*•]\s+/, "").replace(/\*\*/g, "");
+    } else if (t && cur) {
+      cur += " " + t.replace(/\*\*/g, "");
+    } else if (!t && cur) {
+      bullets.push(cur.trim());
+      cur = "";
     }
   }
-  if (current) bullets.push(current.trim());
+  if (cur) bullets.push(cur.trim());
   return bullets.filter(Boolean);
 }
 
-/** Extract prose paragraphs (non-bullet lines joined into paragraphs) */
+/** Extract prose paragraphs (joined non-bullet lines). */
 function extractProse(lines) {
   const paras = [];
-  let current = [];
+  let cur = [];
   for (const line of lines) {
-    const trimmed = line.trim().replace(/\*\*/g, "").replace(/^#+\s*/, "");
-    if (trimmed) {
-      current.push(trimmed);
-    } else if (current.length) {
-      paras.push(current.join(" "));
-      current = [];
-    }
+    const t = line.trim().replace(/\*\*/g, "").replace(/^#+\s*/, "");
+    if (t) { cur.push(t); }
+    else if (cur.length) { paras.push(cur.join(" ")); cur = []; }
   }
-  if (current.length) paras.push(current.join(" "));
+  if (cur.length) paras.push(cur.join(" "));
   return paras.filter(Boolean);
 }
 
-// ─── Sub-renderers ──────────────────────────────────────────────
+/** Return first ~260 characters of content, cut at a sentence boundary. */
+function excerptLines(lines, maxChars = 260) {
+  const text = lines
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith("#") && !l.startsWith("-") && !l.startsWith("*"))
+    .join(" ")
+    .replace(/\*\*/g, "");
+  if (text.length <= maxChars) return text;
+  const cut = text.slice(0, maxChars);
+  const dot = cut.lastIndexOf(".");
+  return dot > maxChars * 0.6 ? cut.slice(0, dot + 1) : cut + "…";
+}
 
-function ProseSection({ lines, prominent }) {
-  const paras = extractProse(lines);
-  if (!paras.length) return <p className="text-[12px] italic text-slate-600">(Limited data)</p>;
+function isScoresSection(heading) {
+  return heading.toLowerCase().includes("signal score");
+}
+
+// ─── Signal Scores visualisation ─────────────────────────────────────────────
+
+const SCORE_COLORS = {
+  "Risk Exposure": "#ef4444",
+  default: "#f59e0b",
+};
+
+function scoreColor(label) {
+  return SCORE_COLORS[label] ?? SCORE_COLORS.default;
+}
+
+function MiniRadar({ scores }) {
+  const data = Object.entries(scores).map(([metric, s]) => ({ metric, value: s.value, fullMark: 10 }));
+  if (!data.length) return null;
   return (
-    <div className="space-y-2">
-      {paras.map((p, i) => (
-        <p key={i} className={prominent ? "text-[14px] leading-relaxed text-slate-200" : "text-[13px] leading-relaxed text-slate-300"}>
-          {p}
-        </p>
-      ))}
-    </div>
+    <ResponsiveContainer width="100%" height={180}>
+      <RadarChart data={data} outerRadius="70%">
+        <PolarGrid stroke="#44403c" strokeOpacity={0.5} />
+        <PolarAngleAxis
+          dataKey="metric"
+          tick={{ fill: "#a8a29e", fontSize: 9, fontWeight: 500 }}
+        />
+        <Radar dataKey="value" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.12} strokeWidth={1.5} />
+        <RechartsTooltip
+          contentStyle={{ background: "#1c1917", border: "1px solid #44403c", borderRadius: 8, fontSize: 11 }}
+          labelStyle={{ color: "#e7e5e4" }}
+          itemStyle={{ color: "#f59e0b" }}
+          formatter={(v) => [`${v} / 10`]}
+        />
+      </RadarChart>
+    </ResponsiveContainer>
   );
 }
 
-function BulletsSection({ lines, bulletIcon, color }) {
-  const c = COLOR_MAP[color] || COLOR_MAP.indigo;
-  const bullets = extractBullets(lines);
-  if (!bullets.length) return <p className="text-[12px] italic text-slate-600">(Limited data — flagged for further research)</p>;
+function FullRadar({ scores }) {
+  const data = Object.entries(scores).map(([metric, s]) => ({ metric, value: s.value, fullMark: 10 }));
+  if (!data.length) return null;
   return (
-    <div className="space-y-2">
-      {bullets.map((b, i) => (
-        <div key={i} className="flex gap-2.5">
-          <span className={`mt-0.5 shrink-0 text-[11px] font-bold ${c.iconText}`}>{bulletIcon || "·"}</span>
-          <p className="text-[13px] leading-relaxed text-slate-300">{b}</p>
-        </div>
-      ))}
-    </div>
+    <ResponsiveContainer width="100%" height={220}>
+      <RadarChart data={data} outerRadius="72%">
+        <PolarGrid stroke="#44403c" strokeOpacity={0.5} />
+        <PolarAngleAxis
+          dataKey="metric"
+          tick={{ fill: "#a8a29e", fontSize: 10, fontWeight: 500 }}
+        />
+        <Radar dataKey="value" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.15} strokeWidth={2} />
+        <RechartsTooltip
+          contentStyle={{ background: "#1c1917", border: "1px solid #44403c", borderRadius: 8, fontSize: 12 }}
+          labelStyle={{ color: "#e7e5e4" }}
+          itemStyle={{ color: "#f59e0b" }}
+          formatter={(v) => [`${v} / 10`]}
+        />
+      </RadarChart>
+    </ResponsiveContainer>
   );
 }
 
-function ChipsSection({ lines, color }) {
-  const c = COLOR_MAP[color] || COLOR_MAP.violet;
-  const bullets = extractBullets(lines);
-  const paras = extractProse(lines);
-  const items = bullets.length ? bullets : paras;
-  if (!items.length) return <p className="text-[12px] italic text-slate-600">(Limited data)</p>;
+function ScoreBars({ scores, showRationale = false }) {
   return (
-    <div className="space-y-2.5">
-      {items.map((item, i) => {
-        // Split on " — " or ": " to separate label from description
-        const sepIdx = item.search(/ [—–-] | : /);
-        const label = sepIdx > 0 ? item.slice(0, sepIdx).trim() : item;
-        const desc = sepIdx > 0 ? item.slice(sepIdx).replace(/^[ —–:\-]+/, "").trim() : null;
+    <div className={`grid grid-cols-1 gap-3 ${showRationale ? "" : "sm:grid-cols-2"}`}>
+      {Object.entries(scores).map(([label, { value, rationale }]) => {
+        const isRisk = label.toLowerCase().includes("risk");
+        const pct = value * 10;
+        const barColor = isRisk
+          ? pct > 60 ? "bg-red-500" : pct > 40 ? "bg-amber-500" : "bg-emerald-500"
+          : pct >= 70 ? "bg-emerald-500" : pct >= 40 ? "bg-amber-500" : "bg-red-400";
         return (
-          <div key={i} className="flex items-start gap-2.5">
-            <span className={`mt-0.5 inline-flex shrink-0 items-center rounded-md border px-2 py-0.5 text-[11px] font-semibold ${c.chipBg}`}>
-              {label}
-            </span>
-            {desc && <p className="text-[12px] leading-relaxed text-slate-400">{desc}</p>}
+          <div key={label} className="space-y-1">
+            <div className="flex justify-between text-[11px]">
+              <span className="font-medium text-stone-300">{label}</span>
+              <span className="tabular-nums text-stone-500">{value}/10</span>
+            </div>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-stone-800">
+              <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${pct}%` }} />
+            </div>
+            {showRationale && rationale && (
+              <p className="pt-0.5 text-[11px] leading-relaxed text-stone-500">{rationale}</p>
+            )}
           </div>
         );
       })}
@@ -264,134 +195,135 @@ function ChipsSection({ lines, color }) {
   );
 }
 
-function SpotlightSection({ lines }) {
-  const paras = extractProse(lines);
-  if (!paras.length) return <p className="text-[12px] italic text-slate-600">(Limited data)</p>;
-  return (
-    <div className="relative rounded-xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 to-indigo-500/5 px-4 py-3.5">
-      <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl bg-gradient-to-b from-violet-400 to-indigo-500" />
-      <div className="space-y-2 pl-2">
-        {paras.map((p, i) => (
-          <p key={i} className="text-[13px] leading-relaxed text-slate-200 italic">
-            {p}
-          </p>
-        ))}
-      </div>
-    </div>
-  );
-}
+// ─── Document section renderer ───────────────────────────────────────────────
 
-function NumberedSection({ lines, color }) {
-  const c = COLOR_MAP[color] || COLOR_MAP.purple;
+function DocSection({ heading, lines, isFirst }) {
+  const isAnalyst = heading.toLowerCase().includes("analyst");
+  const isOverview = heading.toLowerCase().includes("executive");
   const bullets = extractBullets(lines);
-  if (!bullets.length) return <p className="text-[12px] italic text-slate-600">(Limited data)</p>;
+  const prose = extractProse(lines);
+
+  // Choose bullets vs prose: prefer bullets if the AI produced them
+  const useBullets = bullets.length > 0 && (prose.length === 0 || bullets.length >= 2);
+
   return (
-    <div className="space-y-2">
-      {bullets.map((b, i) => (
-        <div key={i} className="flex gap-2.5">
-          <span className={`mt-0.5 shrink-0 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold ${c.iconBg} ${c.iconText}`}>
-            {i + 1}
-          </span>
-          <p className="text-[13px] leading-relaxed text-slate-300">{b}</p>
+    <div className={`${!isFirst ? "border-t border-stone-800 pt-5" : ""} pb-5`}>
+      {/* Section label */}
+      <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">
+        {heading}
+      </p>
+
+      {isAnalyst ? (
+        /* Analyst's Take — blockquote style */
+        <div className="border-l-[3px] border-amber-700/60 pl-4">
+          <div className="space-y-2">
+            {prose.map((p, i) => (
+              <p key={i} className="text-[13px] italic leading-relaxed text-stone-300">{p}</p>
+            ))}
+          </div>
         </div>
-      ))}
+      ) : useBullets ? (
+        <div className="space-y-2.5">
+          {bullets.map((b, i) => {
+            // "Key Themes" format: "Label — description"
+            const sepIdx = b.search(/ [—–] /);
+            const label = sepIdx > 0 ? b.slice(0, sepIdx).trim() : null;
+            const desc = sepIdx > 0 ? b.slice(sepIdx + 3).trim() : b;
+            return (
+              <div key={i} className="flex gap-3 items-start">
+                <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-stone-600" />
+                <p className="text-[13px] leading-relaxed text-stone-300">
+                  {label && (
+                    <span className="font-semibold text-stone-200">{label}{" — "}</span>
+                  )}
+                  {desc}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {prose.map((p, i) => (
+            <p
+              key={i}
+              className={`leading-relaxed text-stone-300 ${isOverview ? "text-[14px]" : "text-[13px]"}`}
+            >
+              {p}
+            </p>
+          ))}
+          {!prose.length && (
+            <p className="text-[12px] italic text-stone-600">(Limited data — flagged for further research)</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-// ─── Section Card ────────────────────────────────────────────────
+// ─── Compact preview (shown in the panel card) ───────────────────────────────
 
-function SectionCard({ section }) {
-  const key = section.rawHeading.toLowerCase().trim();
-  const meta = Object.entries(SECTION_META).find(([k]) => key.includes(k))?.[1];
+export function CompanyProfilePreview({ markdown }) {
+  const sections = parseMarkdownSections(markdown);
+  const scores = parseSignalScores(markdown);
+  const hasScores = Object.keys(scores).length > 0;
 
-  if (!meta) {
-    // Fallback for unknown sections
-    const paras = extractProse(section.lines);
-    if (!paras.length) return null;
-    return (
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-        <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-slate-500">{section.rawHeading}</p>
-        <div className="space-y-1.5">
-          {paras.map((p, i) => <p key={i} className="text-[13px] text-slate-300 leading-relaxed">{p}</p>)}
-        </div>
-      </div>
-    );
-  }
-
-  const c = COLOR_MAP[meta.color] || COLOR_MAP.indigo;
+  const execSection = sections.find((s) => s.rawHeading.toLowerCase().includes("executive"));
+  const excerpt = excerptLines(execSection?.lines ?? sections[0]?.lines ?? []);
 
   return (
-    <div className={`rounded-xl border ${c.border} ${meta.prominent ? "bg-gradient-to-br from-indigo-500/10 via-violet-500/5 to-transparent" : c.bg} overflow-hidden`}>
-      {/* Section header */}
-      <div className={`flex items-center gap-2.5 px-4 py-2.5 ${c.headerBg} border-b ${c.border}`}>
-        <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-base ${c.iconBg}`}>
-          {meta.icon}
-        </span>
-        <span className={`text-[11px] font-bold uppercase tracking-widest ${c.label}`}>
-          {meta.label}
-        </span>
-        <span className={`ml-auto h-1 w-1 rounded-full ${c.accent} opacity-60`} />
-      </div>
+    <div className="space-y-4">
+      {excerpt && (
+        <p className="text-[13px] leading-relaxed text-stone-400">{excerpt}</p>
+      )}
 
-      {/* Section body */}
-      <div className="px-4 py-3.5">
-        {meta.layout === "prose" && (
-          <ProseSection lines={section.lines} prominent={meta.prominent} />
-        )}
-        {meta.layout === "bullets" && (
-          <BulletsSection lines={section.lines} bulletIcon={meta.bulletIcon} color={meta.color} />
-        )}
-        {meta.layout === "chips" && (
-          <ChipsSection lines={section.lines} color={meta.color} />
-        )}
-        {meta.layout === "spotlight" && (
-          <SpotlightSection lines={section.lines} />
-        )}
-        {meta.layout === "numbered" && (
-          <NumberedSection lines={section.lines} color={meta.color} />
-        )}
-      </div>
+      {hasScores && (
+        <div className="rounded-xl border border-stone-800 bg-stone-900/60 p-3">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-amber-600/80">
+            Signal Scores
+          </p>
+          <MiniRadar scores={scores} />
+          <div className="mt-3">
+            <ScoreBars scores={scores} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ─── Main export ─────────────────────────────────────────────────
+// ─── Full document view (used inside the modal) ──────────────────────────────
 
 export default function CompanyProfileView({ markdown }) {
   if (!markdown) return null;
+
   const sections = parseMarkdownSections(markdown);
+  const scores = parseSignalScores(markdown);
+  const hasScores = Object.keys(scores).length > 0;
+  const visibleSections = sections.filter((s) => !isScoresSection(s.rawHeading));
+
   if (!sections.length) {
-    return <p className="text-[13px] text-slate-400">{markdown}</p>;
+    return <p className="text-[13px] text-stone-400">{markdown}</p>;
   }
 
-  // Put Executive Overview and Analyst's Take full-width; pair others in a 2-col grid
-  const prominent = sections.filter(s => {
-    const k = s.rawHeading.toLowerCase();
-    return k.includes("executive") || k.includes("analyst");
-  });
-  const grid = sections.filter(s => {
-    const k = s.rawHeading.toLowerCase();
-    return !k.includes("executive") && !k.includes("analyst");
-  });
-
   return (
-    <div className="space-y-3">
-      {/* Executive Overview — always first, full width */}
-      {prominent.filter(s => s.rawHeading.toLowerCase().includes("executive")).map((s, i) => (
-        <SectionCard key={i} section={s} />
-      ))}
-
-      {/* 2-column grid for middle sections */}
-      {grid.length > 0 && (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {grid.map((s, i) => <SectionCard key={i} section={s} />)}
+    <div>
+      {/* Signal scores panel */}
+      {hasScores && (
+        <div className="mb-6 rounded-xl border border-stone-800 bg-stone-900/60 p-4">
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">
+            Signal Scores
+          </p>
+          <FullRadar scores={scores} />
+          <div className="mt-4">
+            <ScoreBars scores={scores} showRationale={true} />
+          </div>
         </div>
       )}
 
-      {/* Analyst's Take — always last, full width spotlight */}
-      {prominent.filter(s => s.rawHeading.toLowerCase().includes("analyst")).map((s, i) => (
-        <SectionCard key={i} section={s} />
+      {/* Report sections */}
+      {visibleSections.map((s, i) => (
+        <DocSection key={i} heading={s.rawHeading} lines={s.lines} isFirst={i === 0} />
       ))}
     </div>
   );

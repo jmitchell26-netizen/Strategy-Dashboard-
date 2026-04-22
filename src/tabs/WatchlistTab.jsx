@@ -1,0 +1,159 @@
+// WatchlistTab.jsx — Track companies and keywords; shows matching articles from the live feed.
+
+import { useState, useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+
+const TERM_COLORS = [
+  { dot: "bg-amber-400",   badge: "border-amber-700/50 bg-amber-500/10 text-amber-300" },
+  { dot: "bg-sky-400",     badge: "border-sky-700/50 bg-sky-500/10 text-sky-300" },
+  { dot: "bg-violet-400",  badge: "border-violet-700/50 bg-violet-500/10 text-violet-300" },
+  { dot: "bg-emerald-400", badge: "border-emerald-700/50 bg-emerald-500/10 text-emerald-300" },
+  { dot: "bg-rose-400",    badge: "border-rose-700/50 bg-rose-500/10 text-rose-300" },
+  { dot: "bg-cyan-400",    badge: "border-cyan-700/50 bg-cyan-500/10 text-cyan-300" },
+  { dot: "bg-orange-400",  badge: "border-orange-700/50 bg-orange-500/10 text-orange-300" },
+  { dot: "bg-fuchsia-400", badge: "border-fuchsia-700/50 bg-fuchsia-500/10 text-fuchsia-300" },
+];
+
+function matchesArticle(term, article) {
+  const t = term.toLowerCase();
+  return (
+    (article.title || "").toLowerCase().includes(t) ||
+    (article.summary || "").toLowerCase().includes(t) ||
+    (article.companyName || "").toLowerCase().includes(t)
+  );
+}
+
+export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) {
+  const [input, setInput] = useState("");
+  const [expanded, setExpanded] = useState(null);
+
+  function addTerm(e) {
+    e.preventDefault();
+    const term = input.trim();
+    if (!term || watchlist.some((w) => w.term.toLowerCase() === term.toLowerCase())) return;
+    const color = TERM_COLORS[watchlist.length % TERM_COLORS.length];
+    setWatchlist((prev) => [...prev, { id: Date.now().toString(), term, addedAt: new Date().toISOString(), colorIdx: watchlist.length % TERM_COLORS.length }]);
+    setInput("");
+  }
+
+  function removeTerm(id) {
+    setWatchlist((prev) => prev.filter((w) => w.id !== id));
+    if (expanded === id) setExpanded(null);
+  }
+
+  const watchlistWithMatches = useMemo(() =>
+    watchlist.map((w) => ({
+      ...w,
+      matches: feedArticles.filter((a) => matchesArticle(w.term, a)),
+    })),
+    [watchlist, feedArticles]
+  );
+
+  const totalMatches = watchlistWithMatches.reduce((sum, w) => sum + w.matches.length, 0);
+
+  return (
+    <div className="mx-auto max-w-3xl">
+      {/* Header */}
+      <div className="mb-6">
+        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">Watchlist</p>
+        <h2 className="mt-1 text-2xl font-bold tracking-tight text-stone-100">Company & Keyword Monitor</h2>
+        <p className="mt-1 text-sm text-stone-500">
+          Add terms to watch — matching articles from the live feed appear automatically.
+          {watchlist.length > 0 && <span className="ml-2 tabular-nums text-stone-600">{totalMatches} matches across {watchlist.length} terms</span>}
+        </p>
+      </div>
+
+      {/* Add term form */}
+      <form onSubmit={addTerm} className="mb-8 flex gap-2">
+        <Input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Company name or keyword (e.g. Apple, AI regulation, chip shortage)"
+          className="flex-1 border-stone-700 bg-stone-900 text-stone-200 placeholder:text-stone-600 focus-visible:border-amber-600/60 focus-visible:ring-amber-500/20"
+        />
+        <Button type="submit" disabled={!input.trim()}
+          className="shrink-0 bg-amber-500 text-stone-950 hover:bg-amber-400 disabled:opacity-40">
+          Watch
+        </Button>
+      </form>
+
+      {/* Empty state */}
+      {watchlist.length === 0 && (
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-stone-800 py-24 text-center">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-stone-800 bg-stone-900">
+            <svg className="h-6 w-6 text-stone-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+          </div>
+          <p className="text-sm font-semibold text-stone-500">Nothing being watched</p>
+          <p className="mt-1 text-xs text-stone-600">Add a company or keyword above to start monitoring the feed.</p>
+        </div>
+      )}
+
+      {/* Watchlist cards */}
+      <div className="space-y-3">
+        {watchlistWithMatches.map((w) => {
+          const color = TERM_COLORS[w.colorIdx ?? 0];
+          const isOpen = expanded === w.id;
+          return (
+            <div key={w.id} className="rounded-xl border border-stone-800 bg-stone-900/60 overflow-hidden">
+              {/* Card header */}
+              <div className="flex items-center gap-3 px-4 py-3">
+                <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${color.dot}`} />
+                <span className="flex-1 text-sm font-semibold text-stone-200">{w.term}</span>
+                <Badge variant="outline" className={`tabular-nums text-[11px] ${color.badge}`}>
+                  {w.matches.length} {w.matches.length === 1 ? "match" : "matches"}
+                </Badge>
+                <button
+                  onClick={() => setExpanded(isOpen ? null : w.id)}
+                  className="rounded p-1 text-stone-500 transition-colors hover:bg-stone-800 hover:text-stone-300"
+                >
+                  <svg className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </button>
+                <button onClick={() => removeTerm(w.id)} className="rounded p-1 text-stone-600 transition-colors hover:bg-red-500/10 hover:text-red-400">
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Matching articles */}
+              {isOpen && (
+                <div className="border-t border-stone-800">
+                  {w.matches.length === 0 ? (
+                    <p className="px-4 py-3 text-[12px] italic text-stone-600">No matching articles in the current feed.</p>
+                  ) : (
+                    <div className="divide-y divide-stone-800">
+                      {w.matches.map((a) => (
+                        <div key={a.id} className="px-4 py-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1 min-w-0">
+                              {a.url ? (
+                                <a href={a.url} target="_blank" rel="noopener noreferrer"
+                                  className="text-[13px] font-medium text-stone-200 hover:text-amber-400 transition-colors line-clamp-2">
+                                  {a.title}
+                                </a>
+                              ) : (
+                                <p className="text-[13px] font-medium text-stone-200 line-clamp-2">{a.title}</p>
+                              )}
+                              <p className="mt-0.5 text-[11px] text-stone-600">{a.source} · {a.date} · {a.category}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

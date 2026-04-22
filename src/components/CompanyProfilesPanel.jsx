@@ -8,8 +8,8 @@ import {
   compareProfilesBrief,
 } from "../api/openaiCompanyProfile";
 import ProfileCompareModal from "./ProfileCompareModal";
-import MarkdownContent from "./MarkdownContent";
-import CompanyProfileView from "./CompanyProfileView";
+import CompanyProfileModal from "./CompanyProfileModal";
+import { CompanyProfilePreview } from "./CompanyProfileView";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
@@ -26,6 +26,7 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
   const [compareSelection, setCompareSelection] = useState({ a: "", b: "" });
   const [synthesis, setSynthesis] = useState("");
   const [loadingSynthesis, setLoadingSynthesis] = useState(false);
+  const [fullProfileKey, setFullProfileKey] = useState(null);
 
   const groups = useMemo(() => {
     const map = new Map();
@@ -129,38 +130,66 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
             return (
               <div
                 key={key}
-                className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 backdrop-blur-sm"
+                className="rounded-2xl border border-stone-800 bg-stone-900/40 p-4"
               >
-                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                {/* Card header */}
+                <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-semibold text-slate-200">{displayName}</p>
-                    <p className="text-[11px] text-slate-500">Articles tagged: {items.length}</p>
+                    <p className="text-sm font-semibold text-stone-200">{displayName}</p>
+                    <p className="text-[11px] text-stone-600">
+                      {items.length} article{items.length !== 1 ? "s" : ""} tagged
+                      {prof?.updatedAt && (
+                        <> · updated {new Date(prof.updatedAt).toLocaleDateString()}</>
+                      )}
+                    </p>
                   </div>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
+
+                  <div className="flex items-center gap-2">
+                    {prof?.summary && (
                       <Button
                         type="button"
-                        disabled={loading || !isLlmConfigured()}
-                        onClick={() => handleGenerate(key, displayName, items)}
                         variant="outline"
                         size="sm"
-                        className="border-violet-500/40 bg-violet-500/15 text-violet-200 hover:bg-violet-500/25 hover:text-violet-100"
+                        onClick={() => setFullProfileKey(key)}
+                        className="border-amber-700/50 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 hover:text-amber-200"
                       >
-                        {loading ? <><Spinner className="mr-1.5 h-3 w-3" />Generating…</> : prof?.summary ? "Regenerate profile" : "Generate AI profile"}
+                        See full profile →
                       </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>{isLlmConfigured() ? "Generate an AI intelligence profile from tagged articles" : "Configure an LLM in .env to enable this"}</TooltipContent>
-                  </Tooltip>
-                </div>
-                {prof?.summary && (
-                  <p className="text-[11px] text-slate-600">
-                    Updated {new Date(prof.updatedAt).toLocaleString()}
-                  </p>
-                )}
-                {prof?.summary && (
-                  <div className="mt-3 max-h-[42rem] overflow-y-auto">
-                    <CompanyProfileView markdown={prof.summary} />
+                    )}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          disabled={loading || !isLlmConfigured()}
+                          onClick={() => handleGenerate(key, displayName, items)}
+                          variant="outline"
+                          size="sm"
+                          className="border-stone-700 bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-stone-200"
+                        >
+                          {loading
+                            ? <><Spinner className="mr-1.5 h-3 w-3" />Generating…</>
+                            : prof?.summary ? "Regenerate" : "Generate profile"}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {isLlmConfigured()
+                          ? "Generate an AI intelligence profile from tagged articles"
+                          : "Configure an LLM in .env to enable this"}
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
+                </div>
+
+                {/* Compact preview */}
+                {prof?.summary && (
+                  <CompanyProfilePreview markdown={prof.summary} />
+                )}
+
+                {/* Empty state when no profile yet */}
+                {!prof?.summary && !loading && (
+                  <p className="text-[12px] italic text-stone-700">
+                    No profile yet — press "Generate profile" above.
+                  </p>
                 )}
               </div>
             );
@@ -231,6 +260,15 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
             setSynthesis("");
           }}
           onRequestSynthesis={handleSynthesis}
+        />
+      )}
+
+      {fullProfileKey && companyProfiles[fullProfileKey]?.summary && (
+        <CompanyProfileModal
+          companyName={companyProfiles[fullProfileKey].displayName}
+          summary={companyProfiles[fullProfileKey].summary}
+          updatedAt={companyProfiles[fullProfileKey].updatedAt}
+          onClose={() => setFullProfileKey(null)}
         />
       )}
     </div>

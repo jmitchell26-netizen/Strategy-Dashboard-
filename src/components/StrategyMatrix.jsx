@@ -42,33 +42,14 @@ export default function StrategyMatrix({
   // Shown when the user hasn't saved any items yet
   if (items.length === 0) {
     return (
-      <div className="relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-white/[0.06] bg-white/[0.01] py-20 text-center backdrop-blur-sm">
-        {/* Animated gradient background pulse */}
-        <div className="animate-glow-pulse pointer-events-none absolute inset-0 bg-gradient-to-br from-violet-500/[0.03] via-transparent to-blue-500/[0.03]" />
-        <div className="relative">
-          {/* Grid icon */}
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/[0.06] bg-white/[0.03]">
-            <svg
-              className="h-7 w-7 text-slate-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z"
-              />
-            </svg>
-          </div>
-          <p className="text-sm font-semibold text-slate-500">
-            Your matrix is empty
-          </p>
-          <p className="mt-1.5 text-xs text-slate-600">
-            Save news items to build your strategy overview
-          </p>
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-stone-800 bg-stone-900/30 py-16 text-center">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-stone-800 bg-stone-900">
+          <svg className="h-6 w-6 text-stone-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z" />
+          </svg>
         </div>
+        <p className="text-sm font-semibold text-stone-500">Your matrix is empty</p>
+        <p className="mt-1 text-xs text-stone-600">Save articles from the news feed to get started</p>
       </div>
     );
   }
@@ -79,13 +60,10 @@ export default function StrategyMatrix({
   return (
     <div className="space-y-3">
 
-      {/* ===== Compare toolbar =====
-          Only shows when there are 2+ items in the matrix.
-          Displays selection guidance text and the "Battle View" button. */}
+      {/* ===== Compare toolbar ===== */}
       {items.length >= 2 && (
-        <div className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 backdrop-blur-sm">
-          {/* Dynamic instruction text based on how many items are selected */}
-          <p className="text-[12px] font-medium text-slate-500">
+        <div className="flex items-center justify-between rounded-xl border border-stone-800 bg-stone-900/60 px-4 py-2.5">
+          <p className="text-[12px] font-medium text-stone-500">
             {selCount === 0 && "Select 2 items to compare"}
             {selCount === 1 && "Select 1 more item"}
             {selCount === 2 && "Ready to compare"}
@@ -120,115 +98,101 @@ export default function StrategyMatrix({
 
       {/* ===== Saved item cards ===== */}
       {items.map((item, i) => {
-        const isSelected = selectedIds.has(item.id); // Whether this card's checkbox is checked
+        const isSelected = selectedIds.has(item.id);
+        const dot = categoryDot[item.category];
         return (
           <div
             key={item.id}
-            // Highlight with amber border/glow when selected for comparison
-            className={`animate-fade-in rounded-2xl border p-4 backdrop-blur-xl transition-all duration-200 ${
+            className={`animate-fade-in overflow-hidden rounded-xl border transition-all duration-200 ${
               isSelected
-                ? "border-amber-500/30 bg-amber-500/[0.04] shadow-lg shadow-amber-500/5"
-                : "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04]"
+                ? "border-amber-600/40 bg-amber-500/[0.05] shadow-sm shadow-amber-500/5"
+                : "border-stone-700/70 bg-stone-900 hover:border-stone-600"
             }`}
             style={{ animationDelay: `${i * 0.05}s` }}
           >
-            {/* --- Header row: checkbox, title, remove button --- */}
-            <div className="mb-2 flex items-start gap-3">
-              {/* Selection checkbox — toggles this item for Battle View comparison */}
-              <button
-                onClick={() => onToggleSelect(item.id)}
-                className={`mt-0.5 flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-md border transition-all duration-200 ${
-                  isSelected
-                    ? "border-amber-500/50 bg-amber-500/20 text-amber-400"          // Checked state
-                    : "border-white/[0.08] bg-white/[0.02] text-transparent hover:border-white/[0.15]" // Unchecked state
-                }`}
-              >
-                {/* Checkmark icon — visible only when selected (text-transparent hides it otherwise) */}
-                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                </svg>
-              </button>
+            {/* Category color accent bar */}
+            <div className={`h-0.5 w-full ${dot ?? "bg-stone-700"}`} />
 
-              {/* Article title — link to original story when URL was saved from NewsAPI */}
-              <h3 className="flex-1 text-[13px] leading-snug font-semibold text-slate-200">
-                {item.url ? (
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-slate-200 underline decoration-white/15 underline-offset-2 transition-colors hover:text-sky-300 hover:decoration-sky-400/40"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {item.title}
-                  </a>
-                ) : (
-                  item.title
-                )}
-              </h3>
+            <div className="p-4">
+              {/* --- Header row --- */}
+              <div className="mb-2.5 flex items-start gap-2.5">
+                <button
+                  onClick={() => onToggleSelect(item.id)}
+                  className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 cursor-pointer items-center justify-center rounded border transition-all duration-200 ${
+                    isSelected
+                      ? "border-amber-500/60 bg-amber-500/20 text-amber-400"
+                      : "border-stone-600 bg-stone-800 text-transparent hover:border-stone-500"
+                  }`}
+                >
+                  <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                </button>
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    onClick={() => onRemove(item.id)}
-                    variant="ghost"
-                    size="xs"
-                    className="shrink-0 text-red-400/50 hover:bg-red-500/10 hover:text-red-400"
-                  >
-                    Remove
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Remove from saved matrix</TooltipContent>
-              </Tooltip>
-            </div>
+                <h3 className="flex-1 text-[13px] font-semibold leading-snug text-stone-200">
+                  {item.url ? (
+                    <a href={item.url} target="_blank" rel="noopener noreferrer"
+                      className="text-stone-200 decoration-stone-600 underline-offset-2 transition-colors hover:text-amber-400 hover:underline"
+                      onClick={(e) => e.stopPropagation()}>
+                      {item.title}
+                    </a>
+                  ) : item.title}
+                </h3>
 
-            {/* --- Metadata row: category dot + name, source, date --- */}
-            <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 pl-8 text-[11px]">
-              <span className="inline-flex items-center gap-1.5 font-semibold text-slate-400">
-                {/* Colored dot matching the article's category */}
-                <span className={`h-1.5 w-1.5 rounded-full ${categoryDot[item.category] || "bg-slate-400"}`} />
-                {item.category}
-              </span>
-              <span className="text-slate-600">·</span>
-              <span className="font-medium text-slate-500">{item.source}</span>
-              <span className="text-slate-600">·</span>
-              <span className="tabular-nums text-slate-600">{item.date}</span>
-            </div>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => onRemove(item.id)}
+                      className="shrink-0 rounded p-1 text-stone-600 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                    >
+                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                      </svg>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Remove from saved matrix</TooltipContent>
+                </Tooltip>
+              </div>
 
-            {/* --- Company tag (groups articles for AI company profile) --- */}
-            <div className="mb-3 pl-8">
-              <label className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold tracking-widest text-slate-500 uppercase">
-                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
-                </svg>
-                Company
-              </label>
-              <Input
-                type="text"
-                value={item.companyName || ""}
-                onChange={(e) => onUpdateCompany(item.id, e.target.value)}
-                placeholder="e.g. Apple, Tesla — same name for all articles about one firm"
-                className="rounded-xl border border-white/[0.04] bg-white/[0.02] px-3.5 py-2 h-auto text-[13px] text-slate-300 placeholder:text-slate-600 focus-visible:border-violet-500/30 focus-visible:bg-white/[0.04] focus-visible:ring-1 focus-visible:ring-violet-500/20"
-              />
-            </div>
+              {/* --- Metadata row --- */}
+              <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 pl-7 text-[11px]">
+                <span className="inline-flex items-center gap-1.5 font-medium text-stone-500">
+                  <span className={`h-1.5 w-1.5 rounded-full ${dot ?? "bg-stone-500"}`} />
+                  {item.category}
+                </span>
+                <span className="text-stone-700">·</span>
+                <span className="text-stone-600">{item.source}</span>
+                <span className="text-stone-700">·</span>
+                <span className="tabular-nums text-stone-700">{item.date}</span>
+              </div>
 
-            {/* --- Research Notes textarea ---
-                Lets the user type their own strategic analysis for this article.
-                Notes are persisted to localStorage via the parent's state management. */}
-            <div className="pl-8">
-              <label className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold tracking-widest text-slate-500 uppercase">
-                {/* Pencil icon */}
-                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                </svg>
-                Research Notes
-              </label>
-              <Textarea
-                value={item.notes || ""}
-                onChange={(e) => onUpdateNotes(item.id, e.target.value)}
-                placeholder="Add your analysis…"
-                rows={2}
-                className="resize-none rounded-xl border border-white/[0.04] bg-white/[0.02] px-3.5 py-2.5 text-[13px] leading-relaxed text-slate-300 placeholder:text-slate-600 focus-visible:border-violet-500/30 focus-visible:bg-white/[0.04] focus-visible:ring-1 focus-visible:ring-violet-500/20"
-              />
+              {/* --- Company tag --- */}
+              <div className="mb-3 pl-7">
+                <label className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-stone-600">
+                  Company
+                </label>
+                <Input
+                  type="text"
+                  value={item.companyName || ""}
+                  onChange={(e) => onUpdateCompany(item.id, e.target.value)}
+                  placeholder="e.g. Apple, Tesla — same name for all articles about one firm"
+                  className="h-auto rounded-lg border-stone-700 bg-stone-800/80 px-3 py-1.5 text-[12px] text-stone-300 placeholder:text-stone-600 focus-visible:border-amber-600/50 focus-visible:ring-amber-500/20"
+                />
+              </div>
+
+              {/* --- Research Notes --- */}
+              <div className="pl-7">
+                <label className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-stone-600">
+                  Research Notes
+                </label>
+                <Textarea
+                  value={item.notes || ""}
+                  onChange={(e) => onUpdateNotes(item.id, e.target.value)}
+                  placeholder="Add your analysis…"
+                  rows={2}
+                  className="resize-none rounded-lg border-stone-700 bg-stone-800/80 px-3 py-2 text-[12px] leading-relaxed text-stone-300 placeholder:text-stone-600 focus-visible:border-amber-600/50 focus-visible:ring-amber-500/20"
+                />
+              </div>
             </div>
           </div>
         );

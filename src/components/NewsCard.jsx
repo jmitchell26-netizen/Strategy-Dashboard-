@@ -1,18 +1,18 @@
 // NewsCard.jsx — Displays a single news article in the Live News Feed.
 
 const categoryConfig = {
-  "Product Strategy": { text: "text-violet-300", dot: "bg-violet-400" },
-  Expansion:          { text: "text-emerald-300", dot: "bg-emerald-400" },
-  Financial:          { text: "text-sky-300",     dot: "bg-sky-400" },
-  "Market Entry":     { text: "text-amber-300",   dot: "bg-amber-400" },
-  "R&D":              { text: "text-rose-300",    dot: "bg-rose-400" },
-  "Content Strategy": { text: "text-fuchsia-300", dot: "bg-fuchsia-400" },
-  "Product Launch":   { text: "text-cyan-300",    dot: "bg-cyan-400" },
-  "M&A":              { text: "text-orange-300",  dot: "bg-orange-400" },
-  General:            { text: "text-indigo-300",  dot: "bg-indigo-400" },
+  "Product Strategy": { text: "text-violet-300", dot: "bg-violet-400", bar: "bg-violet-500" },
+  Expansion:          { text: "text-emerald-300", dot: "bg-emerald-400", bar: "bg-emerald-500" },
+  Financial:          { text: "text-sky-300",     dot: "bg-sky-400",    bar: "bg-sky-500" },
+  "Market Entry":     { text: "text-amber-300",   dot: "bg-amber-400",  bar: "bg-amber-500" },
+  "R&D":              { text: "text-rose-300",    dot: "bg-rose-400",   bar: "bg-rose-500" },
+  "Content Strategy": { text: "text-fuchsia-300", dot: "bg-fuchsia-400", bar: "bg-fuchsia-500" },
+  "Product Launch":   { text: "text-cyan-300",    dot: "bg-cyan-400",   bar: "bg-cyan-500" },
+  "M&A":              { text: "text-orange-300",  dot: "bg-orange-400", bar: "bg-orange-500" },
+  General:            { text: "text-indigo-300",  dot: "bg-indigo-400", bar: "bg-indigo-500" },
 };
 
-const fallback = { text: "text-stone-400", dot: "bg-stone-500" };
+const fallback = { text: "text-stone-400", dot: "bg-stone-500", bar: "bg-stone-600" };
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,9 @@ export default function NewsCard({ item, onSave, isSaved, onRemoveFromFeed }) {
   const articleUrl = item.url;
 
   return (
-    <Card className="border-stone-800 bg-stone-900 transition-colors hover:bg-stone-800/70">
+    <Card className="overflow-hidden border-stone-800 bg-stone-900 transition-colors hover:bg-stone-800/70">
+      {/* Category colour accent strip */}
+      <div className={`h-0.5 w-full ${cat.bar}`} />
       <CardContent className="p-5">
 
         {/* Top row: badges + date */}
