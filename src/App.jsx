@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import BattleView from "./components/BattleView";
+import SplashScreen from "./components/SplashScreen";
 import useNews from "./hooks/useNews";
 import ResearchTab from "./tabs/ResearchTab";
 import BriefingTab from "./tabs/BriefingTab";
@@ -32,6 +33,7 @@ function ls(key, fallback) {
 }
 
 function App() {
+  const [splashVisible, setSplashVisible] = useState(true);
   const [activeTab, setActiveTab] = useState("research");
 
   // ── Feed state ────────────────────────────────────────────────
@@ -119,6 +121,10 @@ function App() {
     thesis:     theses.length || null,
     comparison: Object.values(companyProfiles).filter((p) => p?.summary).length || null,
   };
+
+  if (splashVisible) {
+    return <SplashScreen onEnter={() => setSplashVisible(false)} />;
+  }
 
   return (
     <div className="min-h-screen bg-stone-950">
