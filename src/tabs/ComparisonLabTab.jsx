@@ -73,20 +73,22 @@ export default function ComparisonLabTab({ companyProfiles }) {
               {readyProfiles.map((prof, i) => {
                 const isSelected = selected.includes(prof.key);
                 const colorIdx = selected.indexOf(prof.key);
-                const color = isSelected ? COMPANY_COLORS[colorIdx] : null;
+                const dotColor = isSelected ? COMPANY_COLORS[colorIdx] : null;
                 return (
                   <button
                     key={prof.key}
                     onClick={() => toggleCompany(prof.key)}
                     disabled={!isSelected && selected.length >= MAX_SELECT}
-                    className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-all ${
+                    className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-all ${
                       isSelected
-                        ? "border-current opacity-100"
+                        ? "border-stone-600 bg-stone-800 text-stone-200"
                         : "border-stone-700 bg-stone-900 text-stone-400 hover:border-stone-600 hover:text-stone-200 disabled:opacity-30 disabled:cursor-not-allowed"
                     }`}
-                    style={isSelected ? { color, borderColor: color, background: color + "15" } : {}}
                   >
-                    {isSelected && <span className="mr-1.5 inline-block h-2 w-2 rounded-full" style={{ background: color }} />}
+                    <span
+                      className="h-2 w-2 rounded-full shrink-0"
+                      style={{ background: dotColor ?? "#44403c" }}
+                    />
                     {prof.name}
                   </button>
                 );

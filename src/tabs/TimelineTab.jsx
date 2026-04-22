@@ -97,7 +97,7 @@ export default function TimelineTab({ savedItems, onRemove, onUpdateNotes, onUpd
                 <button key={co} onClick={() => setCompanyFilter(co)}
                   className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
                     companyFilter === co
-                      ? "border-violet-700/60 bg-violet-500/15 text-violet-300"
+                      ? "border-amber-700/60 bg-amber-500/15 text-amber-300"
                       : "border-stone-700 bg-stone-900 text-stone-500 hover:text-stone-300"
                   }`}>
                   {co === "All" ? "All Companies" : co}

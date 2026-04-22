@@ -6,13 +6,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { generateThesisSummary, isLlmConfigured } from "../api/openaiCompanyProfile";
 
-const THESIS_COLORS = [
-  { bg: "bg-amber-500/10",   border: "border-amber-700/50",  accent: "text-amber-400",   bar: "bg-amber-500" },
-  { bg: "bg-sky-500/10",     border: "border-sky-700/50",    accent: "text-sky-400",     bar: "bg-sky-500" },
-  { bg: "bg-violet-500/10",  border: "border-violet-700/50", accent: "text-violet-400",  bar: "bg-violet-500" },
-  { bg: "bg-emerald-500/10", border: "border-emerald-700/50",accent: "text-emerald-400", bar: "bg-emerald-500" },
-  { bg: "bg-rose-500/10",    border: "border-rose-700/50",   accent: "text-rose-400",    bar: "bg-rose-500" },
-];
 
 const CAT_DOT = {
   "Product Strategy":"bg-violet-400","Expansion":"bg-emerald-400","Financial":"bg-sky-400",
@@ -79,8 +72,7 @@ export default function ThesisBuilderTab({ savedItems, theses, setTheses }) {
 
   function createThesis() {
     const id = Date.now().toString();
-    const color = theses.length % THESIS_COLORS.length;
-    setTheses((prev) => [...prev, { id, title: "New Thesis", hypothesis: "", articleIds: [], aiSummary: null, colorIdx: color }]);
+    setTheses((prev) => [...prev, { id, title: "New Thesis", hypothesis: "", articleIds: [], aiSummary: null }]);
     setFocusedThesis(id);
   }
 
@@ -141,20 +133,19 @@ export default function ThesisBuilderTab({ savedItems, theses, setTheses }) {
         )}
 
         {theses.map((thesis) => {
-          const color = THESIS_COLORS[thesis.colorIdx ?? 0];
           const isActive = focusedThesis === thesis.id;
           return (
             <div
               key={thesis.id}
               onClick={() => setFocusedThesis(thesis.id)}
               className={`cursor-pointer overflow-hidden rounded-xl border transition-all ${
-                isActive ? `${color.border} ${color.bg}` : "border-stone-800 bg-stone-900/60 hover:border-stone-700"
+                isActive ? "border-amber-700/50 bg-stone-900" : "border-stone-800 bg-stone-900/60 hover:border-stone-700"
               }`}
             >
-              <div className={`h-0.5 w-full ${color.bar}`} />
+              {isActive && <div className="h-0.5 w-full bg-amber-500/60" />}
               <div className="p-3">
                 <div className="flex items-start justify-between gap-2">
-                  <p className={`text-[13px] font-semibold ${isActive ? color.accent : "text-stone-300"}`}>
+                  <p className={`text-[13px] font-semibold ${isActive ? "text-amber-300" : "text-stone-300"}`}>
                     {thesis.title || "Untitled"}
                   </p>
                   <button onClick={(e) => { e.stopPropagation(); deleteThesis(thesis.id); }}

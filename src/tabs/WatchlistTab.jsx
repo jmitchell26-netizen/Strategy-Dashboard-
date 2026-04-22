@@ -5,15 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
-const TERM_COLORS = [
-  { dot: "bg-amber-400",   badge: "border-amber-700/50 bg-amber-500/10 text-amber-300" },
-  { dot: "bg-sky-400",     badge: "border-sky-700/50 bg-sky-500/10 text-sky-300" },
-  { dot: "bg-violet-400",  badge: "border-violet-700/50 bg-violet-500/10 text-violet-300" },
-  { dot: "bg-emerald-400", badge: "border-emerald-700/50 bg-emerald-500/10 text-emerald-300" },
-  { dot: "bg-rose-400",    badge: "border-rose-700/50 bg-rose-500/10 text-rose-300" },
-  { dot: "bg-cyan-400",    badge: "border-cyan-700/50 bg-cyan-500/10 text-cyan-300" },
-  { dot: "bg-orange-400",  badge: "border-orange-700/50 bg-orange-500/10 text-orange-300" },
-  { dot: "bg-fuchsia-400", badge: "border-fuchsia-700/50 bg-fuchsia-500/10 text-fuchsia-300" },
+// Tiny dots only — same set as category dots used throughout the app
+const TERM_DOTS = [
+  "bg-amber-400", "bg-sky-400", "bg-violet-400", "bg-emerald-400",
+  "bg-rose-400", "bg-cyan-400", "bg-orange-400", "bg-fuchsia-400",
 ];
 
 function matchesArticle(term, article) {
@@ -33,8 +28,7 @@ export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) 
     e.preventDefault();
     const term = input.trim();
     if (!term || watchlist.some((w) => w.term.toLowerCase() === term.toLowerCase())) return;
-    const color = TERM_COLORS[watchlist.length % TERM_COLORS.length];
-    setWatchlist((prev) => [...prev, { id: Date.now().toString(), term, addedAt: new Date().toISOString(), colorIdx: watchlist.length % TERM_COLORS.length }]);
+    setWatchlist((prev) => [...prev, { id: Date.now().toString(), term, addedAt: new Date().toISOString(), colorIdx: watchlist.length % TERM_DOTS.length }]);
     setInput("");
   }
 
@@ -96,15 +90,15 @@ export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) 
       {/* Watchlist cards */}
       <div className="space-y-3">
         {watchlistWithMatches.map((w) => {
-          const color = TERM_COLORS[w.colorIdx ?? 0];
+          const dot = TERM_DOTS[w.colorIdx ?? 0];
           const isOpen = expanded === w.id;
           return (
             <div key={w.id} className="rounded-xl border border-stone-800 bg-stone-900/60 overflow-hidden">
               {/* Card header */}
               <div className="flex items-center gap-3 px-4 py-3">
-                <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${color.dot}`} />
+                <span className={`h-2 w-2 shrink-0 rounded-full ${dot}`} />
                 <span className="flex-1 text-sm font-semibold text-stone-200">{w.term}</span>
-                <Badge variant="outline" className={`tabular-nums text-[11px] ${color.badge}`}>
+                <Badge variant="outline" className="tabular-nums text-[11px] border-stone-700 bg-stone-800 text-stone-400">
                   {w.matches.length} {w.matches.length === 1 ? "match" : "matches"}
                 </Badge>
                 <button

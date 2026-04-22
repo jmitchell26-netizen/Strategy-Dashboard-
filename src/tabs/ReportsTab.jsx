@@ -238,7 +238,7 @@ export default function ReportsTab({ savedItems, companyProfiles }) {
             onClick={handleGenExecSummary}
             disabled={generating || config.companies.length < 2 || !isLlmConfigured()}
             variant="outline"
-            className="w-full border-violet-700/50 bg-violet-500/10 text-violet-300 hover:bg-violet-500/20"
+            className="w-full border-amber-700/50 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 disabled:opacity-40"
             size="sm"
           >
             {generating ? <><Spinner className="mr-2 h-3.5 w-3.5" />Generating…</> : "Generate Executive Summary"}
