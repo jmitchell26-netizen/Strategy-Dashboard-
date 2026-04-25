@@ -1,126 +1,118 @@
-// SplashScreen.jsx — Scrollable in-app landing page. Shown on every load; dismiss to open the dashboard.
+// SplashScreen.jsx — Light, editorial landing page. Dismiss to open the dashboard.
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
-/* ─── Scroll-reveal hook ──────────────────────────────────────────────────── */
+/* ─── Scroll-reveal ───────────────────────────────────────────────────────── */
 function useReveal() {
   useEffect(() => {
     const els = document.querySelectorAll("[data-reveal]");
     const obs = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("srd-visible"); obs.unobserve(e.target); } }),
-      { threshold: 0.12 }
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) { e.target.classList.add("srd-vis"); obs.unobserve(e.target); }
+        }),
+      { threshold: 0.1 }
     );
     els.forEach((el) => obs.observe(el));
     return () => obs.disconnect();
   }, []);
 }
 
-/* ─── Section label ────────────────────────────────────────────────────────── */
-function SectionLabel({ children }) {
-  return (
-    <p className="mb-3 font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-600/80">
-      {children}
-    </p>
-  );
+/* ─── Thin rule ───────────────────────────────────────────────────────────── */
+function Rule() {
+  return <div style={{ height: 1, background: "#e8e2d9", width: "100%" }} />;
 }
 
-/* ─── Divider ──────────────────────────────────────────────────────────────── */
-function Divider() {
-  return <div className="h-px w-full bg-gradient-to-r from-transparent via-stone-800 to-transparent" />;
-}
-
-/* ─── App mockup ───────────────────────────────────────────────────────────── */
+/* ─── App mockup ──────────────────────────────────────────────────────────── */
 function AppMockup() {
   return (
-    <div className="mx-auto max-w-5xl px-6 pb-4 pt-2" data-reveal>
-      <div className="overflow-hidden rounded-2xl border border-stone-800 bg-stone-950 shadow-[0_24px_64px_rgba(0,0,0,0.6)]">
-        {/* Browser chrome */}
-        <div className="flex items-center gap-1.5 border-b border-stone-800 bg-stone-900/80 px-4 py-2.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-red-500/60" />
-          <span className="h-2.5 w-2.5 rounded-full bg-amber-500/60" />
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/60" />
-          <div className="mx-3 flex-1 rounded border border-stone-800 bg-stone-950 px-3 py-1 text-center font-mono text-[10px] text-stone-600">
+    <div data-reveal style={{ maxWidth: 960, margin: "0 auto", padding: "0 2rem 2rem" }}>
+      <div style={{ borderRadius: 16, overflow: "hidden", border: "1px solid #2c2924", background: "#0c0b09", boxShadow: "0 32px 80px rgba(0,0,0,0.35)" }}>
+        {/* Chrome */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#131210", borderBottom: "1px solid #2c2924", padding: "10px 16px" }}>
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "rgba(239,68,68,0.5)" }} />
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "rgba(245,158,11,0.5)" }} />
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "rgba(52,211,153,0.5)" }} />
+          <div style={{ flex: 1, marginLeft: 12, background: "#0c0b09", border: "1px solid #2c2924", borderRadius: 6, padding: "4px 12px", fontFamily: "monospace", fontSize: 10, color: "#57534e", textAlign: "center" }}>
             localhost:5173 — Strategy Research Dashboard
           </div>
         </div>
 
         {/* App header */}
-        <div className="flex items-center justify-between border-b border-stone-800 bg-stone-900/60 px-5 py-3">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-amber-700/40 bg-amber-500/10 text-sm">📊</div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #2c2924", background: "#131210", padding: "10px 20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 8, border: "1px solid rgba(245,158,11,0.3)", background: "rgba(245,158,11,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>📊</div>
             <div>
-              <div className="text-[12px] font-bold text-stone-100">Strategy Research Dashboard</div>
-              <div className="text-[10px] text-stone-600">Search companies · clip intelligence · run AI profiles</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#f5f0eb" }}>Strategy Research Dashboard</div>
+              <div style={{ fontSize: 10, color: "#57534e" }}>Search companies · clip intelligence · run AI profiles</div>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 rounded-full border border-emerald-800/60 bg-emerald-950/60 px-2.5 py-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            <span className="text-[10px] font-medium text-emerald-400">Live</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(6,78,59,0.3)", border: "1px solid rgba(6,78,59,0.6)", borderRadius: 20, padding: "4px 10px" }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34d399" }} />
+            <span style={{ fontSize: 10, color: "#34d399", fontWeight: 500 }}>Live</span>
           </div>
         </div>
 
-        {/* Tab bar */}
-        <div className="flex overflow-x-auto border-b border-stone-800 bg-stone-900/40">
-          {["Research 130", "Briefing", "Watchlist 3", "Trends", "Timeline 12", "Comparison Lab", "Reports", "Thesis Builder 2"].map((t, i) => (
-            <div key={t} className={`shrink-0 whitespace-nowrap px-4 py-2.5 text-[11px] font-medium ${i === 0 ? "border-b-2 border-amber-500 text-amber-400" : "text-stone-600"}`}>{t}</div>
+        {/* Tabs */}
+        <div style={{ display: "flex", borderBottom: "1px solid #2c2924", background: "#0f0e0c", overflowX: "auto" }}>
+          {["Research 130","Briefing","Watchlist 3","Trends","Timeline 12","Comparison Lab","Reports","Thesis Builder 2"].map((t, i) => (
+            <div key={t} style={{ flexShrink: 0, padding: "10px 16px", fontSize: 11, fontWeight: 500, color: i === 0 ? "#f59e0b" : "#57534e", borderBottom: i === 0 ? "2px solid #f59e0b" : "none", whiteSpace: "nowrap" }}>{t}</div>
           ))}
         </div>
 
-        {/* Two-column body */}
-        <div className="grid grid-cols-[1fr_0.7fr] divide-x divide-stone-800">
-          {/* Left — news feed */}
-          <div className="p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[11px]">📰</span>
-                <span className="text-[11px] font-bold text-stone-300">Live News Feed</span>
+        {/* Body */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 0.65fr", borderTop: "none" }}>
+          {/* Left */}
+          <div style={{ padding: 16, borderRight: "1px solid #2c2924" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ fontSize: 12 }}>📰</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#d6d3d1" }}>Live News Feed</span>
               </div>
-              <span className="rounded border border-stone-800 bg-stone-900 px-1.5 py-0.5 font-mono text-[9px] text-stone-500">130</span>
+              <span style={{ fontSize: 9, color: "#57534e", fontFamily: "monospace", background: "#1a1814", border: "1px solid #2c2924", borderRadius: 4, padding: "2px 6px" }}>130</span>
             </div>
-            {/* Category tabs */}
-            <div className="mb-3 flex gap-1.5 overflow-x-auto">
-              {[{l:"All 130",a:true},{l:"Market Entry 4"},{l:"Financial 10"},{l:"Product Strategy"}].map(({l,a})=>(
-                <div key={l} className={`shrink-0 rounded-lg border px-2.5 py-1 text-[9px] font-medium ${a ? "border-amber-700/50 bg-amber-500/10 text-amber-300" : "border-stone-800 text-stone-600"}`}>{l}</div>
+            <div style={{ display: "flex", gap: 6, marginBottom: 12, flexWrap: "wrap" }}>
+              {[{l:"All 130",a:true},{l:"Market Entry"},{l:"Financial"},{l:"Product Strategy"}].map(({l,a})=>(
+                <div key={l} style={{ fontSize: 9, padding: "4px 8px", borderRadius: 6, border: `1px solid ${a ? "rgba(245,158,11,0.4)" : "#2c2924"}`, background: a ? "rgba(245,158,11,0.08)" : "transparent", color: a ? "#f59e0b" : "#78716c" }}>{l}</div>
               ))}
             </div>
-            {/* News cards */}
             {[
-              {bar:"bg-amber-500",cat:"Market Entry",catColor:"text-amber-400",date:"Apr 19, 2026",title:"Soaring jet fuel prices could threaten your European vacation",saved:true},
-              {bar:"bg-sky-500",cat:"Financial",catColor:"text-sky-400",date:"Apr 18, 2026",title:"Fed holds rates — markets brace for Q2 guidance season"},
-              {bar:"bg-violet-500",cat:"Product Strategy",catColor:"text-violet-400",date:"Apr 17, 2026",title:"Apple posts $124B revenue — AI services lead growth surge",dim:true},
+              { bar:"#f59e0b", cat:"Market Entry", catC:"#fbbf24", date:"Apr 24, 2026", title:"Soaring jet fuel prices could threaten European vacation plans", saved:true },
+              { bar:"#38bdf8", cat:"Financial",    catC:"#38bdf8", date:"Apr 23, 2026", title:"Fed holds rates — markets brace for Q2 guidance season" },
+              { bar:"#a78bfa", cat:"Product Strategy", catC:"#a78bfa", date:"Apr 22, 2026", title:"Apple posts $124B revenue — AI services lead growth surge", dim:true },
             ].map((c,i)=>(
-              <div key={i} className={`mb-2 overflow-hidden rounded-lg border border-stone-800 bg-stone-900/60 ${c.dim?"opacity-50":""}`}>
-                <div className={`h-0.5 w-full ${c.bar}`} />
-                <div className="p-2.5">
-                  <div className="mb-1 flex items-center justify-between">
-                    <span className={`text-[9px] font-semibold ${c.catColor}`}>{c.cat}</span>
-                    <span className="text-[9px] text-stone-700">{c.date}</span>
+              <div key={i} style={{ marginBottom: 8, borderRadius: 8, border: "1px solid #2c2924", background: "#131210", overflow: "hidden", opacity: c.dim ? 0.45 : 1 }}>
+                <div style={{ height: 2, background: c.bar }} />
+                <div style={{ padding: "8px 10px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                    <span style={{ fontSize: 9, fontWeight: 600, color: c.catC }}>{c.cat}</span>
+                    <span style={{ fontSize: 9, color: "#44403c" }}>{c.date}</span>
                   </div>
-                  <div className="mb-1.5 text-[10px] font-medium leading-snug text-stone-300">{c.title}</div>
-                  <div className={`inline-block rounded border px-1.5 py-0.5 text-[8px] font-medium ${c.saved ? "border-amber-700/50 bg-amber-500/10 text-amber-400" : "border-stone-700 text-stone-600"}`}>
+                  <div style={{ fontSize: 10, fontWeight: 500, color: "#d6d3d1", lineHeight: 1.4, marginBottom: 6 }}>{c.title}</div>
+                  <span style={{ fontSize: 8, padding: "2px 6px", borderRadius: 4, border: `1px solid ${c.saved ? "rgba(245,158,11,0.4)" : "#2c2924"}`, background: c.saved ? "rgba(245,158,11,0.08)" : "transparent", color: c.saved ? "#f59e0b" : "#57534e" }}>
                     {c.saved ? "✓ Saved" : "Save to Matrix"}
-                  </div>
+                  </span>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Right — saved strategies */}
-          <div className="p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <span className="text-[11px] font-bold text-stone-300">Saved Strategies</span>
-              <span className="rounded border border-stone-800 bg-stone-900 px-1.5 py-0.5 font-mono text-[9px] text-stone-500">2</span>
+          {/* Right */}
+          <div style={{ padding: 16 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#d6d3d1" }}>Saved Strategies</span>
+              <span style={{ fontSize: 9, color: "#57534e", fontFamily: "monospace", background: "#1a1814", border: "1px solid #2c2924", borderRadius: 4, padding: "2px 6px" }}>2</span>
             </div>
             {[
-              {bar:"bg-amber-500",title:"Soaring jet fuel prices could threaten your European vacation",meta:"Market Entry · Washington Post · Apr 19"},
-              {bar:"bg-sky-500",title:"Fed holds rates — markets brace for Q2 guidance",meta:"Financial · Bloomberg · Apr 18",dim:true},
+              { bar:"#f59e0b", title:"Jet fuel prices threaten European vacations", meta:"Market Entry · Washington Post · Apr 24" },
+              { bar:"#38bdf8", title:"Fed holds rates — markets brace for Q2 guidance", meta:"Financial · Bloomberg · Apr 23", dim:true },
             ].map((c,i)=>(
-              <div key={i} className={`mb-2 overflow-hidden rounded-lg border border-stone-800 bg-stone-900/60 ${c.dim?"opacity-60":""}`}>
-                <div className={`h-0.5 w-full ${c.bar}`} />
-                <div className="p-2.5">
-                  <div className="mb-1 text-[10px] font-medium leading-snug text-stone-300">{c.title}</div>
-                  <div className="mb-2 text-[9px] text-stone-600">{c.meta}</div>
-                  <div className="h-5 rounded border border-stone-800 bg-stone-950/60" />
+              <div key={i} style={{ marginBottom: 8, borderRadius: 8, border: "1px solid #2c2924", background: "#131210", overflow: "hidden", opacity: c.dim ? 0.55 : 1 }}>
+                <div style={{ height: 2, background: c.bar }} />
+                <div style={{ padding: "8px 10px" }}>
+                  <div style={{ fontSize: 10, fontWeight: 500, color: "#d6d3d1", lineHeight: 1.4, marginBottom: 4 }}>{c.title}</div>
+                  <div style={{ fontSize: 9, color: "#57534e", marginBottom: 8 }}>{c.meta}</div>
+                  <div style={{ height: 18, borderRadius: 4, border: "1px solid #2c2924", background: "#0c0b09" }} />
                 </div>
               </div>
             ))}
@@ -131,327 +123,253 @@ function AppMockup() {
   );
 }
 
-/* ─── Stats ────────────────────────────────────────────────────────────────── */
-const STATS = [
-  { num: "8",    label: "Specialist research tabs" },
-  { num: "9+",   label: "AI profile sections" },
-  { num: "100%", label: "Free with Groq or local Ollama" },
-  { num: "0",    label: "Data sent to servers (local mode)" },
-];
-
-/* ─── Core features ────────────────────────────────────────────────────────── */
-const FEATURES = [
-  { icon: "📡", title: "Live News Feed",         desc: "Real-time headlines from NewsAPI, auto-categorised across 9 strategy lenses. Filter the feed by category with live article counts." },
-  { icon: "🧠", title: "AI Company Profiles",    desc: "Generate a 9-section intelligence brief per company — Signal Scores (1–10) with an interactive radar chart and AI-written rationale for each rating." },
-  { icon: "☀️", title: "Morning Briefing",        desc: "AI-synthesised daily digest built from your live feed. Top stories, key themes, companies to watch, and an editor's take — all in one card." },
-  { icon: "📐", title: "Thesis Builder",          desc: "Group saved articles into investment theses. AI synthesises evidence for and against, plus what would have to be true for the thesis to hold." },
-  { icon: "📊", title: "Trends & Analytics",      desc: "Category volume, company coverage, save-activity timelines, and keyword-based sentiment charts — all derived from your own research data." },
-  { icon: "⚖️", title: "Comparison Lab",          desc: "Overlay radar charts and signal-score tables for up to four AI-profiled companies. Instantly see relative strengths and blind spots." },
-];
-
-/* ─── 8 tabs ───────────────────────────────────────────────────────────────── */
-const TABS = [
-  { n:"01", label:"Research",       desc:"Live news feed, article saving, company profile generation." },
-  { n:"02", label:"Briefing",       desc:"AI-generated daily intelligence digest from your feed." },
-  { n:"03", label:"Watchlist",      desc:"Monitor companies and keywords; live match counts." },
-  { n:"04", label:"Trends",         desc:"Category volume, sentiment timelines, and save-activity charts." },
-  { n:"05", label:"Timeline",       desc:"Saved articles in chronological order with week grouping." },
-  { n:"06", label:"Comparison Lab", desc:"Side-by-side radar chart comparison of AI-profiled companies." },
-  { n:"07", label:"Reports",        desc:"Build and export formatted research reports with AI summaries." },
-  { n:"08", label:"Thesis Builder", desc:"Group articles into theses with AI synthesis for and against." },
-];
-
-/* ─── How it works ─────────────────────────────────────────────────────────── */
-const STEPS = [
-  { n:"01", title:"Search a topic or company",         desc:"Enter a query and the live feed pulls real-time headlines from NewsAPI, organised by category." },
-  { n:"02", title:"Save intelligence to your matrix",  desc:"One click saves an article. Add a company tag and research notes to build your structured dataset." },
-  { n:"03", title:"Generate an AI company profile",    desc:"Tag articles to a company and hit generate — a full 9-section brief with signal scores appears in seconds." },
-  { n:"04", title:"Build a thesis around your ideas",  desc:"Move saved articles into a thesis. AI synthesises evidence for and against your hypothesis." },
-  { n:"05", title:"Monitor, compare, and report",      desc:"Track keywords on the Watchlist, compare profiles in the Lab, and export polished reports from the Reports tab." },
-];
-
-/* ─── Main component ───────────────────────────────────────────────────────── */
+/* ─── Main ────────────────────────────────────────────────────────────────── */
 export default function SplashScreen({ onEnter }) {
   useReveal();
 
+  const FEATURES = [
+    { icon: "📡", title: "Live News Feed",       desc: "Real-time headlines from NewsAPI, auto-categorised across 9 strategy lenses with live article counts." },
+    { icon: "🧠", title: "AI Company Profiles",  desc: "9-section intelligence brief per company with Signal Scores, radar chart, and AI-written rationale for every rating." },
+    { icon: "☀️", title: "Morning Briefing",      desc: "AI-synthesised daily digest of your feed — top stories, key themes, and companies to watch." },
+    { icon: "📐", title: "Thesis Builder",        desc: "Group saved articles into investment theses. AI synthesises evidence for and against your hypothesis." },
+    { icon: "📊", title: "Trends & Analytics",    desc: "Category volume, sentiment timelines, and save-activity charts derived from your own research data." },
+    { icon: "⚖️", title: "Comparison Lab",        desc: "Overlay radar charts for up to four AI-profiled companies and spot relative strengths at a glance." },
+  ];
+
+  const STEPS = [
+    { n:"01", t:"Search a topic or company",        d:"Enter a query and the live feed pulls real-time headlines, auto-organised by category." },
+    { n:"02", t:"Save intelligence to your matrix", d:"One click saves an article. Add a company tag and research notes to build your dataset." },
+    { n:"03", t:"Generate an AI company profile",   d:"Tag articles to a company and hit generate — a full 9-section brief appears in seconds." },
+    { n:"04", t:"Build a thesis around your ideas", d:"Move saved articles into a thesis. AI synthesises evidence for and against your hypothesis." },
+    { n:"05", t:"Monitor, compare, and report",     d:"Track keywords, compare profiles in the Lab, and export polished reports." },
+  ];
+
+  const TABS = [
+    ["01","Research","Live feed, save articles, generate AI profiles."],
+    ["02","Briefing","AI daily digest from your live feed."],
+    ["03","Watchlist","Track companies and keywords with live match counts."],
+    ["04","Trends","Category volume, sentiment, and save-activity charts."],
+    ["05","Timeline","Saved articles grouped by week."],
+    ["06","Comparison Lab","Radar chart comparison of AI-profiled companies."],
+    ["07","Reports","Build and export formatted research reports."],
+    ["08","Thesis Builder","Group articles into theses with AI synthesis."],
+  ];
+
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-stone-950">
+    <>
+      {/* ── Google Fonts for serif headlines ── */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        [data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity 0.65s ease, transform 0.65s ease; }
+        [data-reveal].srd-vis { opacity: 1; transform: translateY(0); }
+        .srd-btn-outline { border: 1px solid #c9a84c; background: transparent; color: #8a6c2a; padding: 0.7rem 2rem; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: background 0.2s, color 0.2s; }
+        .srd-btn-outline:hover { background: #f5f0e8; color: #6b4f1a; }
+        .srd-btn-dark { border: none; background: #1a1612; color: #f5f0eb; padding: 0.85rem 2.5rem; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .srd-btn-dark:hover { background: #2c2520; }
+        html { scroll-behavior: smooth; }
+      `}</style>
 
-      {/* ─── Sticky Nav ─────────────────────────────────────────── */}
-      <nav className="sticky top-0 z-10 flex items-center justify-between border-b border-stone-800/80 bg-stone-950/90 px-6 py-3 backdrop-blur-md sm:px-10">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-6 w-6 items-center justify-center rounded border border-amber-700/40 bg-amber-500/10 text-xs">📊</div>
-          <span className="text-[13px] font-bold text-stone-100">Strategy Dashboard</span>
-        </div>
-        <div className="hidden items-center gap-6 sm:flex">
-          {[["#features","Features"],["#tabs","8 Tabs"],["#how-it-works","How it works"],["#ai","AI Engine"]].map(([href,label])=>(
-            <a key={href} href={href} className="text-[13px] text-stone-500 transition-colors hover:text-stone-200">{label}</a>
-          ))}
-        </div>
-        <button
-          onClick={onEnter}
-          className="rounded-lg border border-amber-700/60 bg-amber-500/10 px-4 py-1.5 text-[13px] font-semibold text-amber-300 transition-all hover:bg-amber-500/20 hover:text-amber-200"
-        >
-          Open Dashboard →
-        </button>
-      </nav>
+      <div style={{ position: "fixed", inset: 0, zIndex: 50, overflowY: "auto", background: "#faf8f5", fontFamily: "'Inter', sans-serif", color: "#1a1612" }}>
 
-      {/* ─── Hero ───────────────────────────────────────────────── */}
-      <section className="relative flex min-h-[92vh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
-        {/* Subtle radial glow */}
-        <div className="pointer-events-none absolute left-1/2 top-1/4 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-amber-500/[0.06] blur-3xl" />
-
-        <div className="relative max-w-3xl" data-reveal>
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-stone-800 bg-stone-900/60 px-3.5 py-1.5">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            </span>
-            <span className="text-[11px] font-medium text-stone-400">Strategy Research Tool</span>
+        {/* ─── NAV ─────────────────────────────────────────────────── */}
+        <nav style={{ position: "sticky", top: 0, zIndex: 10, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 2.5rem", height: 60, background: "rgba(250,248,245,0.92)", backdropFilter: "blur(12px)", borderBottom: "1px solid #e8e2d9" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 26, height: 26, borderRadius: 7, border: "1px solid #d4c5a0", background: "#f5edd8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13 }}>📊</div>
+            <span style={{ fontWeight: 700, fontSize: 14, color: "#1a1612", letterSpacing: "-0.01em" }}>Strategy Dashboard</span>
           </div>
-
-          <h1 className="text-5xl font-bold leading-[1.1] tracking-tight text-stone-50 sm:text-6xl">
-            Your personal<br />intelligence desk
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-xl text-[16px] leading-relaxed text-stone-500">
-            A full research workflow in one professional dashboard — live news, AI intelligence profiles with signal scores, 8 specialist research tabs, and exportable reports.
-          </p>
-
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={onEnter}
-              className="group flex items-center gap-2 rounded-xl border border-amber-700/60 bg-amber-500/10 px-6 py-3 text-[14px] font-semibold text-amber-300 transition-all hover:border-amber-600 hover:bg-amber-500/20"
-            >
-              Open Dashboard
-              <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-              </svg>
-            </button>
-            <a href="#features" className="flex items-center gap-1.5 rounded-xl border border-stone-800 bg-stone-900/60 px-6 py-3 text-[14px] font-medium text-stone-400 transition-colors hover:border-stone-700 hover:text-stone-200">
-              Explore Features ↓
-            </a>
+          <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
+            {[["#features","Features"],["#tabs","8 Tabs"],["#works","How it works"],["#ai","AI Engine"]].map(([href,label]) => (
+              <a key={href} href={href} style={{ fontSize: 13, color: "#78716c", textDecoration: "none", fontWeight: 500 }}
+                onMouseEnter={e => e.target.style.color="#1a1612"} onMouseLeave={e => e.target.style.color="#78716c"}>
+                {label}
+              </a>
+            ))}
           </div>
+          <button onClick={onEnter} className="srd-btn-outline">Open Dashboard →</button>
+        </nav>
 
-          <p className="mt-6 text-[12px] text-stone-700">Scroll to explore ↓</p>
-        </div>
-      </section>
-
-      {/* ─── App Mockup ─────────────────────────────────────────── */}
-      <AppMockup />
-
-      {/* ─── Stats ──────────────────────────────────────────────── */}
-      <div className="mx-auto max-w-5xl px-6 py-10" data-reveal>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {STATS.map((s) => (
-            <div key={s.num} className="rounded-xl border border-stone-800 bg-stone-900/60 p-5 text-center">
-              <div className="text-3xl font-bold text-amber-400">{s.num}</div>
-              <div className="mt-1 text-[11px] leading-snug text-stone-500">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <Divider />
-
-      {/* ─── Core Features ──────────────────────────────────────── */}
-      <section id="features" className="mx-auto max-w-5xl px-6 py-20">
-        <div className="mb-12 text-center" data-reveal>
-          <SectionLabel>Core Features</SectionLabel>
-          <h2 className="text-3xl font-bold tracking-tight text-stone-50 sm:text-4xl">
-            Everything a strategist<br />needs, built in
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-[15px] text-stone-500">
-            From live news ingestion to AI-powered deep dives — the full research workflow in one professional interface.
-          </p>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f, i) => (
-            <div key={f.title} className="rounded-xl border border-stone-800 bg-stone-900/60 p-5 transition-colors hover:border-stone-700" data-reveal>
-              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg border border-stone-800 bg-stone-900 text-lg">
-                {f.icon}
-              </div>
-              <div className="mb-1.5 text-[14px] font-semibold text-stone-200">{f.title}</div>
-              <div className="text-[13px] leading-relaxed text-stone-500">{f.desc}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <Divider />
-
-      {/* ─── 8 Research Tabs ────────────────────────────────────── */}
-      <section id="tabs" className="mx-auto max-w-5xl px-6 py-20">
-        <div className="mb-12 text-center" data-reveal>
-          <SectionLabel>8 Research Tabs</SectionLabel>
-          <h2 className="text-3xl font-bold tracking-tight text-stone-50 sm:text-4xl">One app, eight specialist views</h2>
-          <p className="mx-auto mt-4 max-w-xl text-[15px] text-stone-500">
-            Each tab is purpose-built for a distinct part of the research workflow.
-          </p>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-reveal>
-          {TABS.map((t) => (
-            <div key={t.n} className="rounded-xl border border-stone-800 bg-stone-900/60 p-4">
-              <div className="mb-2 font-mono text-[10px] font-semibold text-stone-700">{t.n}</div>
-              <div className="mb-1 text-[13px] font-semibold text-stone-200">{t.label}</div>
-              <div className="text-[12px] leading-relaxed text-stone-600">{t.desc}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <Divider />
-
-      {/* ─── How it works ───────────────────────────────────────── */}
-      <section id="how-it-works" className="mx-auto max-w-3xl px-6 py-20">
-        <div className="mb-12 text-center" data-reveal>
-          <SectionLabel>How it works</SectionLabel>
-          <h2 className="text-3xl font-bold tracking-tight text-stone-50 sm:text-4xl">From feed to insight in minutes</h2>
-        </div>
-
-        <div className="space-y-0" data-reveal>
-          {STEPS.map((s, i) => (
-            <div key={s.n} className="flex gap-6 border-b border-stone-800 py-6 last:border-b-0">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-stone-800 bg-stone-900 font-mono text-[11px] font-semibold text-amber-600/80">
-                {s.n}
-              </div>
-              <div>
-                <div className="mb-1 text-[14px] font-semibold text-stone-200">{s.title}</div>
-                <div className="text-[13px] leading-relaxed text-stone-500">{s.desc}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <Divider />
-
-      {/* ─── AI Engine ──────────────────────────────────────────── */}
-      <section id="ai" className="mx-auto max-w-5xl px-6 py-20">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
+        {/* ─── HERO ────────────────────────────────────────────────── */}
+        <section style={{ minHeight: "92vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "8rem 2rem 4rem" }}>
           <div data-reveal>
-            <SectionLabel>AI Engine</SectionLabel>
-            <h2 className="text-3xl font-bold tracking-tight text-stone-50 sm:text-4xl">
-              Deep profiles,<br />not summaries
-            </h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-stone-500">
-              Every company profile is a 9-section investment-grade brief generated by Groq or local Ollama. Signal Scores are rated 1–10 across six strategic dimensions with AI-written rationale for each score, visualised on an interactive radar chart.
+            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "#a08040", marginBottom: "1.5rem" }}>
+              Strategy Research Tool
             </p>
-            <div className="mt-6 space-y-2.5">
-              {["Signal Scores with AI-written rationale per dimension","Interactive radar chart overlay in Comparison Lab","Evidence-for and evidence-against thesis synthesis","Executive summaries across multiple company profiles"].map((item) => (
-                <div key={item} className="flex items-start gap-2.5">
-                  <svg className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                  </svg>
-                  <span className="text-[13px] text-stone-400">{item}</span>
-                </div>
-              ))}
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(3rem, 7vw, 5.5rem)", fontWeight: 700, lineHeight: 1.08, letterSpacing: "-0.02em", color: "#1a1612", marginBottom: "1.75rem" }}>
+              Your personal<br />intelligence desk
+            </h1>
+            <p style={{ maxWidth: 520, margin: "0 auto 2.5rem", fontSize: 16, lineHeight: 1.75, color: "#78716c", fontWeight: 400 }}>
+              A full research workflow in one professional dashboard — live news, AI intelligence profiles with signal scores, 8 specialist research tabs, and exportable reports.
+            </p>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+              <button onClick={onEnter} className="srd-btn-dark">
+                Open Dashboard
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+              </button>
+              <a href="#features" style={{ border: "1px solid #d4c5a0", background: "transparent", color: "#78716c", padding: "0.7rem 1.8rem", borderRadius: 6, fontSize: "0.85rem", fontWeight: 500, letterSpacing: "0.04em", textDecoration: "none", display: "inline-block" }}>
+                Explore Features ↓
+              </a>
             </div>
           </div>
+        </section>
 
-          {/* Signal score mock */}
-          <div className="rounded-xl border border-stone-800 bg-stone-900/60 p-6" data-reveal>
-            <p className="mb-4 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-600/80">Signal Scores — Apple Inc.</p>
-            {[
-              { label: "Strategic Momentum",   val: 9 },
-              { label: "Market Opportunity",   val: 8 },
-              { label: "Competitive Position", val: 9 },
-              { label: "Financial Health",     val: 8 },
-              { label: "Execution Capability", val: 8 },
-              { label: "Risk Exposure",        val: 4 },
-            ].map((s) => (
-              <div key={s.label} className="mb-3">
-                <div className="mb-1 flex items-center justify-between">
-                  <span className="text-[12px] text-stone-400">{s.label}</span>
-                  <span className="font-mono text-[12px] font-semibold text-stone-300">{s.val}<span className="text-stone-700">/10</span></span>
-                </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-stone-800">
-                  <div
-                    className="h-full rounded-full bg-amber-500/70 transition-all"
-                    style={{ width: `${s.val * 10}%` }}
-                  />
+        {/* ─── APP MOCKUP ──────────────────────────────────────────── */}
+        <AppMockup />
+
+        {/* ─── STATS ───────────────────────────────────────────────── */}
+        <div data-reveal style={{ maxWidth: 880, margin: "0 auto", padding: "2rem 2rem 4rem", display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 1, background: "#e8e2d9", borderRadius: 14, overflow: "hidden" }}>
+          {[["8","Specialist research tabs"],["9+","AI profile sections"],["100%","Free with Groq or Ollama"],["0","Data sent to servers"]].map(([n,l]) => (
+            <div key={n} style={{ background: "#faf8f5", padding: "2rem 1.5rem", textAlign: "center" }}>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 700, color: "#1a1612", lineHeight: 1 }}>{n}</div>
+              <div style={{ fontSize: 12, color: "#a09080", marginTop: 8, lineHeight: 1.4 }}>{l}</div>
+            </div>
+          ))}
+        </div>
+
+        <Rule />
+
+        {/* ─── FEATURES ────────────────────────────────────────────── */}
+        <section id="features" style={{ maxWidth: 960, margin: "0 auto", padding: "6rem 2rem" }}>
+          <div data-reveal style={{ textAlign: "center", marginBottom: "4rem" }}>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#a08040", marginBottom: 12 }}>Core Features</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 700, color: "#1a1612", lineHeight: 1.2, marginBottom: 16 }}>
+              Everything a strategist<br />needs, built in
+            </h2>
+            <p style={{ fontSize: 15, color: "#78716c", maxWidth: 480, margin: "0 auto" }}>From live news ingestion to AI-powered deep dives — the full research workflow in one interface.</p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1px", background: "#e8e2d9", borderRadius: 14, overflow: "hidden" }}>
+            {FEATURES.map((f) => (
+              <div key={f.title} data-reveal style={{ background: "#faf8f5", padding: "2rem 1.75rem" }}>
+                <div style={{ fontSize: 22, marginBottom: 12 }}>{f.icon}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "#1a1612", marginBottom: 8 }}>{f.title}</div>
+                <div style={{ fontSize: 13, lineHeight: 1.65, color: "#78716c" }}>{f.desc}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <Rule />
+
+        {/* ─── 8 TABS ──────────────────────────────────────────────── */}
+        <section id="tabs" style={{ maxWidth: 960, margin: "0 auto", padding: "6rem 2rem" }}>
+          <div data-reveal style={{ textAlign: "center", marginBottom: "4rem" }}>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#a08040", marginBottom: 12 }}>8 Research Tabs</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 700, color: "#1a1612", lineHeight: 1.2 }}>One app, eight specialist views</h2>
+          </div>
+          <div data-reveal style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1px", background: "#e8e2d9", borderRadius: 14, overflow: "hidden" }}>
+            {TABS.map(([n, label, desc]) => (
+              <div key={n} style={{ background: "#faf8f5", padding: "1.5rem 1.25rem" }}>
+                <div style={{ fontFamily: "monospace", fontSize: 10, color: "#c0b090", marginBottom: 8 }}>{n}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#1a1612", marginBottom: 6 }}>{label}</div>
+                <div style={{ fontSize: 12, lineHeight: 1.55, color: "#a09080" }}>{desc}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <Rule />
+
+        {/* ─── HOW IT WORKS ────────────────────────────────────────── */}
+        <section id="works" style={{ maxWidth: 680, margin: "0 auto", padding: "6rem 2rem" }}>
+          <div data-reveal style={{ textAlign: "center", marginBottom: "4rem" }}>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#a08040", marginBottom: 12 }}>How it works</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 700, color: "#1a1612" }}>From feed to insight<br />in minutes</h2>
+          </div>
+          <div data-reveal>
+            {STEPS.map((s, i) => (
+              <div key={s.n} style={{ display: "flex", gap: 24, padding: "1.75rem 0", borderBottom: i < STEPS.length - 1 ? "1px solid #e8e2d9" : "none" }}>
+                <div style={{ flexShrink: 0, width: 36, height: 36, borderRadius: 8, border: "1px solid #e0d8cc", background: "#f5f0e8", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "monospace", fontSize: 11, fontWeight: 600, color: "#a08040" }}>{s.n}</div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: "#1a1612", marginBottom: 6 }}>{s.t}</div>
+                  <div style={{ fontSize: 13, lineHeight: 1.65, color: "#78716c" }}>{s.d}</div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <Divider />
+        <Rule />
 
-      {/* ─── Tech stack ─────────────────────────────────────────── */}
-      <section className="mx-auto max-w-5xl px-6 py-16" data-reveal>
-        <div className="mb-8 text-center">
-          <SectionLabel>Tech Stack</SectionLabel>
-          <h2 className="text-2xl font-bold tracking-tight text-stone-100">Built with</h2>
-        </div>
-        <div className="flex flex-wrap justify-center gap-2.5">
-          {[
-            { label: "React", dot: "bg-sky-400" },
-            { label: "Vite", dot: "bg-violet-400" },
-            { label: "Tailwind CSS", dot: "bg-cyan-400" },
-            { label: "shadcn/ui", dot: "bg-stone-400" },
-            { label: "Recharts", dot: "bg-emerald-400" },
-            { label: "Groq API", dot: "bg-amber-400" },
-            { label: "Ollama", dot: "bg-orange-400" },
-            { label: "NewsAPI", dot: "bg-rose-400" },
-          ].map((t) => (
-            <div key={t.label} className="flex items-center gap-2 rounded-lg border border-stone-800 bg-stone-900/60 px-4 py-2 text-[13px] text-stone-400 transition-colors hover:border-stone-700 hover:text-stone-200">
-              <span className={`h-2 w-2 rounded-full ${t.dot}`} />
-              {t.label}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <Divider />
-
-      {/* ─── Final CTA ──────────────────────────────────────────── */}
-      <section className="px-6 py-20" data-reveal>
-        <div className="mx-auto max-w-2xl">
-          <div className="relative overflow-hidden rounded-2xl border border-stone-800 bg-stone-900/60 px-8 py-14 text-center">
-            {/* Subtle amber glow at top */}
-            <div className="pointer-events-none absolute left-1/2 top-0 h-48 w-96 -translate-x-1/2 rounded-full bg-amber-500/[0.08] blur-3xl" />
-            <div className="relative">
-              <SectionLabel>Ready to start?</SectionLabel>
-              <h2 className="text-3xl font-bold tracking-tight text-stone-50 sm:text-4xl">
-                Open your research environment
-              </h2>
-              <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-stone-500">
-                Everything loads in-browser. Bring your own Groq key for free AI — no subscription needed.
+        {/* ─── AI ENGINE ───────────────────────────────────────────── */}
+        <section id="ai" style={{ maxWidth: 960, margin: "0 auto", padding: "6rem 2rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5rem", alignItems: "center" }}>
+            <div data-reveal>
+              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#a08040", marginBottom: 16 }}>AI Engine</p>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)", fontWeight: 700, color: "#1a1612", lineHeight: 1.2, marginBottom: 20 }}>Deep profiles,<br />not summaries</h2>
+              <p style={{ fontSize: 15, lineHeight: 1.75, color: "#78716c", marginBottom: 24 }}>
+                Every company profile is a 9-section investment-grade brief generated by Groq or local Ollama. Signal Scores are rated 1–10 across six strategic dimensions with AI-written rationale for every rating.
               </p>
-              <button
-                onClick={onEnter}
-                className="group mt-8 inline-flex items-center gap-2.5 rounded-xl border border-amber-700/60 bg-amber-500/10 px-8 py-3.5 text-[15px] font-semibold text-amber-300 transition-all hover:border-amber-600 hover:bg-amber-500/20"
-              >
-                Open Dashboard
-                <svg className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-              </button>
+              {["Signal Scores with AI-written rationale per dimension","Interactive radar chart overlay in Comparison Lab","Evidence-for and against thesis synthesis","Executive summaries across multiple company profiles"].map((item) => (
+                <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 10 }}>
+                  <svg style={{ width: 14, height: 14, flexShrink: 0, marginTop: 3, color: "#a08040" }} fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                  <span style={{ fontSize: 13, color: "#78716c" }}>{item}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Signal score card */}
+            <div data-reveal style={{ background: "#f0ebe3", borderRadius: 14, border: "1px solid #e0d8cc", padding: "2rem" }}>
+              <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#a08040", marginBottom: 20 }}>Signal Scores — Apple Inc.</p>
+              {[["Strategic Momentum",9],["Market Opportunity",8],["Competitive Position",9],["Financial Health",8],["Execution Capability",8],["Risk Exposure",4]].map(([label, val]) => (
+                <div key={label} style={{ marginBottom: 14 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                    <span style={{ fontSize: 12, color: "#5c5040" }}>{label}</span>
+                    <span style={{ fontSize: 12, fontWeight: 600, fontFamily: "monospace", color: "#1a1612" }}>{val}<span style={{ color: "#c0b090" }}>/10</span></span>
+                  </div>
+                  <div style={{ height: 4, borderRadius: 2, background: "#ddd6c8", overflow: "hidden" }}>
+                    <div style={{ height: "100%", borderRadius: 2, background: val >= 7 ? "#a08040" : val >= 5 ? "#c0a060" : "#c08060", width: `${val * 10}%`, transition: "width 0.8s ease" }} />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ─── Footer ─────────────────────────────────────────────── */}
-      <footer className="border-t border-stone-800 px-6 py-6 text-center">
-        <p className="text-[12px] text-stone-700">
-          Strategy Research Dashboard · Built with React, Groq & NewsAPI ·{" "}
-          <a href="https://github.com/jmitchell26-netizen/Strategy-Dashboard-" target="_blank" rel="noopener noreferrer" className="text-stone-600 transition-colors hover:text-stone-400">
-            View on GitHub →
-          </a>
-        </p>
-      </footer>
+        <Rule />
 
-      {/* ─── Reveal animation styles ─────────────────────────────── */}
-      <style>{`
-        [data-reveal] { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
-        [data-reveal].srd-visible { opacity: 1; transform: translateY(0); }
-      `}</style>
+        {/* ─── TECH STACK ──────────────────────────────────────────── */}
+        <section data-reveal style={{ maxWidth: 960, margin: "0 auto", padding: "4rem 2rem", textAlign: "center" }}>
+          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#a08040", marginBottom: 28 }}>Built with</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}>
+            {["React","Vite","Tailwind CSS","shadcn/ui","Recharts","Groq API","Ollama","NewsAPI"].map((t) => (
+              <div key={t} style={{ padding: "8px 18px", border: "1px solid #e0d8cc", borderRadius: 20, fontSize: 13, color: "#78716c", background: "#f5f0e8" }}>{t}</div>
+            ))}
+          </div>
+        </section>
 
-    </div>
+        {/* ─── DARK CTA ────────────────────────────────────────────── */}
+        <section style={{ background: "#141210", padding: "6rem 2rem", textAlign: "center" }}>
+          <div data-reveal style={{ maxWidth: 580, margin: "0 auto" }}>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#a08040", marginBottom: 20 }}>Ready to start?</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 700, color: "#f5f0eb", lineHeight: 1.1, marginBottom: 20 }}>
+              Open your research<br />environment
+            </h2>
+            <p style={{ fontSize: 15, lineHeight: 1.75, color: "#78716c", marginBottom: 36, maxWidth: 440, margin: "0 auto 2.5rem" }}>
+              Everything loads in-browser. Bring your own Groq key for free AI-powered analysis — no subscription needed.
+            </p>
+            <button onClick={onEnter} className="srd-btn-dark" style={{ fontSize: "0.9rem", padding: "1rem 2.75rem", borderRadius: 8, background: "#f5f0eb", color: "#141210" }}
+              onMouseEnter={e => { e.currentTarget.style.background="#e8e0d4"; }}
+              onMouseLeave={e => { e.currentTarget.style.background="#f5f0eb"; }}>
+              Open Dashboard →
+            </button>
+          </div>
+        </section>
+
+        {/* ─── FOOTER ──────────────────────────────────────────────── */}
+        <footer style={{ background: "#141210", borderTop: "1px solid #2c2924", padding: "1.5rem 2rem", textAlign: "center" }}>
+          <p style={{ fontSize: 12, color: "#44403c" }}>
+            Strategy Research Dashboard · Built with React, Groq & NewsAPI ·{" "}
+            <a href="https://github.com/jmitchell26-netizen/Strategy-Dashboard-" target="_blank" rel="noopener noreferrer" style={{ color: "#78716c", textDecoration: "none" }}>
+              View on GitHub →
+            </a>
+          </p>
+        </footer>
+
+      </div>
+    </>
   );
 }
