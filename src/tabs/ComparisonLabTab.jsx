@@ -46,16 +46,16 @@ export default function ComparisonLabTab({ companyProfiles }) {
     <div>
       <div className="mb-6">
         <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">Comparison Lab</p>
-        <h2 className="mt-1 text-2xl font-bold tracking-tight text-stone-100">Profile Comparison Lab</h2>
+        <h2 className="mt-1 text-2xl font-bold tracking-tight text-stone-900">Profile Comparison Lab</h2>
         <p className="mt-1 text-sm text-stone-500">
           Select up to {MAX_SELECT} companies with generated profiles to compare signal scores side by side.
         </p>
       </div>
 
       {readyProfiles.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-stone-800 py-24 text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-stone-800 bg-stone-900">
-            <svg className="h-6 w-6 text-stone-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-stone-200 py-24 text-center">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded border border-stone-200 bg-white">
+            <svg className="h-6 w-6 text-stone-300" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
             </svg>
           </div>
@@ -79,15 +79,15 @@ export default function ComparisonLabTab({ companyProfiles }) {
                     key={prof.key}
                     onClick={() => toggleCompany(prof.key)}
                     disabled={!isSelected && selected.length >= MAX_SELECT}
-                    className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-all ${
+                    className={`flex items-center gap-2 rounded border px-4 py-2 text-sm font-semibold transition-all ${
                       isSelected
-                        ? "border-stone-600 bg-stone-800 text-stone-200"
-                        : "border-stone-700 bg-stone-900 text-stone-400 hover:border-stone-600 hover:text-stone-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                        ? "border-stone-300 bg-white text-stone-700"
+                        : "border-stone-200 bg-white text-stone-400 hover:border-stone-300 hover:text-stone-600 disabled:opacity-30 disabled:cursor-not-allowed"
                     }`}
                   >
                     <span
                       className="h-2 w-2 rounded-full shrink-0"
-                      style={{ background: dotColor ?? "#44403c" }}
+                      style={{ background: dotColor ?? "#d6d3d1" }}
                     />
                     {prof.name}
                   </button>
@@ -97,19 +97,19 @@ export default function ComparisonLabTab({ companyProfiles }) {
           </div>
 
           {selectedProfiles.length < 2 ? (
-            <div className="rounded-xl border border-dashed border-stone-800 py-12 text-center">
+            <div className="rounded-xl border border-dashed border-stone-200 py-12 text-center">
               <p className="text-sm text-stone-600">Select at least 2 companies above to start comparing.</p>
             </div>
           ) : (
             <div className="space-y-8">
               {/* Overlay Radar */}
-              <div className="rounded-xl border border-stone-800 bg-stone-900/60 p-6">
+              <div className="rounded-xl border border-stone-200 bg-white p-6">
                 <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">Signal Score Overlay</p>
                 <p className="mb-4 text-[11px] text-stone-600">All companies plotted on the same axes — larger area = stronger overall signal.</p>
                 <ResponsiveContainer width="100%" height={340}>
                   <RadarChart data={radarData} outerRadius="70%">
-                    <PolarGrid stroke="#44403c" strokeOpacity={0.5} />
-                    <PolarAngleAxis dataKey="dim" tick={{ fill: "#a8a29e", fontSize: 10, fontWeight: 500 }} />
+                    <PolarGrid stroke="#e7e5e4" strokeOpacity={0.5} />
+                    <PolarAngleAxis dataKey="dim" tick={{ fill: "#78716c", fontSize: 10, fontWeight: 500 }} />
                     {selectedProfiles.map((prof, i) => (
                       <Radar
                         key={prof.key}
@@ -122,7 +122,7 @@ export default function ComparisonLabTab({ companyProfiles }) {
                       />
                     ))}
                     <Tooltip
-                      contentStyle={{ background: "#1c1917", border: "1px solid #44403c", borderRadius: 8, fontSize: 12 }}
+                      contentStyle={{ background: "#ffffff", border: "1px solid #e7e5e4", borderRadius: 8, fontSize: 12 }}
                       labelStyle={{ color: "#e7e5e4" }}
                       formatter={(v, name) => [v != null ? `${v}/10` : "N/A", name]}
                     />
@@ -132,8 +132,8 @@ export default function ComparisonLabTab({ companyProfiles }) {
               </div>
 
               {/* Score comparison table */}
-              <div className="rounded-xl border border-stone-800 bg-stone-900/60 overflow-hidden">
-                <div className="px-5 py-3 border-b border-stone-800">
+              <div className="rounded-xl border border-stone-200 bg-white overflow-hidden">
+                <div className="px-5 py-3 border-b border-stone-200">
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">Score Breakdown</p>
                 </div>
                 <div className="overflow-x-auto">
@@ -155,7 +155,7 @@ export default function ComparisonLabTab({ companyProfiles }) {
                         const validValues = values.filter((v) => v !== null);
                         const maxVal = validValues.length ? Math.max(...validValues) : null;
                         return (
-                          <tr key={dim} className="border-b border-stone-800/60 hover:bg-stone-800/30 transition-colors">
+                          <tr key={dim} className="border-b border-stone-100 hover:bg-stone-50 transition-colors">
                             <td className="px-5 py-3 text-[12px] font-medium text-stone-400">{dim}</td>
                             {values.map((val, i) => {
                               const isTop = val !== null && val === maxVal && validValues.length > 1;
@@ -199,7 +199,7 @@ export default function ComparisonLabTab({ companyProfiles }) {
                   const top = entries.slice(0, 2);
                   const bottom = entries.slice(-2).reverse();
                   return (
-                    <div key={prof.key} className="rounded-xl border border-stone-800 bg-stone-900/60 p-4"
+                    <div key={prof.key} className="rounded-xl border border-stone-200 bg-white p-4"
                       style={{ borderTopColor: COMPANY_COLORS[i], borderTopWidth: 2 }}>
                       <p className="mb-3 text-[11px] font-bold tracking-wide" style={{ color: COMPANY_COLORS[i] }}>{prof.name}</p>
                       <div className="space-y-2">

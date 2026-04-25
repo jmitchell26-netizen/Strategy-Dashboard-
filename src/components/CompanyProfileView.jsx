@@ -127,15 +127,15 @@ function MiniRadar({ scores }) {
   return (
     <ResponsiveContainer width="100%" height={180}>
       <RadarChart data={data} outerRadius="70%">
-        <PolarGrid stroke="#44403c" strokeOpacity={0.5} />
+        <PolarGrid stroke="#e7e5e4" strokeOpacity={0.5} />
         <PolarAngleAxis
           dataKey="metric"
-          tick={{ fill: "#a8a29e", fontSize: 9, fontWeight: 500 }}
+          tick={{ fill: "#78716c", fontSize: 9, fontWeight: 500 }}
         />
         <Radar dataKey="value" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.12} strokeWidth={1.5} />
         <RechartsTooltip
           contentStyle={{ background: "#1c1917", border: "1px solid #44403c", borderRadius: 8, fontSize: 11 }}
-          labelStyle={{ color: "#e7e5e4" }}
+          labelStyle={{ color: "#1c1917" }}
           itemStyle={{ color: "#f59e0b" }}
           formatter={(v) => [`${v} / 10`]}
         />
@@ -150,15 +150,15 @@ function FullRadar({ scores }) {
   return (
     <ResponsiveContainer width="100%" height={220}>
       <RadarChart data={data} outerRadius="72%">
-        <PolarGrid stroke="#44403c" strokeOpacity={0.5} />
+        <PolarGrid stroke="#e7e5e4" strokeOpacity={0.5} />
         <PolarAngleAxis
           dataKey="metric"
-          tick={{ fill: "#a8a29e", fontSize: 10, fontWeight: 500 }}
+          tick={{ fill: "#78716c", fontSize: 10, fontWeight: 500 }}
         />
         <Radar dataKey="value" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.15} strokeWidth={2} />
         <RechartsTooltip
           contentStyle={{ background: "#1c1917", border: "1px solid #44403c", borderRadius: 8, fontSize: 12 }}
-          labelStyle={{ color: "#e7e5e4" }}
+          labelStyle={{ color: "#1c1917" }}
           itemStyle={{ color: "#f59e0b" }}
           formatter={(v) => [`${v} / 10`]}
         />
@@ -179,7 +179,7 @@ function ScoreBars({ scores, showRationale = false }) {
         return (
           <div key={label} className="space-y-1">
             <div className="flex justify-between text-[11px]">
-              <span className="font-medium text-stone-300">{label}</span>
+              <span className="font-medium text-stone-600">{label}</span>
               <span className="tabular-nums text-stone-500">{value}/10</span>
             </div>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-stone-800">
@@ -209,7 +209,7 @@ function DocSection({ heading, lines, isFirst }) {
   return (
     <div className={`${!isFirst ? "border-t border-stone-800 pt-5" : ""} pb-5`}>
       {/* Section label */}
-      <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">
+      <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-700">
         {heading}
       </p>
 
@@ -218,7 +218,7 @@ function DocSection({ heading, lines, isFirst }) {
         <div className="border-l-[3px] border-amber-700/60 pl-4">
           <div className="space-y-2">
             {prose.map((p, i) => (
-              <p key={i} className="text-[13px] italic leading-relaxed text-stone-300">{p}</p>
+              <p key={i} className="text-[13px] italic leading-relaxed text-stone-600">{p}</p>
             ))}
           </div>
         </div>
@@ -232,9 +232,9 @@ function DocSection({ heading, lines, isFirst }) {
             return (
               <div key={i} className="flex gap-3 items-start">
                 <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-stone-600" />
-                <p className="text-[13px] leading-relaxed text-stone-300">
+                <p className="text-[13px] leading-relaxed text-stone-600">
                   {label && (
-                    <span className="font-semibold text-stone-200">{label}{" — "}</span>
+                    <span className="font-semibold text-stone-700">{label}{" — "}</span>
                   )}
                   {desc}
                 </p>
@@ -278,8 +278,8 @@ export function CompanyProfilePreview({ markdown }) {
       )}
 
       {hasScores && (
-        <div className="rounded-xl border border-stone-800 bg-stone-900/60 p-3">
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-amber-600/80">
+        <div className="rounded-xl border border-stone-200 bg-white p-3">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-amber-700">
             Signal Scores
           </p>
           <MiniRadar scores={scores} />
@@ -310,8 +310,8 @@ export default function CompanyProfileView({ markdown }) {
     <div>
       {/* Signal scores panel */}
       {hasScores && (
-        <div className="mb-6 rounded-xl border border-stone-800 bg-stone-900/60 p-4">
-          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">
+        <div className="mb-6 rounded-xl border border-stone-200 bg-white p-4">
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-700">
             Signal Scores
           </p>
           <FullRadar scores={scores} />

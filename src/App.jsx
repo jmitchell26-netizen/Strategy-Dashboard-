@@ -127,35 +127,35 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-950">
+    <div className="min-h-screen bg-stone-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* ── Header ─────────────────────────────────────────── */}
-        <header className="py-6">
+        <header className="border-b border-stone-200 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-700/40 bg-amber-500/10">
-                <svg className="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor">
+              <div className="flex h-9 w-9 items-center justify-center rounded-md border border-stone-300 bg-white">
+                <svg className="h-4.5 w-4.5 text-amber-700" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0 1 16.5 7.605" />
                 </svg>
               </div>
               <div>
-                <h1 className="text-xl font-bold tracking-tight text-stone-50">Strategy Research Dashboard</h1>
-                <p className="text-xs text-stone-500">Search companies · clip intelligence · run AI profiles</p>
+                <h1 className="text-[15px] font-bold tracking-tight text-stone-900">Strategy Research Dashboard</h1>
+                <p className="text-[11px] text-stone-400">Search companies · clip intelligence · run AI profiles</p>
               </div>
             </div>
-            <div className="hidden items-center gap-1.5 rounded-full border border-emerald-800/60 bg-emerald-950/60 px-3 py-1 sm:flex">
+            <div className="hidden items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 sm:flex">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
               </span>
-              <span className="text-[11px] font-medium text-emerald-400">Live</span>
+              <span className="text-[11px] font-medium text-emerald-700">Live</span>
             </div>
           </div>
         </header>
 
         {/* ── Navigation tabs ─────────────────────────────────── */}
-        <div className="border-b border-stone-800">
+        <div className="border-b border-stone-200">
           <ScrollArea className="w-full">
             <nav className="flex">
               {NAV_TABS.map((tab) => {
@@ -167,13 +167,13 @@ function App() {
                     onClick={() => setActiveTab(tab.id)}
                     className={`relative whitespace-nowrap px-4 py-3 text-sm font-medium transition-colors ${
                       isActive
-                        ? "text-amber-400 after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[2px] after:rounded-t after:bg-amber-500"
-                        : "text-stone-500 hover:text-stone-300"
+                        ? "text-amber-700 after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[2px] after:bg-amber-600"
+                        : "text-stone-400 hover:text-stone-700"
                     }`}
                   >
                     {tab.label}
                     {badge != null && (
-                      <span className={`ml-1.5 text-[10px] tabular-nums ${isActive ? "text-amber-600" : "text-stone-700"}`}>
+                      <span className={`ml-1.5 text-[10px] tabular-nums ${isActive ? "text-amber-600" : "text-stone-300"}`}>
                         {badge}
                       </span>
                     )}

@@ -75,13 +75,13 @@ function BriefingSection({ heading, lines, isFirst }) {
   const isEditor = heading.toLowerCase().includes("editor");
 
   return (
-    <div className={`${isFirst ? "" : "border-t border-stone-800 pt-5"} pb-5`}>
+    <div className={`${isFirst ? "" : "border-t border-stone-200 pt-5"} pb-5`}>
       <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">{label}</p>
 
       {isEditor ? (
-        <div className="border-l-[3px] border-amber-700/50 pl-4">
+        <div className="border-l-[3px] border-amber-300 pl-4">
           {prose.map((p, i) => (
-            <p key={i} className="text-[13px] italic leading-relaxed text-stone-300">{p}</p>
+            <p key={i} className="text-[13px] italic leading-relaxed text-stone-600">{p}</p>
           ))}
         </div>
       ) : useBullets ? (
@@ -93,8 +93,8 @@ function BriefingSection({ heading, lines, isFirst }) {
             return (
               <div key={i} className="flex gap-3 items-start">
                 <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-stone-600" />
-                <p className="text-[13px] leading-relaxed text-stone-300">
-                  {headline && <span className="font-semibold text-stone-200">{headline} — </span>}
+                <p className="text-[13px] leading-relaxed text-stone-400">
+                  {headline && <span className="font-semibold text-stone-800">{headline} — </span>}
                   {body}
                 </p>
               </div>
@@ -104,7 +104,7 @@ function BriefingSection({ heading, lines, isFirst }) {
       ) : (
         <div className="space-y-2">
           {prose.map((p, i) => (
-            <p key={i} className="text-[13px] leading-relaxed text-stone-300">{p}</p>
+            <p key={i} className="text-[13px] leading-relaxed text-stone-600">{p}</p>
           ))}
         </div>
       )}
@@ -142,13 +142,13 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
       {/* Header */}
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">Morning Briefing</p>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight text-stone-100">{today}</h2>
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-amber-700">Morning Briefing</p>
+          <h2 className="mt-1 text-2xl font-bold tracking-tight text-stone-900">{today}</h2>
           {briefing && (
-            <p className="mt-1 text-xs text-stone-600">
+            <p className="mt-1 text-xs text-stone-400">
               {isToday ? "Generated today" : "From " + new Date(briefing.generatedAt).toLocaleDateString()}
               {" · "}{briefing.articleCount} articles analysed
-              {!isToday && <span className="ml-2 text-amber-600/70"> · Stale — regenerate for today's feed</span>}
+              {!isToday && <span className="ml-2 text-amber-600"> · Stale — regenerate for today's feed</span>}
             </p>
           )}
         </div>
@@ -157,7 +157,7 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
           disabled={generating || !isLlmConfigured() || feedArticles.length === 0}
           variant="outline"
           size="sm"
-          className="shrink-0 border-amber-700/50 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 hover:text-amber-200 disabled:opacity-40"
+          className="shrink-0 border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 hover:text-amber-800 disabled:opacity-40"
         >
           {generating
             ? <><Spinner className="mr-2 h-3.5 w-3.5" />Generating…</>
@@ -166,24 +166,24 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
       </div>
 
       {!isLlmConfigured() && (
-        <div className="mb-6 rounded-xl border border-stone-700 bg-stone-900/60 px-4 py-3 text-sm text-stone-400">
-          Configure an LLM in <code className="rounded bg-stone-800 px-1 text-xs text-stone-300">.env</code> to generate briefings.
+        <div className="mb-6 rounded-xl border border-stone-200 bg-white/60 px-4 py-3 text-sm text-stone-400">
+          Configure an LLM in <code className="rounded bg-stone-100 px-1 text-xs text-stone-600">.env</code> to generate briefings.
         </div>
       )}
 
       {error && (
-        <div className="mb-6 rounded-xl border border-red-900/50 bg-red-950/30 px-4 py-3 text-sm text-red-400">{error}</div>
+        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
       )}
 
       {/* Generating skeleton */}
       {generating && (
-        <div className="rounded-xl border border-stone-800 bg-stone-900/60 p-5 space-y-6">
+        <div className="rounded-xl border border-stone-200 bg-white p-5 space-y-6">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className={`${i > 0 ? "border-t border-stone-800 pt-5" : ""} space-y-2`}>
-              <Skeleton className="h-2.5 w-24 bg-stone-800" />
+            <div key={i} className={`${i > 0 ? "border-t border-stone-200 pt-5" : ""} space-y-2`}>
+              <Skeleton className="h-2.5 w-24 bg-stone-100" />
               <div className="space-y-1.5 pt-1">
                 {Array.from({ length: i === 4 ? 2 : 3 }).map((_, j) => (
-                  <Skeleton key={j} className="h-3 w-full bg-stone-800" />
+                  <Skeleton key={j} className="h-3 w-full bg-stone-100" />
                 ))}
               </div>
             </div>
@@ -193,7 +193,7 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
 
       {/* Briefing content */}
       {!generating && sections.length > 0 && (
-        <div className="rounded-xl border border-stone-800 bg-stone-900/60 px-6 py-5">
+        <div className="rounded-xl border border-stone-200 bg-white px-6 py-5">
           {sections.map((s, i) => (
             <BriefingSection key={i} heading={s.heading} lines={s.lines} isFirst={i === 0} />
           ))}
@@ -202,8 +202,8 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
 
       {/* Empty state */}
       {!generating && !briefing && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-stone-800 py-24 text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-stone-800 bg-stone-900">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-stone-200 py-24 text-center">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-stone-200 bg-white">
             <svg className="h-5 w-5 text-stone-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
             </svg>

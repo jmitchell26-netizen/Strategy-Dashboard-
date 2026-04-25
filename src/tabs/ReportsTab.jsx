@@ -18,10 +18,10 @@ function ReportPreview({ config, companyProfiles, savedItems, execSummary }) {
     : [];
 
   return (
-    <div className="space-y-8 text-stone-200">
+    <div className="space-y-8 text-stone-800">
       {/* Title */}
-      <div className="border-b border-stone-700 pb-4">
-        <h1 className="text-xl font-bold text-stone-100">{config.title || "Strategy Intelligence Report"}</h1>
+      <div className="border-b border-stone-200 pb-4">
+        <h1 className="text-xl font-bold text-stone-900">{config.title || "Strategy Intelligence Report"}</h1>
         <p className="mt-1 text-sm text-stone-500">{today} · {selectedProfiles.length} companies</p>
       </div>
 
@@ -40,7 +40,7 @@ function ReportPreview({ config, companyProfiles, savedItems, execSummary }) {
       {/* Company sections */}
       {selectedProfiles.map((prof) => (
         <div key={prof.displayName} className="border-t border-stone-800 pt-6">
-          <h2 className="mb-1 text-base font-bold text-stone-100">{prof.displayName}</h2>
+          <h2 className="mb-1 text-base font-bold text-stone-900">{prof.displayName}</h2>
           <p className="text-[11px] text-stone-600">Updated {new Date(prof.updatedAt).toLocaleDateString()}</p>
           {prof.summary && (
             <div className="mt-3 text-[13px] leading-relaxed text-stone-400 line-clamp-6">
@@ -172,7 +172,7 @@ export default function ReportsTab({ savedItems, companyProfiles }) {
       <div className="space-y-6">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">Reports</p>
-          <h2 className="mt-1 text-xl font-bold tracking-tight text-stone-100">Report Builder</h2>
+          <h2 className="mt-1 text-xl font-bold tracking-tight text-stone-900">Report Builder</h2>
         </div>
 
         {/* Title */}
@@ -182,7 +182,7 @@ export default function ReportsTab({ savedItems, companyProfiles }) {
             value={config.title}
             onChange={(e) => setConfig((c) => ({ ...c, title: e.target.value }))}
             placeholder="Strategy Intelligence Report"
-            className="w-full rounded-lg border border-stone-700 bg-stone-900 px-3 py-2 text-[13px] text-stone-200 placeholder:text-stone-600 focus:border-amber-600/50 focus:outline-none"
+            className="w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-[13px] text-stone-700 placeholder:text-stone-300 focus:border-amber-400 focus:outline-none"
           />
         </div>
 
@@ -198,13 +198,13 @@ export default function ReportsTab({ savedItems, companyProfiles }) {
               {profileList.map((p) => {
                 const isOn = config.companies.includes(p.key);
                 return (
-                  <label key={p.key} className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-stone-800 bg-stone-900/60 px-3 py-2 hover:border-stone-700 transition-colors">
+                  <label key={p.key} className="flex cursor-pointer items-center gap-2.5 rounded border border-stone-200 bg-white px-3 py-2 hover:border-stone-300 transition-colors">
                     <div className={`h-4 w-4 rounded border-2 transition-colors flex items-center justify-center ${
-                      isOn ? "border-amber-500 bg-amber-500" : "border-stone-600 bg-transparent"
+                      isOn ? "border-amber-400 bg-amber-400" : "border-stone-300 bg-transparent"
                     }`} onClick={() => toggleCompany(p.key)}>
-                      {isOn && <svg className="h-2.5 w-2.5 text-stone-950" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>}
+                      {isOn && <svg className="h-2.5 w-2.5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>}
                     </div>
-                    <span className="text-[13px] text-stone-300">{p.name}</span>
+                    <span className="text-[13px] text-stone-700">{p.name}</span>
                   </label>
                 );
               })}
@@ -221,9 +221,9 @@ export default function ReportsTab({ savedItems, companyProfiles }) {
           ].map(({ key, label }) => (
             <label key={key} className="flex cursor-pointer items-center gap-2.5">
               <div className={`h-4 w-4 rounded border-2 transition-colors flex items-center justify-center ${
-                config[key] ? "border-amber-500 bg-amber-500" : "border-stone-600 bg-transparent"
+                config[key] ? "border-amber-400 bg-amber-400" : "border-stone-300 bg-transparent"
               }`} onClick={() => setConfig((c) => ({ ...c, [key]: !c[key] }))}>
-                {config[key] && <svg className="h-2.5 w-2.5 text-stone-950" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>}
+                {config[key] && <svg className="h-2.5 w-2.5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>}
               </div>
               <span className="text-[13px] text-stone-400">{label}</span>
             </label>
@@ -233,33 +233,33 @@ export default function ReportsTab({ savedItems, companyProfiles }) {
         {error && <p className="text-[12px] text-red-400">{error}</p>}
 
         {/* Actions */}
-        <div className="space-y-2 border-t border-stone-800 pt-4">
+        <div className="space-y-2 border-t border-stone-200 pt-4">
           <Button
             onClick={handleGenExecSummary}
             disabled={generating || config.companies.length < 2 || !isLlmConfigured()}
             variant="outline"
-            className="w-full border-amber-700/50 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 disabled:opacity-40"
+            className="w-full border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 disabled:opacity-40"
             size="sm"
           >
             {generating ? <><Spinner className="mr-2 h-3.5 w-3.5" />Generating…</> : "Generate Executive Summary"}
           </Button>
           <Button onClick={handleCopyMarkdown} disabled={!canPreview} variant="outline"
-            className="w-full border-stone-700 text-stone-300 hover:border-stone-600 hover:text-stone-200" size="sm">
+            className="w-full border-stone-200 text-stone-600 hover:border-stone-300 hover:text-stone-800" size="sm">
             {copied ? "✓ Copied!" : "Copy as Markdown"}
           </Button>
           <Button onClick={() => window.print()} disabled={!canPreview} variant="outline"
-            className="w-full border-stone-700 text-stone-300 hover:border-stone-600 hover:text-stone-200" size="sm">
+            className="w-full border-stone-200 text-stone-600 hover:border-stone-300 hover:text-stone-800" size="sm">
             Print / Save PDF
           </Button>
         </div>
       </div>
 
       {/* ── Preview panel ── */}
-      <div className="rounded-2xl border border-stone-800 bg-stone-900/40 p-6 min-h-[400px]">
+      <div className="rounded border border-stone-200 bg-white p-6 min-h-[400px]">
         {!canPreview ? (
           <div className="flex h-full flex-col items-center justify-center py-16 text-center">
             <p className="text-sm font-semibold text-stone-500">Report preview</p>
-            <p className="mt-1 text-xs text-stone-600">Select at least one company to see a preview.</p>
+            <p className="mt-1 text-xs text-stone-400">Select at least one company to see a preview.</p>
           </div>
         ) : (
           <ReportPreview

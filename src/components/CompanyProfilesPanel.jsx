@@ -130,13 +130,13 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
             return (
               <div
                 key={key}
-                className="rounded-2xl border border-stone-800 bg-stone-900/40 p-4"
+                className="rounded-2xl border border-stone-200 bg-white/40 p-4"
               >
                 {/* Card header */}
                 <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-semibold text-stone-200">{displayName}</p>
-                    <p className="text-[11px] text-stone-600">
+                    <p className="text-sm font-semibold text-stone-700">{displayName}</p>
+                    <p className="text-[11px] text-stone-400">
                       {items.length} article{items.length !== 1 ? "s" : ""} tagged
                       {prof?.updatedAt && (
                         <> · updated {new Date(prof.updatedAt).toLocaleDateString()}</>
@@ -151,7 +151,7 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
                         variant="outline"
                         size="sm"
                         onClick={() => setFullProfileKey(key)}
-                        className="border-amber-700/50 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 hover:text-amber-200"
+                        className="border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-500/20 hover:text-amber-200"
                       >
                         See full profile →
                       </Button>
@@ -164,7 +164,7 @@ export default function CompanyProfilesPanel({ savedItems, companyProfiles, onPr
                           onClick={() => handleGenerate(key, displayName, items)}
                           variant="outline"
                           size="sm"
-                          className="border-stone-700 bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-stone-200"
+                          className="border-stone-200 bg-stone-50 text-stone-500 hover:bg-stone-100 hover:text-stone-700"
                         >
                           {loading
                             ? <><Spinner className="mr-1.5 h-3 w-3" />Generating…</>

@@ -26,22 +26,22 @@ const CAT_COLORS = {
 };
 
 const CUSTOM_TOOLTIP_STYLE = {
-  contentStyle: { background: "#1c1917", border: "1px solid #44403c", borderRadius: 8, fontSize: 12 },
-  labelStyle: { color: "#e7e5e4" }, itemStyle: { color: "#f59e0b" },
+  contentStyle: { background: "#ffffff", border: "1px solid #e7e5e4", borderRadius: 8, fontSize: 12 },
+  labelStyle: { color: "#1c1917" }, itemStyle: { color: "#f59e0b" },
 };
 
 function SectionHeader({ title, subtitle }) {
   return (
     <div className="mb-4">
-      <h3 className="text-sm font-bold text-stone-200">{title}</h3>
-      {subtitle && <p className="text-[11px] text-stone-600">{subtitle}</p>}
+      <h3 className="text-sm font-bold text-stone-800">{title}</h3>
+      {subtitle && <p className="text-[11px] text-stone-400">{subtitle}</p>}
     </div>
   );
 }
 
 function ChartCard({ children, className = "" }) {
   return (
-    <div className={`rounded-xl border border-stone-800 bg-stone-900/60 p-5 ${className}`}>
+    <div className={`rounded border border-stone-200 bg-white p-5 ${className}`}>
       {children}
     </div>
   );
@@ -115,7 +115,7 @@ export default function TrendsTab({ feedArticles, savedItems }) {
     <div>
       <div className="mb-8">
         <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">Trends</p>
-        <h2 className="mt-1 text-2xl font-bold tracking-tight text-stone-100">Research Analytics</h2>
+        <h2 className="mt-1 text-2xl font-bold tracking-tight text-stone-900">Research Analytics</h2>
         <p className="mt-1 text-sm text-stone-500">Live charts from your feed and saved matrix.</p>
       </div>
 

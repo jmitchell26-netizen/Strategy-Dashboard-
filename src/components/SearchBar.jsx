@@ -28,7 +28,7 @@ export default function SearchBar({ query, onChange }) {
         value={query}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search company name (e.g. Apple, Tesla, Microsoft)…"
-        className="w-full rounded-xl border border-stone-700 bg-stone-900 py-4 pl-14 pr-5 h-auto text-[15px] font-medium text-stone-100 placeholder:text-stone-600 shadow-sm transition-all focus-visible:border-amber-600/60 focus-visible:ring-1 focus-visible:ring-amber-500/20"
+        className="w-full rounded border border-stone-200 bg-white py-4 pl-14 pr-5 h-auto text-[15px] font-medium text-stone-800 placeholder:text-stone-300 shadow-sm transition-all focus-visible:border-amber-400 focus-visible:ring-1 focus-visible:ring-amber-200"
       />
 
       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-5">

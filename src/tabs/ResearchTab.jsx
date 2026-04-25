@@ -10,15 +10,15 @@ import StrategyMatrix from "../components/StrategyMatrix";
 import CompanyProfilesPanel from "../components/CompanyProfilesPanel";
 
 const CATEGORY_COLORS = {
-  "Product Strategy": { dot: "bg-violet-400",  active: "text-violet-300 border-violet-400" },
-  Expansion:          { dot: "bg-emerald-400", active: "text-emerald-300 border-emerald-400" },
-  Financial:          { dot: "bg-sky-400",     active: "text-sky-300 border-sky-400" },
-  "Market Entry":     { dot: "bg-amber-400",   active: "text-amber-300 border-amber-400" },
-  "R&D":              { dot: "bg-rose-400",    active: "text-rose-300 border-rose-400" },
-  "Content Strategy": { dot: "bg-fuchsia-400", active: "text-fuchsia-300 border-fuchsia-400" },
-  "Product Launch":   { dot: "bg-cyan-400",    active: "text-cyan-300 border-cyan-400" },
-  "M&A":              { dot: "bg-orange-400",  active: "text-orange-300 border-orange-400" },
-  General:            { dot: "bg-indigo-400",  active: "text-indigo-300 border-indigo-400" },
+  "Product Strategy": { dot: "bg-violet-400",  active: "text-violet-700 border-violet-300" },
+  Expansion:          { dot: "bg-emerald-400", active: "text-emerald-700 border-emerald-300" },
+  Financial:          { dot: "bg-sky-400",     active: "text-sky-700 border-sky-300" },
+  "Market Entry":     { dot: "bg-amber-400",   active: "text-amber-700 border-amber-300" },
+  "R&D":              { dot: "bg-rose-400",    active: "text-rose-700 border-rose-300" },
+  "Content Strategy": { dot: "bg-fuchsia-400", active: "text-fuchsia-700 border-fuchsia-300" },
+  "Product Launch":   { dot: "bg-cyan-400",    active: "text-cyan-700 border-cyan-300" },
+  "M&A":              { dot: "bg-orange-400",  active: "text-orange-700 border-orange-300" },
+  General:            { dot: "bg-indigo-400",  active: "text-indigo-700 border-indigo-300" },
 };
 
 export default function ResearchTab({
@@ -56,16 +56,16 @@ export default function ResearchTab({
 
         {/* ── Left: Live News Feed ── */}
         <section>
-          <div className="mb-4 flex items-center gap-3 border-b border-stone-800 pb-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-stone-800">
-              <svg className="h-3.5 w-3.5 text-stone-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+          <div className="mb-4 flex items-center gap-3 border-b border-stone-200 pb-3">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md border border-stone-200 bg-white">
+              <svg className="h-3.5 w-3.5 text-stone-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
               </svg>
             </div>
-            <h2 className="text-base font-bold tracking-tight text-stone-200">Live News Feed</h2>
-            <span className="ml-auto rounded-full border border-stone-700 bg-stone-800/80 px-2.5 py-0.5 text-xs font-semibold tabular-nums text-stone-400">
+            <h2 className="text-[13px] font-bold tracking-tight text-stone-800">Live News Feed</h2>
+            <span className="ml-auto rounded border border-stone-200 bg-white px-2 py-0.5 text-xs font-semibold tabular-nums text-stone-500">
               {displayedArticles.length}
-              {activeCategory !== "All" && <span className="text-stone-600"> / {feedArticles.length}</span>}
+              {activeCategory !== "All" && <span className="text-stone-300"> / {feedArticles.length}</span>}
             </span>
           </div>
 
@@ -76,14 +76,14 @@ export default function ResearchTab({
                 <div className="flex gap-1 pb-2">
                   <button
                     onClick={() => setActiveCategory("All")}
-                    className={`shrink-0 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+                    className={`shrink-0 rounded border px-3 py-1.5 text-xs font-medium transition-colors ${
                       activeCategory === "All"
-                        ? "border-amber-700/60 bg-amber-500/15 text-amber-300"
-                        : "border-stone-700 bg-stone-900 text-stone-500 hover:border-stone-600 hover:text-stone-300"
+                        ? "border-amber-300 bg-amber-50 text-amber-700"
+                        : "border-stone-200 bg-white text-stone-500 hover:border-stone-300 hover:text-stone-700"
                     }`}
                   >
                     All
-                    <span className={`ml-1.5 tabular-nums ${activeCategory === "All" ? "text-amber-400" : "text-stone-600"}`}>
+                    <span className={`ml-1.5 tabular-nums ${activeCategory === "All" ? "text-amber-600" : "text-stone-300"}`}>
                       {feedArticles.length}
                     </span>
                   </button>
@@ -95,15 +95,15 @@ export default function ResearchTab({
                       <button
                         key={cat}
                         onClick={() => setActiveCategory(cat)}
-                        className={`shrink-0 flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+                        className={`shrink-0 flex items-center gap-1.5 rounded border px-3 py-1.5 text-xs font-medium transition-colors ${
                           isActive
-                            ? `border-stone-700 bg-stone-800 ${cc?.active ?? "text-stone-200 border-stone-500"}`
-                            : "border-stone-700 bg-stone-900 text-stone-500 hover:border-stone-600 hover:text-stone-300"
+                            ? `bg-white ${cc?.active ?? "text-stone-700 border-stone-300"}`
+                            : "border-stone-200 bg-white text-stone-500 hover:border-stone-300 hover:text-stone-700"
                         }`}
                       >
-                        <span className={`h-1.5 w-1.5 rounded-full ${cc?.dot ?? "bg-stone-500"}`} />
+                        <span className={`h-1.5 w-1.5 rounded-full ${cc?.dot ?? "bg-stone-400"}`} />
                         {cat}
-                        <span className={`tabular-nums ${isActive ? "opacity-70" : "text-stone-600"}`}>{count}</span>
+                        <span className={`tabular-nums ${isActive ? "opacity-60" : "text-stone-300"}`}>{count}</span>
                       </button>
                     );
                   })}
@@ -114,32 +114,28 @@ export default function ResearchTab({
           )}
 
           {error && (
-            <div className="mb-4 rounded-lg border border-red-900 bg-red-950/50 px-4 py-3 text-sm text-red-400">
+            <div className="mb-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
               <span className="font-semibold">API Error:</span> {error}
             </div>
           )}
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {loading && feedArticles.length === 0 ? (
               Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="rounded-xl border border-stone-800 bg-stone-900 p-5 space-y-3">
+                <div key={i} className="rounded border border-stone-200 bg-white p-4 space-y-3">
                   <div className="flex justify-between">
-                    <Skeleton className="h-5 w-24 bg-stone-800" />
-                    <Skeleton className="h-4 w-20 bg-stone-800" />
+                    <Skeleton className="h-4 w-24 bg-stone-100" />
+                    <Skeleton className="h-4 w-20 bg-stone-100" />
                   </div>
-                  <Skeleton className="h-4 w-3/4 bg-stone-800" />
-                  <Skeleton className="h-3 w-full bg-stone-800" />
-                  <Skeleton className="h-3 w-5/6 bg-stone-800" />
-                  <div className="flex justify-between pt-1">
-                    <Skeleton className="h-3 w-16 bg-stone-800" />
-                    <Skeleton className="h-7 w-28 bg-stone-800" />
-                  </div>
+                  <Skeleton className="h-4 w-3/4 bg-stone-100" />
+                  <Skeleton className="h-3 w-full bg-stone-100" />
+                  <Skeleton className="h-3 w-5/6 bg-stone-100" />
                 </div>
               ))
             ) : displayedArticles.length > 0 ? (
               <>
                 {loading && (
-                  <div className="rounded-lg border border-emerald-900 bg-emerald-950/50 px-3 py-2 text-center text-[11px] text-emerald-400">
+                  <div className="rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-center text-[11px] text-emerald-700">
                     Updating feed…
                   </div>
                 )}
@@ -154,12 +150,12 @@ export default function ResearchTab({
                 ))}
               </>
             ) : (
-              <div className="rounded-xl border border-dashed border-stone-800 py-16 text-center">
-                <p className="text-sm text-stone-600">
+              <div className="rounded border border-dashed border-stone-200 py-16 text-center">
+                <p className="text-sm text-stone-400">
                   {activeCategory !== "All"
-                    ? <><span className="text-stone-400">{activeCategory}</span> — no articles in current feed</>
+                    ? <><span className="text-stone-600">{activeCategory}</span> — no articles in current feed</>
                     : query
-                      ? <>No results for "<span className="text-stone-400">{query}</span>"</>
+                      ? <>No results for "<span className="text-stone-600">{query}</span>"</>
                       : "No articles available right now"}
                 </p>
               </div>
@@ -168,15 +164,15 @@ export default function ResearchTab({
         </section>
 
         {/* ── Right: Saved Strategy Matrix ── */}
-        <section className="rounded-2xl border border-stone-800 bg-stone-900/30 p-5">
-          <div className="mb-4 flex items-center gap-3 border-b border-stone-800 pb-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/15">
-              <svg className="h-3.5 w-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+        <section className="rounded-md border border-stone-200 bg-white p-5">
+          <div className="mb-4 flex items-center gap-3 border-b border-stone-200 pb-3">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md border border-amber-200 bg-amber-50">
+              <svg className="h-3.5 w-3.5 text-amber-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z" />
               </svg>
             </div>
-            <h2 className="text-base font-bold tracking-tight text-stone-200">Saved Strategies</h2>
-            <span className="ml-auto rounded-full border border-stone-700 bg-stone-800/80 px-2.5 py-0.5 text-xs font-semibold tabular-nums text-stone-400">
+            <h2 className="text-[13px] font-bold tracking-tight text-stone-800">Saved Strategies</h2>
+            <span className="ml-auto rounded border border-stone-200 bg-stone-50 px-2 py-0.5 text-xs font-semibold tabular-nums text-stone-500">
               {savedItems.length}
             </span>
           </div>

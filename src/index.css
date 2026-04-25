@@ -108,20 +108,19 @@ body {
   content: "";
   position: absolute;
   inset: -1px;
-  border-radius: 16px;
+  border-radius: 8px;
   background: linear-gradient(
     135deg,
-    rgba(139, 92, 246, 0.5),  /* violet */
-    rgba(59, 130, 246, 0.5),   /* blue */
-    rgba(16, 185, 129, 0.5)    /* emerald */
+    rgba(180, 130, 40, 0.4),
+    rgba(210, 160, 60, 0.3)
   );
-  z-index: -1;       /* Behind the input */
+  z-index: -1;
   opacity: 0;
-  filter: blur(12px); /* Soft glow, not a hard edge */
+  filter: blur(10px);
   transition: opacity 0.4s ease;
 }
 .search-glow:focus-within::after {
-  opacity: 0.35; /* Glow appears when the input inside is focused */
+  opacity: 0.5;
 }
 
 /* ===== Noise Texture Overlay =====
