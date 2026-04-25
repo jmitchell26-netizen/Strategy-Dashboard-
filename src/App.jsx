@@ -144,12 +144,20 @@ function App() {
                 <p className="text-[11px] text-stone-400">Search companies · clip intelligence · run AI profiles</p>
               </div>
             </div>
-            <div className="hidden items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 sm:flex">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              </span>
-              <span className="text-[11px] font-medium text-emerald-700">Live</span>
+            <div className="flex items-center gap-3">
+              <div className="hidden items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 sm:flex">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                </span>
+                <span className="text-[11px] font-medium text-emerald-700">Live</span>
+              </div>
+              <button
+                onClick={() => setSplashVisible(true)}
+                className="rounded border border-stone-200 bg-white px-3 py-1.5 text-[11px] font-medium text-stone-500 transition-colors hover:border-stone-300 hover:text-stone-700"
+              >
+                ← About
+              </button>
             </div>
           </div>
         </header>
