@@ -13,7 +13,7 @@ import {
 
 const API_KEY = import.meta.env.VITE_CURRENTS_API_KEY;
 const BASE_URL = "https://api.currentsapi.services/v1";
-const LIMIT = 100;
+const LIMIT = 10;
 
 // Convert a Currents API article to the shape the app expects.
 // Currents uses "news" array, "published" (not publishedAt), category as array, no source object.
@@ -117,9 +117,9 @@ export default function useNews(query) {
 
     const key = encodeURIComponent(API_KEY);
     const urls = [
-      `${BASE_URL}/latest-news?language=en&category=business&limit=${LIMIT}&apiKey=${key}`,
-      `${BASE_URL}/latest-news?language=en&category=technology&limit=${LIMIT}&apiKey=${key}`,
-      `${BASE_URL}/latest-news?language=en&category=finance&limit=${LIMIT}&apiKey=${key}`,
+      `${BASE_URL}/latest-news?language=en&category=business&apiKey=${key}`,
+      `${BASE_URL}/latest-news?language=en&category=technology&apiKey=${key}`,
+      `${BASE_URL}/latest-news?language=en&category=finance&apiKey=${key}`,
     ];
 
     setLoading(true);
@@ -138,10 +138,12 @@ export default function useNews(query) {
       for (const result of results) {
         if (result.status === "fulfilled") {
           const data = result.value;
+          console.log("Currents API response:", JSON.stringify(data).slice(0, 300));
           if (data.status === "ok" && Array.isArray(data.news)) {
             rawLists.push(data.news);
-          } else if (data.message) {
-            errors.push(data.message);
+          } else {
+            const msg = data.message || data.error || `Unexpected response: ${JSON.stringify(data).slice(0, 120)}`;
+            errors.push(msg);
           }
         } else if (!isAbortError(result.reason)) {
           errors.push(result.reason?.message || "Request failed");
@@ -183,7 +185,7 @@ export default function useNews(query) {
     abortRef.current = controller;
     const generation = ++fetchGenerationRef.current;
 
-    const url = `${BASE_URL}/search?keywords=${encodeURIComponent(q)}&language=en&limit=${LIMIT}&apiKey=${encodeURIComponent(API_KEY)}`;
+    const url = `${BASE_URL}/search?keywords=${encodeURIComponent(q)}&language=en&apiKey=${encodeURIComponent(API_KEY)}`;
 
     setLoading(true);
     setError(null);
