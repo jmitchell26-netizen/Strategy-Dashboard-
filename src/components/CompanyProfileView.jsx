@@ -218,7 +218,7 @@ function DocSection({ heading, lines, isFirst }) {
         <div className="border-l-[3px] border-amber-700/60 pl-4">
           <div className="space-y-2">
             {prose.map((p, i) => (
-              <p key={i} className="text-[13px] italic leading-relaxed text-stone-600">{p}</p>
+              <p key={i} className="text-[13px] italic leading-relaxed text-stone-700">{p}</p>
             ))}
           </div>
         </div>
@@ -232,7 +232,7 @@ function DocSection({ heading, lines, isFirst }) {
             return (
               <div key={i} className="flex gap-3 items-start">
                 <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-stone-600" />
-                <p className="text-[13px] leading-relaxed text-stone-600">
+                <p className="text-[13px] leading-relaxed text-stone-800">
                   {label && (
                     <span className="font-semibold text-stone-700">{label}{" — "}</span>
                   )}
@@ -274,7 +274,7 @@ export function CompanyProfilePreview({ markdown }) {
   return (
     <div className="space-y-4">
       {excerpt && (
-        <p className="text-[13px] leading-relaxed text-stone-400">{excerpt}</p>
+        <p className="text-[13px] leading-relaxed text-stone-700">{excerpt}</p>
       )}
 
       {hasScores && (
@@ -303,7 +303,7 @@ export default function CompanyProfileView({ markdown }) {
   const visibleSections = sections.filter((s) => !isScoresSection(s.rawHeading));
 
   if (!sections.length) {
-    return <p className="text-[13px] text-stone-400">{markdown}</p>;
+    return <p className="text-[13px] text-stone-800">{markdown}</p>;
   }
 
   return (

@@ -93,7 +93,7 @@ function BriefingSection({ heading, lines, isFirst }) {
             return (
               <div key={i} className="flex gap-3 items-start">
                 <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-stone-600" />
-                <p className="text-[13px] leading-relaxed text-stone-400">
+                <p className="text-[13px] leading-relaxed text-stone-700">
                   {headline && <span className="font-semibold text-stone-800">{headline} — </span>}
                   {body}
                 </p>
