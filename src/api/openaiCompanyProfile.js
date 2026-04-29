@@ -212,21 +212,21 @@ export async function generateMorningBriefing(articles) {
 Use this exact structure:
 
 ## Top Stories
-5 bullet points. For each: **Headline** — one sentence on strategic significance.
+5 bullet points. For each: **Headline** — one sentence on strategic significance. End each bullet with one or more article references in square brackets, e.g. [2] or [2][7].
 
 ## Key Themes Today
-3–4 bullet points on the dominant strategic narratives across the clippings.
+3–4 bullet points on the dominant strategic narratives across the clippings. End each bullet with supporting references like [1][4].
 
 ## Companies to Watch
-3–4 bullet points naming specific firms and why they deserve attention today.
+3–4 bullet points naming specific firms and why they deserve attention today. End each bullet with supporting references like [3].
 
 ## Market Signals
-2–3 bullet points on macro/sector signals visible in the clippings.
+2–3 bullet points on macro/sector signals visible in the clippings. End each bullet with supporting references like [5][6].
 
 ## Editor's Take
-2–3 sentences: what is the single most important strategic development in today's feed and why?
+2–3 sentences: what is the single most important strategic development in today's feed and why? Include at least one supporting reference marker [n].
 
-Be specific, analytical, and grounded in the provided articles. Do not invent facts.`,
+Be specific, analytical, and grounded in the provided articles. Do not invent facts. Only cite article numbers that exist in the provided list.`,
       },
       { role: "user", content: `Today's articles:\n\n${articleText}` },
     ],

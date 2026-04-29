@@ -247,7 +247,7 @@ function DocSection({ heading, lines, isFirst }) {
           {prose.map((p, i) => (
             <p
               key={i}
-              className={`leading-relaxed text-stone-300 ${isOverview ? "text-[14px]" : "text-[13px]"}`}
+              className={`leading-relaxed text-stone-800 ${isOverview ? "text-[14px]" : "text-[13px]"}`}
             >
               {p}
             </p>

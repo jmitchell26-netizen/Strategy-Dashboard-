@@ -31,7 +31,7 @@ function ReportPreview({ config, companyProfiles, savedItems, execSummary }) {
           <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">Executive Summary</p>
           <div className="space-y-2">
             {execSummary.split("\n").filter(Boolean).map((p, i) => (
-              <p key={i} className="text-[13px] leading-relaxed text-stone-300">{p.replace(/\*\*/g, "")}</p>
+              <p key={i} className="text-[13px] leading-relaxed text-stone-800">{p.replace(/\*\*/g, "")}</p>
             ))}
           </div>
         </div>
@@ -43,7 +43,7 @@ function ReportPreview({ config, companyProfiles, savedItems, execSummary }) {
           <h2 className="mb-1 text-base font-bold text-stone-900">{prof.displayName}</h2>
           <p className="text-[11px] text-stone-600">Updated {new Date(prof.updatedAt).toLocaleDateString()}</p>
           {prof.summary && (
-            <div className="mt-3 text-[13px] leading-relaxed text-stone-400 line-clamp-6">
+            <div className="mt-3 text-[13px] leading-relaxed text-stone-700 line-clamp-6">
               {prof.summary.replace(/^##.+$/gm, "").replace(/\*\*/g, "").slice(0, 600)}…
             </div>
           )}
@@ -58,7 +58,7 @@ function ReportPreview({ config, companyProfiles, savedItems, execSummary }) {
             {selectedArticles.map((a) => (
               <div key={a.id} className="flex gap-3 text-[12px]">
                 <span className="shrink-0 tabular-nums text-stone-600">{a.date}</span>
-                <span className="text-stone-400">{a.title}</span>
+                <span className="text-stone-700">{a.title}</span>
                 <span className="ml-auto shrink-0 text-stone-600">{a.source}</span>
               </div>
             ))}
@@ -225,7 +225,7 @@ export default function ReportsTab({ savedItems, companyProfiles }) {
               }`} onClick={() => setConfig((c) => ({ ...c, [key]: !c[key] }))}>
                 {config[key] && <svg className="h-2.5 w-2.5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>}
               </div>
-              <span className="text-[13px] text-stone-400">{label}</span>
+              <span className="text-[13px] text-stone-700">{label}</span>
             </label>
           ))}
         </div>

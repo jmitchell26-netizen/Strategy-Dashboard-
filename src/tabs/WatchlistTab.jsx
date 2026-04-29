@@ -23,12 +23,17 @@ function matchesArticle(term, article) {
 export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) {
   const [input, setInput] = useState("");
   const [expanded, setExpanded] = useState(null);
+  const [sortMode, setSortMode] = useState("matches-desc");
+
+  function addTermValue(rawTerm) {
+    const term = rawTerm.trim();
+    if (!term || watchlist.some((w) => w.term.toLowerCase() === term.toLowerCase())) return;
+    setWatchlist((prev) => [...prev, { id: Date.now().toString(), term, addedAt: new Date().toISOString(), colorIdx: watchlist.length % TERM_DOTS.length }]);
+  }
 
   function addTerm(e) {
     e.preventDefault();
-    const term = input.trim();
-    if (!term || watchlist.some((w) => w.term.toLowerCase() === term.toLowerCase())) return;
-    setWatchlist((prev) => [...prev, { id: Date.now().toString(), term, addedAt: new Date().toISOString(), colorIdx: watchlist.length % TERM_DOTS.length }]);
+    addTermValue(input);
     setInput("");
   }
 
@@ -46,6 +51,35 @@ export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) 
   );
 
   const totalMatches = watchlistWithMatches.reduce((sum, w) => sum + w.matches.length, 0);
+  const sortedWatchlist = useMemo(() => {
+    const next = [...watchlistWithMatches];
+    if (sortMode === "matches-desc") {
+      next.sort((a, b) => b.matches.length - a.matches.length || a.term.localeCompare(b.term));
+    } else if (sortMode === "matches-asc") {
+      next.sort((a, b) => a.matches.length - b.matches.length || a.term.localeCompare(b.term));
+    } else if (sortMode === "alpha") {
+      next.sort((a, b) => a.term.localeCompare(b.term));
+    } else if (sortMode === "recent") {
+      next.sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime());
+    }
+    return next;
+  }, [watchlistWithMatches, sortMode]);
+
+  const quickSuggestions = useMemo(() => {
+    const watched = new Set(watchlist.map((w) => w.term.toLowerCase()));
+    const seen = new Set();
+    const companies = [];
+    for (const a of feedArticles) {
+      const name = (a.companyName || "").trim();
+      const key = name.toLowerCase();
+      if (!name || watched.has(key) || seen.has(key)) continue;
+      if (name.length > 32) continue;
+      seen.add(key);
+      companies.push(name);
+      if (companies.length >= 8) break;
+    }
+    return companies;
+  }, [feedArticles, watchlist]);
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -73,6 +107,40 @@ export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) 
         </Button>
       </form>
 
+      {quickSuggestions.length > 0 && (
+        <div className="mb-6">
+          <p className="mb-2 text-[11px] font-medium text-stone-500">Quick add from feed companies</p>
+          <div className="flex flex-wrap gap-2">
+            {quickSuggestions.map((term) => (
+              <button
+                key={term}
+                type="button"
+                onClick={() => addTermValue(term)}
+                className="rounded border border-stone-200 bg-white px-2.5 py-1 text-[11px] text-stone-700 transition-colors hover:border-amber-300 hover:text-amber-700"
+              >
+                + {term}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {watchlist.length > 0 && (
+        <div className="mb-3 flex items-center justify-end">
+          <label className="mr-2 text-[11px] text-stone-500">Sort</label>
+          <select
+            value={sortMode}
+            onChange={(e) => setSortMode(e.target.value)}
+            className="rounded border border-stone-200 bg-white px-2.5 py-1 text-[12px] text-stone-700 focus:border-amber-400 focus:outline-none"
+          >
+            <option value="matches-desc">Most matches</option>
+            <option value="matches-asc">Fewest matches</option>
+            <option value="recent">Recently added</option>
+            <option value="alpha">A-Z</option>
+          </select>
+        </div>
+      )}
+
       {/* Empty state */}
       {watchlist.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded border border-dashed border-stone-200 py-24 text-center">
@@ -89,7 +157,7 @@ export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) 
 
       {/* Watchlist cards */}
       <div className="space-y-3">
-        {watchlistWithMatches.map((w) => {
+        {sortedWatchlist.map((w) => {
           const dot = TERM_DOTS[w.colorIdx ?? 0];
           const isOpen = expanded === w.id;
           return (

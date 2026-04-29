@@ -67,7 +67,52 @@ function extractProse(lines) {
   return paras.filter(Boolean);
 }
 
-function BriefingSection({ heading, lines, isFirst }) {
+function extractCitationIds(text) {
+  const ids = new Set();
+  const re = /\[(\d+)\]/g;
+  let m;
+  while ((m = re.exec(text)) !== null) ids.add(Number(m[1]));
+  return [...ids].sort((a, b) => a - b);
+}
+
+function stripCitationMarkers(text) {
+  return text.replace(/\s*\[(\d+)\]/g, "").trim();
+}
+
+function SourceCitations({ citationIds, referenceLookup }) {
+  if (!citationIds.length) return null;
+  return (
+    <div className="mt-1.5 flex flex-wrap gap-1.5">
+      {citationIds.map((id) => {
+        const ref = referenceLookup[id];
+        if (!ref) return null;
+        const label = `[${id}] ${ref.source || "Source"}${ref.date ? ` · ${ref.date}` : ""}`;
+        return ref.url ? (
+          <a
+            key={id}
+            href={ref.url}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="rounded border border-stone-200 bg-stone-50 px-1.5 py-0.5 text-[10px] text-stone-600 transition-colors hover:border-amber-300 hover:text-amber-700"
+            title={ref.title || ref.source}
+          >
+            {label}
+          </a>
+        ) : (
+          <span
+            key={id}
+            className="rounded border border-stone-200 bg-stone-50 px-1.5 py-0.5 text-[10px] text-stone-600"
+            title={ref.title || ref.source}
+          >
+            {label}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+function BriefingSection({ heading, lines, isFirst, referenceLookup }) {
   const label = getSectionLabel(heading);
   const bullets = extractBullets(lines);
   const prose = extractProse(lines);
@@ -80,32 +125,49 @@ function BriefingSection({ heading, lines, isFirst }) {
 
       {isEditor ? (
         <div className="border-l-[3px] border-amber-300 pl-4">
-          {prose.map((p, i) => (
-            <p key={i} className="text-[13px] italic leading-relaxed text-stone-600">{p}</p>
-          ))}
+          {prose.map((p, i) => {
+            const citationIds = extractCitationIds(p);
+            return (
+              <div key={i} className="mb-2.5 last:mb-0">
+                <p className="text-[13px] italic leading-relaxed text-stone-700">{stripCitationMarkers(p)}</p>
+                <SourceCitations citationIds={citationIds} referenceLookup={referenceLookup} />
+              </div>
+            );
+          })}
         </div>
       ) : useBullets ? (
         <div className="space-y-2.5">
           {bullets.map((b, i) => {
-            const boldMatch = b.match(/^\*{0,2}(.+?)\*{0,2}\s*[—–]\s*(.+)/);
+            const citationIds = extractCitationIds(b);
+            const cleanBullet = stripCitationMarkers(b);
+            const boldMatch = cleanBullet.match(/^\*{0,2}(.+?)\*{0,2}\s*[—–]\s*(.+)/);
             const headline = boldMatch ? boldMatch[1].trim() : null;
-            const body = boldMatch ? boldMatch[2].trim() : b;
+            const body = boldMatch ? boldMatch[2].trim() : cleanBullet;
             return (
               <div key={i} className="flex gap-3 items-start">
                 <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-stone-600" />
-                <p className="text-[13px] leading-relaxed text-stone-700">
-                  {headline && <span className="font-semibold text-stone-800">{headline} — </span>}
-                  {body}
-                </p>
+                <div>
+                  <p className="text-[13px] leading-relaxed text-stone-700">
+                    {headline && <span className="font-semibold text-stone-800">{headline} — </span>}
+                    {body}
+                  </p>
+                  <SourceCitations citationIds={citationIds} referenceLookup={referenceLookup} />
+                </div>
               </div>
             );
           })}
         </div>
       ) : (
         <div className="space-y-2">
-          {prose.map((p, i) => (
-            <p key={i} className="text-[13px] leading-relaxed text-stone-600">{p}</p>
-          ))}
+          {prose.map((p, i) => {
+            const citationIds = extractCitationIds(p);
+            return (
+              <div key={i}>
+                <p className="text-[13px] leading-relaxed text-stone-700">{stripCitationMarkers(p)}</p>
+                <SourceCitations citationIds={citationIds} referenceLookup={referenceLookup} />
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
@@ -115,6 +177,7 @@ function BriefingSection({ heading, lines, isFirst }) {
 export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState(null);
+  const [copiedFormat, setCopiedFormat] = useState(null);
 
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long", month: "long", day: "numeric", year: "numeric",
@@ -127,7 +190,19 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
     setError(null);
     try {
       const text = await generateMorningBriefing(feedArticles);
-      setBriefing({ text, date: new Date().toDateString(), generatedAt: new Date().toISOString(), articleCount: feedArticles.length });
+      setBriefing({
+        text,
+        date: new Date().toDateString(),
+        generatedAt: new Date().toISOString(),
+        articleCount: feedArticles.length,
+        references: feedArticles.slice(0, 20).map((a, idx) => ({
+          id: idx + 1,
+          title: a.title,
+          source: a.source,
+          date: a.date,
+          url: a.url,
+        })),
+      });
     } catch (e) {
       setError(e.message);
     } finally {
@@ -135,7 +210,40 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
     }
   }
 
+  function briefingAsMarkdown() {
+    if (!briefing?.text) return "";
+    const sourceLines = (briefing?.references || []).map((r) => `- [${r.id}] ${r.title} (${r.source} · ${r.date})`);
+    return [
+      `# Morning Briefing`,
+      `_${today}_`,
+      "",
+      briefing.text,
+      ...(sourceLines.length ? ["", "## Sources", ...sourceLines] : []),
+    ].join("\n");
+  }
+
+  async function copyBriefing(format) {
+    if (!briefing?.text) return;
+    try {
+      const text = format === "markdown" ? briefingAsMarkdown() : briefing.text.replace(/\*\*/g, "");
+      await navigator.clipboard.writeText(text);
+      setCopiedFormat(format);
+      setTimeout(() => setCopiedFormat(null), 1800);
+    } catch {
+      setError("Clipboard access failed. Try copying from the visible briefing text.");
+    }
+  }
+
   const sections = briefing?.text ? parseSections(briefing.text) : [];
+  const referenceLookup = Object.fromEntries(
+    (briefing?.references || feedArticles.slice(0, 20).map((a, idx) => ({
+      id: idx + 1,
+      title: a.title,
+      source: a.source,
+      date: a.date,
+      url: a.url,
+    }))).map((r) => [r.id, r])
+  );
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -152,17 +260,39 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
             </p>
           )}
         </div>
-        <Button
-          onClick={handleGenerate}
-          disabled={generating || !isLlmConfigured() || feedArticles.length === 0}
-          variant="outline"
-          size="sm"
-          className="shrink-0 border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 hover:text-amber-800 disabled:opacity-40"
-        >
-          {generating
-            ? <><Spinner className="mr-2 h-3.5 w-3.5" />Generating…</>
-            : briefing ? "Regenerate" : "Generate Briefing"}
-        </Button>
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          <Button
+            onClick={handleGenerate}
+            disabled={generating || !isLlmConfigured() || feedArticles.length === 0}
+            variant="outline"
+            size="sm"
+            className="border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 hover:text-amber-800 disabled:opacity-40"
+          >
+            {generating
+              ? <><Spinner className="mr-2 h-3.5 w-3.5" />Generating…</>
+              : briefing ? "Regenerate" : "Generate Briefing"}
+          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => copyBriefing("plain")}
+              disabled={!briefing?.text}
+              variant="outline"
+              size="sm"
+              className="border-stone-200 bg-white text-stone-700 hover:border-stone-300 disabled:opacity-40"
+            >
+              {copiedFormat === "plain" ? "Copied" : "Copy Text"}
+            </Button>
+            <Button
+              onClick={() => copyBriefing("markdown")}
+              disabled={!briefing?.text}
+              variant="outline"
+              size="sm"
+              className="border-stone-200 bg-white text-stone-700 hover:border-stone-300 disabled:opacity-40"
+            >
+              {copiedFormat === "markdown" ? "Copied" : "Copy MD"}
+            </Button>
+          </div>
+        </div>
       </div>
 
       {!isLlmConfigured() && (
@@ -195,7 +325,13 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
       {!generating && sections.length > 0 && (
         <div className="rounded-xl border border-stone-200 bg-white px-6 py-5">
           {sections.map((s, i) => (
-            <BriefingSection key={i} heading={s.heading} lines={s.lines} isFirst={i === 0} />
+            <BriefingSection
+              key={i}
+              heading={s.heading}
+              lines={s.lines}
+              isFirst={i === 0}
+              referenceLookup={referenceLookup}
+            />
           ))}
         </div>
       )}
