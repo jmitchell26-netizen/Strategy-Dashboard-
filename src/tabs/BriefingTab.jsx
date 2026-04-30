@@ -93,7 +93,7 @@ function SourceCitations({ citationIds, referenceLookup }) {
             href={ref.url}
             target="_blank"
             rel="noreferrer noopener"
-            className="rounded border border-stone-200 bg-stone-50 px-1.5 py-0.5 text-[10px] text-stone-600 transition-colors hover:border-amber-300 hover:text-amber-700"
+            className="rounded-md border border-stone-200 bg-stone-50 px-1.5 py-0.5 text-[10px] text-stone-600 transition-colors hover:border-amber-300 hover:text-amber-700"
             title={ref.title || ref.source}
           >
             {label}
@@ -101,7 +101,7 @@ function SourceCitations({ citationIds, referenceLookup }) {
         ) : (
           <span
             key={id}
-            className="rounded border border-stone-200 bg-stone-50 px-1.5 py-0.5 text-[10px] text-stone-600"
+            className="rounded-md border border-stone-200 bg-stone-50 px-1.5 py-0.5 text-[10px] text-stone-600"
             title={ref.title || ref.source}
           >
             {label}
@@ -121,7 +121,7 @@ function BriefingSection({ heading, lines, isFirst, referenceLookup }) {
 
   return (
     <div className={`${isFirst ? "" : "border-t border-stone-200 pt-5"} pb-5`}>
-      <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">{label}</p>
+      <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-700">{label}</p>
 
       {isEditor ? (
         <div className="border-l-[3px] border-amber-300 pl-4">
@@ -129,7 +129,7 @@ function BriefingSection({ heading, lines, isFirst, referenceLookup }) {
             const citationIds = extractCitationIds(p);
             return (
               <div key={i} className="mb-2.5 last:mb-0">
-                <p className="text-[13px] italic leading-relaxed text-stone-700">{stripCitationMarkers(p)}</p>
+                <p className="text-[14px] italic leading-7 text-stone-700">{stripCitationMarkers(p)}</p>
                 <SourceCitations citationIds={citationIds} referenceLookup={referenceLookup} />
               </div>
             );
@@ -147,7 +147,7 @@ function BriefingSection({ heading, lines, isFirst, referenceLookup }) {
               <div key={i} className="flex gap-3 items-start">
                 <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-stone-600" />
                 <div>
-                  <p className="text-[13px] leading-relaxed text-stone-700">
+                  <p className="text-[14px] leading-7 text-stone-700">
                     {headline && <span className="font-semibold text-stone-800">{headline} — </span>}
                     {body}
                   </p>
@@ -163,7 +163,7 @@ function BriefingSection({ heading, lines, isFirst, referenceLookup }) {
             const citationIds = extractCitationIds(p);
             return (
               <div key={i}>
-                <p className="text-[13px] leading-relaxed text-stone-700">{stripCitationMarkers(p)}</p>
+                <p className="text-[14px] leading-7 text-stone-700">{stripCitationMarkers(p)}</p>
                 <SourceCitations citationIds={citationIds} referenceLookup={referenceLookup} />
               </div>
             );
@@ -246,14 +246,14 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
   );
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-4xl">
       {/* Header */}
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-amber-700">Morning Briefing</p>
           <h2 className="mt-1 text-2xl font-bold tracking-tight text-stone-900">{today}</h2>
           {briefing && (
-            <p className="mt-1 text-xs text-stone-400">
+            <p className="mt-1 text-xs text-stone-500">
               {isToday ? "Generated today" : "From " + new Date(briefing.generatedAt).toLocaleDateString()}
               {" · "}{briefing.articleCount} articles analysed
               {!isToday && <span className="ml-2 text-amber-600"> · Stale — regenerate for today's feed</span>}
@@ -278,7 +278,7 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
               disabled={!briefing?.text}
               variant="outline"
               size="sm"
-              className="border-stone-200 bg-white text-stone-700 hover:border-stone-300 disabled:opacity-40"
+              className="border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50 disabled:opacity-40"
             >
               {copiedFormat === "plain" ? "Copied" : "Copy Text"}
             </Button>
@@ -287,7 +287,7 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
               disabled={!briefing?.text}
               variant="outline"
               size="sm"
-              className="border-stone-200 bg-white text-stone-700 hover:border-stone-300 disabled:opacity-40"
+              className="border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50 disabled:opacity-40"
             >
               {copiedFormat === "markdown" ? "Copied" : "Copy MD"}
             </Button>
@@ -296,18 +296,18 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
       </div>
 
       {!isLlmConfigured() && (
-        <div className="mb-6 rounded-xl border border-stone-200 bg-white/60 px-4 py-3 text-sm text-stone-400">
+        <div className="mb-6 rounded-md border border-stone-200 bg-white px-4 py-3 text-sm text-stone-600">
           Configure an LLM in <code className="rounded bg-stone-100 px-1 text-xs text-stone-600">.env</code> to generate briefings.
         </div>
       )}
 
       {error && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
+        <div className="mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
       )}
 
       {/* Generating skeleton */}
       {generating && (
-        <div className="rounded-xl border border-stone-200 bg-white p-5 space-y-6">
+        <div className="rounded-md border border-stone-200 bg-white p-5 space-y-6">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className={`${i > 0 ? "border-t border-stone-200 pt-5" : ""} space-y-2`}>
               <Skeleton className="h-2.5 w-24 bg-stone-100" />
@@ -323,7 +323,7 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
 
       {/* Briefing content */}
       {!generating && sections.length > 0 && (
-        <div className="rounded-xl border border-stone-200 bg-white px-6 py-5">
+        <div className="rounded-md border border-stone-200 bg-white px-6 py-5">
           {sections.map((s, i) => (
             <BriefingSection
               key={i}
@@ -338,14 +338,14 @@ export default function BriefingTab({ feedArticles, briefing, setBriefing }) {
 
       {/* Empty state */}
       {!generating && !briefing && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-stone-200 py-24 text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-stone-200 bg-white">
+        <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-stone-200 py-24 text-center">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-md border border-stone-200 bg-white">
             <svg className="h-5 w-5 text-stone-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
             </svg>
           </div>
-          <p className="text-sm font-semibold text-stone-500">No briefing yet</p>
-          <p className="mt-1 text-xs text-stone-600">Press "Generate Briefing" to summarise today's feed in seconds.</p>
+          <p className="text-sm font-semibold text-stone-600">No briefing yet</p>
+          <p className="mt-1 text-xs text-stone-500">Press "Generate Briefing" to summarise today's feed in seconds.</p>
         </div>
       )}
     </div>

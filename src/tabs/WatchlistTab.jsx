@@ -82,14 +82,14 @@ export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) 
   }, [feedArticles, watchlist]);
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-4xl">
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-8">
         <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-amber-700">Watchlist</p>
         <h2 className="mt-1 text-2xl font-bold tracking-tight text-stone-900">Company & Keyword Monitor</h2>
-        <p className="mt-1 text-sm text-stone-500">
+        <p className="mt-1 text-sm text-stone-600">
           Add terms to watch — matching articles from the live feed appear automatically.
-          {watchlist.length > 0 && <span className="ml-2 tabular-nums text-stone-400">{totalMatches} matches across {watchlist.length} terms</span>}
+          {watchlist.length > 0 && <span className="ml-2 tabular-nums text-stone-500">{totalMatches} matches across {watchlist.length} terms</span>}
         </p>
       </div>
 
@@ -116,7 +116,7 @@ export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) 
                 key={term}
                 type="button"
                 onClick={() => addTermValue(term)}
-                className="rounded border border-stone-200 bg-white px-2.5 py-1 text-[11px] text-stone-700 transition-colors hover:border-amber-300 hover:text-amber-700"
+                className="rounded-md border border-stone-200 bg-white px-2.5 py-1 text-[11px] text-stone-700 transition-colors hover:border-amber-300 hover:text-amber-700"
               >
                 + {term}
               </button>
@@ -131,7 +131,7 @@ export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) 
           <select
             value={sortMode}
             onChange={(e) => setSortMode(e.target.value)}
-            className="rounded border border-stone-200 bg-white px-2.5 py-1 text-[12px] text-stone-700 focus:border-amber-400 focus:outline-none"
+            className="rounded-md border border-stone-200 bg-white px-2.5 py-1 text-[12px] text-stone-700 focus:border-amber-400 focus:outline-none"
           >
             <option value="matches-desc">Most matches</option>
             <option value="matches-asc">Fewest matches</option>
@@ -143,15 +143,15 @@ export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) 
 
       {/* Empty state */}
       {watchlist.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded border border-dashed border-stone-200 py-24 text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded border border-stone-200 bg-white">
+        <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-stone-200 py-24 text-center">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-md border border-stone-200 bg-white">
             <svg className="h-6 w-6 text-stone-300" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
             </svg>
           </div>
-          <p className="text-sm font-semibold text-stone-500">Nothing being watched</p>
-          <p className="mt-1 text-xs text-stone-400">Add a company or keyword above to start monitoring the feed.</p>
+          <p className="text-sm font-semibold text-stone-600">Nothing being watched</p>
+          <p className="mt-1 text-xs text-stone-500">Add a company or keyword above to start monitoring the feed.</p>
         </div>
       )}
 
@@ -161,23 +161,23 @@ export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) 
           const dot = TERM_DOTS[w.colorIdx ?? 0];
           const isOpen = expanded === w.id;
           return (
-            <div key={w.id} className="rounded border border-stone-200 bg-white overflow-hidden">
+            <div key={w.id} className="overflow-hidden rounded-md border border-stone-200 bg-white">
               {/* Card header */}
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className={`h-2 w-2 shrink-0 rounded-full ${dot}`} />
-                <span className="flex-1 text-sm font-semibold text-stone-700">{w.term}</span>
+                <span className="flex-1 text-sm font-semibold text-stone-800">{w.term}</span>
                 <Badge variant="outline" className="tabular-nums text-[11px] border-stone-200 bg-stone-50 text-stone-500">
                   {w.matches.length} {w.matches.length === 1 ? "match" : "matches"}
                 </Badge>
                 <button
                   onClick={() => setExpanded(isOpen ? null : w.id)}
-                  className="rounded p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600"
+                  className="rounded-md p-1 text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700"
                 >
                   <svg className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                   </svg>
                 </button>
-                <button onClick={() => removeTerm(w.id)} className="rounded p-1 text-stone-300 transition-colors hover:bg-red-50 hover:text-red-500">
+                <button onClick={() => removeTerm(w.id)} className="rounded-md p-1 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-500">
                   <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                   </svg>
@@ -188,7 +188,7 @@ export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) 
               {isOpen && (
                 <div className="border-t border-stone-100">
                   {w.matches.length === 0 ? (
-                    <p className="px-4 py-3 text-[12px] italic text-stone-400">No matching articles in the current feed.</p>
+                    <p className="px-4 py-3 text-[12px] italic text-stone-500">No matching articles in the current feed.</p>
                   ) : (
                     <div className="divide-y divide-stone-100">
                       {w.matches.map((a) => (
@@ -197,13 +197,13 @@ export default function WatchlistTab({ watchlist, setWatchlist, feedArticles }) 
                             <div className="flex-1 min-w-0">
                               {a.url ? (
                                 <a href={a.url} target="_blank" rel="noopener noreferrer"
-                                  className="text-[13px] font-medium text-stone-700 hover:text-amber-700 transition-colors line-clamp-2">
+                                  className="line-clamp-2 text-[14px] font-medium text-stone-800 transition-colors hover:text-amber-700">
                                   {a.title}
                                 </a>
                               ) : (
-                                <p className="text-[13px] font-medium text-stone-700 line-clamp-2">{a.title}</p>
+                                <p className="line-clamp-2 text-[14px] font-medium text-stone-800">{a.title}</p>
                               )}
-                              <p className="mt-0.5 text-[11px] text-stone-400">{a.source} · {a.date} · {a.category}</p>
+                              <p className="mt-0.5 text-[11px] text-stone-500">{a.source} · {a.date} · {a.category}</p>
                             </div>
                           </div>
                         </div>

@@ -54,18 +54,18 @@ function SectionHeader({ title, subtitle }) {
   return (
     <div className="mb-4">
       <h3 className="text-sm font-bold text-stone-800">{title}</h3>
-      {subtitle && <p className="text-[11px] text-stone-400">{subtitle}</p>}
+      {subtitle && <p className="text-[11px] text-stone-500">{subtitle}</p>}
     </div>
   );
 }
 
 function ChartCard({ children, className = "" }) {
-  return <div className={`rounded border border-stone-200 bg-white p-5 ${className}`}>{children}</div>;
+  return <div className={`rounded-md border border-stone-200 bg-white p-5 ${className}`}>{children}</div>;
 }
 
 function StatCard({ label, value, hint }) {
   return (
-    <div className="rounded border border-stone-200 bg-white p-4">
+    <div className="rounded-md border border-stone-200 bg-white p-4">
       <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-stone-500">{label}</p>
       <p className="mt-1 text-xl font-bold tracking-tight text-stone-900">{value}</p>
       {hint && <p className="mt-1 text-[11px] text-stone-500">{hint}</p>}
@@ -76,7 +76,7 @@ function StatCard({ label, value, hint }) {
 function DrilldownPanel({ drilldown, onClear }) {
   if (!drilldown) return null;
   return (
-    <div className="mb-6 rounded border border-amber-200 bg-amber-50/60 p-4">
+    <div className="mb-6 rounded-md border border-amber-200 bg-amber-50/60 p-4">
       <div className="mb-3 flex items-center justify-between">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-700">Drilldown</p>
@@ -84,7 +84,7 @@ function DrilldownPanel({ drilldown, onClear }) {
         </div>
         <button
           onClick={onClear}
-          className="rounded border border-amber-200 bg-white px-2 py-1 text-[11px] text-amber-700 transition-colors hover:border-amber-300"
+          className="rounded-md border border-amber-200 bg-white px-2 py-1 text-[11px] text-amber-700 transition-colors hover:border-amber-300"
         >
           Clear
         </button>
@@ -94,7 +94,7 @@ function DrilldownPanel({ drilldown, onClear }) {
       ) : (
         <div className="space-y-2">
           {drilldown.items.slice(0, 12).map((item) => (
-            <div key={item.id} className="rounded border border-stone-200 bg-white px-3 py-2">
+            <div key={item.id} className="rounded-md border border-stone-200 bg-white px-3 py-2">
               {item.url ? (
                 <a href={item.url} target="_blank" rel="noreferrer noopener" className="text-[12px] font-medium text-stone-800 hover:text-amber-700">
                   {item.title}
@@ -232,14 +232,14 @@ export default function TrendsTab({ feedArticles, savedItems }) {
   }, [filteredFeed, filteredSaved, categoryData, companyData, saveActivity, sentimentData]);
 
   return (
-    <div>
+    <div className="mx-auto max-w-7xl">
       <div className="mb-8">
         <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600/80">Trends</p>
         <h2 className="mt-1 text-2xl font-bold tracking-tight text-stone-900">Research Analytics</h2>
-        <p className="mt-1 text-sm text-stone-500">Live charts from your feed and saved matrix.</p>
+        <p className="mt-1 text-sm text-stone-600">Live charts from your feed and saved matrix. Click chart elements to drill into underlying records.</p>
       </div>
 
-      <div className="mb-6 rounded border border-stone-200 bg-white p-4">
+      <div className="mb-6 rounded-md border border-stone-200 bg-white p-4">
         <div className="grid gap-3 md:grid-cols-3">
           <div>
             <label className="mb-1 block text-[11px] font-medium text-stone-500">Date range</label>
@@ -400,7 +400,7 @@ export default function TrendsTab({ feedArticles, savedItems }) {
                   <button
                     key={cat}
                     onClick={() => setDrilldown({ title: `Heat map: ${cat}`, items })}
-                    className="rounded-lg p-3 text-center transition-all"
+                  className="rounded-md p-3 text-center transition-all"
                     style={{
                       background: count > 0 ? `${color}${Math.round(intensity * 40 + 10).toString(16).padStart(2, "0")}` : "#f5f5f4",
                       border: `1px solid ${count > 0 ? color + "40" : "#e7e5e4"}`,

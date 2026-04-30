@@ -141,7 +141,7 @@ function App() {
               </div>
               <div>
                 <h1 className="text-[15px] font-bold tracking-tight text-stone-900">Strategy Research Dashboard</h1>
-                <p className="text-[11px] text-stone-400">Search companies · clip intelligence · run AI profiles</p>
+                <p className="text-[11px] text-stone-500">Search companies · clip intelligence · run AI profiles</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -175,13 +175,13 @@ function App() {
                     onClick={() => setActiveTab(tab.id)}
                     className={`relative whitespace-nowrap px-4 py-3 text-sm font-medium transition-colors ${
                       isActive
-                        ? "text-amber-700 after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[2px] after:bg-amber-600"
-                        : "text-stone-400 hover:text-stone-700"
+                        ? "bg-amber-50/60 text-amber-700 after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[2px] after:bg-amber-600"
+                        : "text-stone-500 hover:bg-stone-100/60 hover:text-stone-800"
                     }`}
                   >
                     {tab.label}
                     {badge != null && (
-                      <span className={`ml-1.5 text-[10px] tabular-nums ${isActive ? "text-amber-600" : "text-stone-300"}`}>
+                      <span className={`ml-1.5 text-[10px] tabular-nums ${isActive ? "text-amber-600" : "text-stone-500"}`}>
                         {badge}
                       </span>
                     )}
