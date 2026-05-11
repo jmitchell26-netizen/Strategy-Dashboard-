@@ -3,6 +3,11 @@
 
 const OPENAI_CHAT = "https://api.openai.com/v1/chat/completions";
 const OPENAI_MODEL = "gpt-4o-mini";
+const DEFAULT_OLLAMA_BASE = "http://127.0.0.1:11434";
+
+const ERR_NO_LLM = "No LLM configured. Add VITE_OPENAI_API_KEY, or Ollama settings (VITE_OLLAMA_BASE_URL / VITE_OLLAMA_API_KEY / VITE_LLM_PROVIDER=ollama) in .env and restart the dev server.";
+const ERR_NO_OPENAI_KEY = "Missing OpenAI API key. Add VITE_OPENAI_API_KEY to your .env file in the project root and restart the dev server.";
+const ERR_NO_LLM_PROFILE = "No LLM configured. Add VITE_OPENAI_API_KEY or Ollama env vars — see .env.example — and restart the dev server.";
 
 const SYSTEM_PROMPT = `You are a senior strategy research analyst at a top-tier investment firm. You receive news articles and research notes about ONE company. Your job is to produce a rigorous, detailed intelligence brief that a portfolio manager or strategist could act on.
 
@@ -70,7 +75,7 @@ function getProvider() {
  * In dev, localhost/127.0.0.1 uses Vite proxy to avoid CORS.
  */
 function getOllamaChatUrl() {
-  const raw = env("VITE_OLLAMA_BASE_URL").replace(/\/$/, "") || "http://127.0.0.1:11434";
+  const raw = env("VITE_OLLAMA_BASE_URL").replace(/\/$/, "") || DEFAULT_OLLAMA_BASE;
   let basePath = `${raw}/v1/chat/completions`;
 
   if (import.meta.env.DEV) {
@@ -116,6 +121,33 @@ function getChatConfig() {
   return null;
 }
 
+function requireChatConfig(errorMessage = ERR_NO_LLM) {
+  const cfg = getChatConfig();
+  if (!cfg) throw new Error(errorMessage);
+  return cfg;
+}
+
+function formatCompanyClipping(article, index) {
+  const summary = (article.summary || "").slice(0, 2500);
+  const notes = (article.notes || "").slice(0, 2000);
+  return `### Clipping ${index + 1}
+- **Title:** ${article.title}
+- **Source:** ${article.source} (${article.date})
+- **Summary:** ${summary}
+- **Research notes:** ${notes || "(none)"}
+`;
+}
+
+function formatBriefingArticle(article, index) {
+  return `[${index + 1}] ${article.title} (${article.category} · ${article.source} · ${article.date})
+${(article.summary || "").slice(0, 400)}`;
+}
+
+function formatThesisArticle(article, index) {
+  return `[${index + 1}] ${article.title} (${article.source}, ${article.date})
+${(article.summary || article.notes || "").slice(0, 600)}`;
+}
+
 /** True if either OpenAI key or Ollama (URL/key/provider) is configured. */
 export function isLlmConfigured() {
   return getChatConfig() !== null;
@@ -123,16 +155,9 @@ export function isLlmConfigured() {
 
 
 async function chatCompletions(body) {
-  const cfg = getChatConfig();
-  if (!cfg) {
-    throw new Error(
-      "No LLM configured. Add VITE_OPENAI_API_KEY, or Ollama settings (VITE_OLLAMA_BASE_URL / VITE_OLLAMA_API_KEY / VITE_LLM_PROVIDER=ollama) in .env and restart the dev server."
-    );
-  }
+  const cfg = requireChatConfig();
   if (cfg.provider === "openai" && !env("VITE_OPENAI_API_KEY")) {
-    throw new Error(
-      "Missing OpenAI API key. Add VITE_OPENAI_API_KEY to your .env file in the project root and restart the dev server."
-    );
+    throw new Error(ERR_NO_OPENAI_KEY);
   }
 
   const res = await fetch(cfg.url, {
@@ -169,18 +194,8 @@ async function chatCompletions(body) {
  * @returns {Promise<string>} Markdown profile text
  */
 export async function generateCompanyProfile(displayName, articles) {
-  const cfg = getChatConfig();
-  if (!cfg) {
-    throw new Error(
-      "No LLM configured. Add VITE_OPENAI_API_KEY or Ollama env vars — see .env.example — and restart the dev server."
-    );
-  }
-
-  const chunks = articles.map((a, i) => {
-    const summary = (a.summary || "").slice(0, 2500);
-    const notes = (a.notes || "").slice(0, 2000);
-    return `### Clipping ${i + 1}\n- **Title:** ${a.title}\n- **Source:** ${a.source} (${a.date})\n- **Summary:** ${summary}\n- **Research notes:** ${notes || "(none)"}\n`;
-  });
+  const cfg = requireChatConfig(ERR_NO_LLM_PROFILE);
+  const chunks = articles.map((article, index) => formatCompanyClipping(article, index));
 
   const userContent = `**Company:** ${displayName}\n\n${chunks.join("\n")}`;
 
@@ -197,13 +212,11 @@ export async function generateCompanyProfile(displayName, articles) {
 
 /** Morning briefing from the live feed articles. */
 export async function generateMorningBriefing(articles) {
-  const articleText = articles
-    .slice(0, 20)
-    .map((a, i) => `[${i + 1}] ${a.title} (${a.category} · ${a.source} · ${a.date})\n${(a.summary || "").slice(0, 400)}`)
-    .join("\n\n");
+  const cfg = requireChatConfig();
+  const articleText = articles.slice(0, 20).map((article, index) => formatBriefingArticle(article, index)).join("\n\n");
 
   return chatCompletions({
-    model: getChatConfig().model,
+    model: cfg.model,
     messages: [
       {
         role: "system",
@@ -237,12 +250,11 @@ Be specific, analytical, and grounded in the provided articles. Do not invent fa
 
 /** Thesis synthesis: given a hypothesis and supporting articles, produce a structured brief. */
 export async function generateThesisSummary(thesisTitle, hypothesis, articles) {
-  const chunks = articles
-    .map((a, i) => `[${i + 1}] ${a.title} (${a.source}, ${a.date})\n${(a.summary || a.notes || "").slice(0, 600)}`)
-    .join("\n\n");
+  const cfg = requireChatConfig();
+  const chunks = articles.map((article, index) => formatThesisArticle(article, index)).join("\n\n");
 
   return chatCompletions({
-    model: getChatConfig().model,
+    model: cfg.model,
     messages: [
       {
         role: "system",
@@ -271,12 +283,13 @@ Be rigorous and honest. Do not spin the evidence.`,
 
 /** Cross-company executive summary for a report. */
 export async function generateReportSummary(companies) {
+  const cfg = requireChatConfig();
   const profileText = companies
     .map((c) => `## ${c.name}\n${c.summary.slice(0, 3000)}`)
     .join("\n\n---\n\n");
 
   return chatCompletions({
-    model: getChatConfig().model,
+    model: cfg.model,
     messages: [
       {
         role: "system",

@@ -42,6 +42,8 @@ export default function ResearchTab({
     return feedArticles.filter((a) => a.category === activeCategory);
   }, [feedArticles, activeCategory]);
 
+  // Reset category when the search term changes.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setActiveCategory("All"); }, [query]);
 
   return (

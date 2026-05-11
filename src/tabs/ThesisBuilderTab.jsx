@@ -13,7 +13,7 @@ const CAT_DOT = {
   "Product Launch":"bg-cyan-400","M&A":"bg-orange-400","General":"bg-indigo-400",
 };
 
-function parseSummarySection(markdown, heading) {
+function parseSummarySection(markdown) {
   const lines = markdown.split("\n");
   const sections = [];
   let current = null;

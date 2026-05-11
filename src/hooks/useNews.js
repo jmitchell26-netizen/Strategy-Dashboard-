@@ -47,8 +47,11 @@ function transformArticle(article, index) {
 }
 
 function extractDomain(url) {
-  try { return new URL(url).hostname.replace(/^www\./, ""); }
-  catch { return null; }
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
 }
 
 function toPublicArticle(t) {
@@ -101,7 +104,6 @@ export default function useNews(query) {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       if (abortRef.current) abortRef.current.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   async function fetchTopHeadlines() {

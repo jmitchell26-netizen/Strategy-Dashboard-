@@ -11,34 +11,9 @@ import {
   ResponsiveContainer,
   Tooltip as RechartsTooltip,
 } from "recharts";
+import { parseSignalScores } from "../utils/profileParsing";
 
 // ─── Parsers ─────────────────────────────────────────────────────────────────
-
-/**
- * Parse the ## Signal Scores block.
- * Returns { label: { value: number, rationale: string|null } }
- */
-export function parseSignalScores(markdown) {
-  const lines = markdown.split("\n");
-  const scores = {};
-  let inScores = false;
-
-  for (const line of lines) {
-    if (/^##\s+signal scores/i.test(line)) { inScores = true; continue; }
-    if (inScores && /^##/.test(line)) { inScores = false; }
-    if (inScores) {
-      // Match:  "- Label: 7/10 — rationale…"  or  "- Label: 7/10"
-      const m = line.match(/^[-*]\s+(.+?):\s*(\d+)(?:\/10)?(?:\s*[—–-]\s*(.+))?/i);
-      if (m) {
-        scores[m[1].trim()] = {
-          value: Math.min(10, Math.max(0, parseInt(m[2], 10))),
-          rationale: m[3] ? m[3].trim() : null,
-        };
-      }
-    }
-  }
-  return scores;
-}
 
 /** Split raw markdown into sections by ## heading. */
 function parseMarkdownSections(markdown) {
@@ -111,15 +86,6 @@ function isScoresSection(heading) {
 }
 
 // ─── Signal Scores visualisation ─────────────────────────────────────────────
-
-const SCORE_COLORS = {
-  "Risk Exposure": "#ef4444",
-  default: "#f59e0b",
-};
-
-function scoreColor(label) {
-  return SCORE_COLORS[label] ?? SCORE_COLORS.default;
-}
 
 function MiniRadar({ scores }) {
   const data = Object.entries(scores).map(([metric, s]) => ({ metric, value: s.value, fullMark: 10 }));

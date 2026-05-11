@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Tooltip, Legend } from "recharts";
-import { parseSignalScores } from "../components/CompanyProfileView";
+import { parseSignalScores } from "../utils/profileParsing";
 
 const COMPANY_COLORS = ["#f59e0b", "#38bdf8", "#a78bfa", "#34d399", "#f87171"];
 const MAX_SELECT = 4;
@@ -70,7 +70,7 @@ export default function ComparisonLabTab({ companyProfiles }) {
               Select companies ({selected.length}/{MAX_SELECT})
             </p>
             <div className="flex flex-wrap gap-2">
-              {readyProfiles.map((prof, i) => {
+              {readyProfiles.map((prof) => {
                 const isSelected = selected.includes(prof.key);
                 const colorIdx = selected.indexOf(prof.key);
                 const dotColor = isSelected ? COMPANY_COLORS[colorIdx] : null;
